@@ -1,10 +1,19 @@
 const express = require('express');  
 const mysql = require('mysql2');   
-const bodyParser = require('body-parser'); 
+const bodyParser = require('body-parser');
+const cors = require('cors');  // Import cors middleware
 
 const app = express();   
 const port = 8000;
+
 app.use(bodyParser.json());        
+
+// Configure CORS to allow requests from your React frontend (running on localhost:3000)
+app.use(cors({
+    origin: 'http://localhost:3000',  // Allow requests only from this origin
+    methods: ['GET', 'POST'],  // Allow only GET and POST requests
+    allowedHeaders: ['Content-Type'],  // Allow Content-Type header
+}));
 
 // Create a connection pool
 const pool = mysql.createPool({
