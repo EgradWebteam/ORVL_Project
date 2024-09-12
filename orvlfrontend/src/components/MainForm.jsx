@@ -64,7 +64,7 @@ const MainForm = () => {
  
  
   return (
-    <div>
+    <div className='examform'> 
       <h1>Exam Selector</h1>
       <form onSubmit={handleSubmit}>
         <div>
