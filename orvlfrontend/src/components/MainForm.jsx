@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../components/MainForrrm.css'
+// import '../components/MainForrrm.css'
  
 const MainForm = () => {
   const [exams, setExams] = useState([]);
