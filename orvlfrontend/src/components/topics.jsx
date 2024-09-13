@@ -131,14 +131,14 @@ const Topics = () => {
         )}
         {topics.length > 0 && (
           <div>
-            <h3>Enter Topics:</h3>
+            <h3>Enter Topics for </h3>
             {topics.map((topic, index) => (
               <div key={index} className="topic-entry">
                 <input
                   type="text"
                   value={topic.topic_name}
                   onChange={(event) => handleTopicChange(index, event)}
-                  placeholder="Enter topic name"
+                  placeholder="Enter topic name for {subject.subject_name} "
                 />
                 <button type="button" onClick={handleAddTopic}>+</button>
                 <button type="button" onClick={() => handleRemoveTopic(index)}>-</button>

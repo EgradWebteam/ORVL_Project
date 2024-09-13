@@ -5,10 +5,10 @@
     align-items: center;
     background-color: rgb(160, 243, 215);
    width: 35vw;
-   height: max-content;
+   height: 60vh;
    margin-left: 35vw;
    margin-top: 15vh;
-   border-radius: 60vh
+  
 }
 .examform h1{
     background-color: rgb(1, 1, 61);
