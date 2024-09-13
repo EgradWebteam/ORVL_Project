@@ -93,7 +93,8 @@ const MainForm = () => {
             ))}
           </div>
         )}
-        <a href=""><button type="submit">Submit Selection</button></a>
+        <button type="submit">Submit Selection</button>
+        <a href="/topics">next</a>
       </form>
     </div>
   );

@@ -1,20 +1,20 @@
 const express = require('express');  
-const mysql = require('mysql2');   
+const mysql = require('mysql2');  
 const bodyParser = require('body-parser');
 const cors = require('cors');  // Import cors middleware
-
-const app = express();   
+ 
+const app = express();  
 const port = 8000;
-
+ 
 app.use(bodyParser.json());        
-
+ 
 // Configure CORS to allow requests from your React frontend (running on localhost:3000)
 app.use(cors({
     origin: 'http://localhost:3000',  // Allow requests only from this origin
     methods: ['GET', 'POST'],  // Allow only GET and POST requests
     allowedHeaders: ['Content-Type'],  // Allow Content-Type header
 }));
-
+ 
 // Create a connection pool
 const pool = mysql.createPool({
     host: 'localhost',
@@ -22,7 +22,7 @@ const pool = mysql.createPool({
     password: '',
     database: 'orvl_project_database'
 });
-
+ 
 // Route to fetch all exams
 app.get('/api/exams', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -40,7 +40,7 @@ app.get('/api/exams', (req, res) => {
         });
     });
 });
-
+ 
 // Route to fetch subjects for a specific exam
 app.get('/api/exam/:exam_id/subjects', (req, res) => {
     const exam_id = req.params.exam_id;
@@ -59,64 +59,40 @@ app.get('/api/exam/:exam_id/subjects', (req, res) => {
         });
     });
 });
-// to submit topics for a specific exam and subject.
-app.post('/api/submit-topics', (req, res) => {
-    const { exam_id, subject_id, topics } = req.body; // topics is an array of topic_name
-
-    if (!exam_id || !subject_id || !topics || topics.length === 0) {
-        return res.status(400).send('Exam, subject, and at least one topic must be provided');
-    }
-
+ 
+// Fetch topics for a specific subject
+app.get('/api/subjects/:subject_id/topics', (req, res) => {
+    const subject_id = req.params.subject_id;
     pool.getConnection((err, connection) => {
         if (err) {
-            console.error('Error connecting to MySQL:', err);
+            console.error('MySQL Connection Error:', err);
             return res.status(500).send('Database connection error');
         }
-
-        // Insert topics into the topics table
-        const insertPromises = topics.map((topic_name) => {
-            return new Promise((resolve, reject) => {
-                connection.query(
-                    'INSERT INTO topics (exam_id, subject_id, topic_name) VALUES (?, ?, ?)',
-                    [exam_id, subject_id, topic_name],
-                    (err, results) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(results);
-                        }
-                    }
-                );
-            });
+        connection.query('SELECT * FROM topics WHERE subject_id = ?', [subject_id], (err, results) => {
+            connection.release();
+            if (err) {
+                console.error('Error fetching topics:', err);
+                return res.status(500).send('Error fetching topics');
+            }
+            res.json(results);
         });
-
-        Promise.all(insertPromises)
-            .then(() => {
-                connection.release();
-                res.status(200).send('Topics saved successfully');
-            })
-            .catch((err) => {
-                connection.release();
-                console.error('Error saving topics:', err);
-                res.status(500).send('Error saving topics');
-            });
     });
 });
-
+ 
 // Route to handle form submission
 app.post('/api/submit-selection', (req, res) => {
     const { exam_id, selectedsubjects } = req.body;  // Destructure examId and selected subjects from the request body
-
+ 
     if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
         return res.status(400).send('Exam and at least one subject must be selected');
     }
-
+ 
     pool.getConnection((err, connection) => {
         if (err) {
             console.error('Error connecting to MySQL:', err);
             return res.status(500).send('Database connection error');
         }
-
+ 
         // Loop through each selected subject and insert it into the Selections table
         const insertPromises = selectedsubjects.map((subject_id) => {
             return new Promise((resolve, reject) => {
@@ -133,7 +109,7 @@ app.post('/api/submit-selection', (req, res) => {
                 );
             });
         });
-
+ 
         Promise.all(insertPromises)
             .then(() => {
                 connection.release();  // Release connection back to the pool
@@ -146,7 +122,52 @@ app.post('/api/submit-selection', (req, res) => {
             });
     });
 });
-
+ 
+// Route to handle topics submission
+app.post('/api/submit-topics', (req, res) => {
+    const { topics } = req.body;  // Extract topics from the request body
+ 
+    if (!topics || !Array.isArray(topics) || topics.length === 0) {
+        return res.status(400).send('At least one topic must be provided');
+    }
+ 
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+ 
+        // Loop through each topic and insert it into the Topics table
+        const insertPromises = topics.map((topic) => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    'INSERT INTO topics (topic_name, subject_id) VALUES (?, ?)',
+                    [topic.topic_name, topic.subject_id],
+                    (err, results) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(results);
+                        }
+                    }
+                );
+            });
+        });
+ 
+        Promise.all(insertPromises)
+            .then(() => {
+                connection.release();  // Release connection back to the pool
+                res.status(200).send('Topics saved successfully');
+            })
+            .catch((err) => {
+                connection.release();  // Release connection even if there's an error
+                console.error('Error saving topics:', err);
+                res.status(500).send('Error saving topics');
+            });
+    });
+});
+ 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+ 
