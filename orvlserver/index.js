@@ -182,10 +182,14 @@ app.post('/api/submit-topics', (req, res) => {
             });
     });
 });
-/// Route to upload an image for an exam
-app.post('/api/exam/:exam_id/upload-image', upload.single('image'), (req, res) => {
-    const exam_id = req.params.exam_id;
-    const image_filename = req.file.filename;
+// Route to handle image upload
+app.post('/api/upload-image', upload.single('image'), (req, res) => {
+    const { exam_id } = req.body;
+    const image_url = `/uploads/${req.file.filename}`;
+
+    if (!exam_id || !image_url) {
+        return res.status(400).send('Exam ID and image URL are required');
+    }
 
     pool.getConnection((err, connection) => {
         if (err) {
@@ -193,11 +197,11 @@ app.post('/api/exam/:exam_id/upload-image', upload.single('image'), (req, res) =
             return res.status(500).send('Database connection error');
         }
 
-        connection.query('INSERT INTO exam_images (exam_id, image_filename) VALUES (?, ?)', [exam_id, image_filename], (err, results) => {
+        connection.query('INSERT INTO exam_images (exam_id, image_url) VALUES (?, ?)', [exam_id, image_url], (err, results) => {
             connection.release();
             if (err) {
-                console.error('Error saving image details:', err);
-                return res.status(500).send('Error saving image details');
+                console.error('Error saving image data:', err);
+                return res.status(500).send('Error saving image data');
             }
             res.status(200).send('Image uploaded successfully');
         });
@@ -205,22 +209,21 @@ app.post('/api/exam/:exam_id/upload-image', upload.single('image'), (req, res) =
 });
 
 // Route to fetch images for a specific exam
-app.get('/api/exam/:exam_id/images', (req, res) => {
+app.get('/api/exam/:exam_id/image', (req, res) => {
     const exam_id = req.params.exam_id;
-
     pool.getConnection((err, connection) => {
         if (err) {
             console.error('Error connecting to MySQL:', err);
             return res.status(500).send('Database connection error');
         }
 
-        connection.query('SELECT image_filename FROM exam_images WHERE exam_id = ?', [exam_id], (err, results) => {
+        connection.query('SELECT image_url FROM exam_images WHERE exam_id = ?', [exam_id], (err, results) => {
             connection.release();
             if (err) {
-                console.error('Error fetching images:', err);
-                return res.status(500).send('Error fetching images');
+                console.error('Error fetching image:', err);
+                return res.status(500).send('Error fetching image');
             }
-            res.json(results.map(row => ({ image_url: `http://localhost:8000/uploads/${row.image_filename}` })));
+            res.json(results);
         });
     });
 });
