@@ -7,7 +7,8 @@ const MainForm = () => {
   const [selectedExam, setSelectedExam] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
-  const [topics, setTopics] = useState({}); // Use an object to map subject IDs to topics
+  const [topics, setTopics] = useState({});
+ // Use an object to map subject IDs to topics
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/exams')

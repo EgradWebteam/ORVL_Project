@@ -77,30 +77,30 @@ app.get('/api/subjects/:subject_id/topics', (req, res) => {
         });
     });
 });
-// Route to fetch topics for a specific subject
-app.get('/api/topics/:subjectId', (req, res) => {
-    const subjectId = req.params.subjectId;
-    pool.getConnection((err, connection) => {
-      if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return res.status(500).send('Database connection error');
-      }
-      connection.query('SELECT * FROM topics WHERE subject_id = ?', [subjectId], (err, results) => {
-        connection.release();  // Release connection back to the pool
-        if (err) {
-          console.error('Error fetching topics:', err);
-          return res.status(500).send('Error fetching topics');
-        }
-        res.json(results);
-      });
-    });
-  });
-// Route to handle form submission
-app.post('/api/submit-selection', (req, res) => {
-    const { exam_id, selectedsubjects, selectedtopics } = req.body;  // Destructure examId, selected subjects, and selected topics from the request body
+// // Fetch topics for a specific subject
+// app.get('/api/subjects/:subject_id/topics', (req, res) => {
+//     const subject_id = req.params.subject_id;
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('MySQL Connection Error:', err);
+//             return res.status(500).send('Database connection error');
+//         }
+//         connection.query('SELECT * FROM topics WHERE subject_id = ?', [subject_id], (err, results) => {
+//             connection.release();
+//             if (err) {
+//                 console.error('Error fetching topics:', err);
+//                 return res.status(500).send('Error fetching topics');
+//             }
+//             res.json(results);
+//         });
+//     });
+// });
 
-    if (!exam_id || !selectedsubjects || selectedsubjects.length === 0 || !selectedtopics || selectedtopics.length === 0) {
-        return res.status(400).send('Exam, at least one subject, and at least one topic must be selected');
+app.post('/api/submit-selection', (req, res) => {
+    const { exam_id, selectedsubjects, selectedtopics } = req.body;
+
+    if (!exam_id || !selectedsubjects || !Array.isArray(selectedsubjects) || selectedsubjects.length === 0 || !selectedtopics || !Array.isArray(selectedtopics) || selectedtopics.length === 0) {
+        return res.status(400).send('Exam, subjects, and topics must be provided and should be non-empty arrays');
     }
 
     pool.getConnection((err, connection) => {
@@ -109,7 +109,6 @@ app.post('/api/submit-selection', (req, res) => {
             return res.status(500).send('Database connection error');
         }
 
-        // Insert subjects into the Selections table
         const insertSubjectPromises = selectedsubjects.map((subject_id) => {
             return new Promise((resolve, reject) => {
                 connection.query(
@@ -126,7 +125,6 @@ app.post('/api/submit-selection', (req, res) => {
             });
         });
 
-        // Insert topics into a separate Topics table or update existing entries
         const insertTopicPromises = selectedtopics.map((topic) => {
             return new Promise((resolve, reject) => {
                 connection.query(
@@ -145,11 +143,11 @@ app.post('/api/submit-selection', (req, res) => {
 
         Promise.all([...insertSubjectPromises, ...insertTopicPromises])
             .then(() => {
-                connection.release();  // Release connection back to the pool
+                connection.release();
                 res.status(200).send('Selection and topics saved successfully');
             })
             .catch((err) => {
-                connection.release();  // Release connection even if there's an error
+                connection.release();
                 console.error('Error saving selection or topics:', err);
                 res.status(500).send('Error saving selection or topics');
             });
