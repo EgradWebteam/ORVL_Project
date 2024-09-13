@@ -9,7 +9,7 @@ const MainForm = () => {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
  
   useEffect(() => {
-    // Fetch exams when component mounts
+  
     axios.get('http://localhost:8000/api/exams')
       .then(response => {
         console.log('Fetched exams:', response.data);
@@ -19,7 +19,7 @@ const MainForm = () => {
   }, []);
  
   useEffect(() => {
-    // Fetch subjects when an exam is selected
+    
     if (selectedExam) {
       axios.get(`http://localhost:8000/api/exam/${selectedExam}/subjects`)
         .then(response => {
@@ -34,7 +34,7 @@ const MainForm = () => {
  
   const handleExamChange = (event) => {
     setSelectedExam(event.target.value);
-    setSelectedSubjects([]); // Clear selected subjects when exam changes
+    setSelectedSubjects([]); 
   };
  
   const handleSubjectChange = (event) => {
