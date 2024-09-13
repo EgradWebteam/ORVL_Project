@@ -118,7 +118,7 @@ const Topics = () => {
                   type='checkbox'
                   id={`subject-${subject.subject_id}`}
                   value={subject.subject_id}
-                  checked={selectedSubjects.includes(subject.subject_id)}
+                //   checked={selectedSubjects.includes(subject.subject_id)}
                   onChange={handleSubjectChange}
                   className="checkbox-input"
                 />

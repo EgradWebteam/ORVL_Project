@@ -141,7 +141,7 @@ app.post('/api/submit-topics', (req, res) => {
         const insertPromises = topics.map((topic) => {
             return new Promise((resolve, reject) => {
                 connection.query(
-                    'INSERT INTO topics (topic_name, subject_id) VALUES (?, ?)',
+                    'INSERT INTO topics (exam_id,topic_name, subject_id) VALUES (?, ?)',
                     [topic.topic_name, topic.subject_id],
                     (err, results) => {
                         if (err) {
