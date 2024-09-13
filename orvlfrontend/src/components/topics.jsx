@@ -77,7 +77,7 @@ const Topics = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    
     // Prepare data for submission
     const examData = {
       exam_id: selectedExam,
@@ -85,8 +85,9 @@ const Topics = () => {
     };
 
     const topicData = topics.map(topic => ({
-      topic_name: topic.topic_name,
-      subject_id: topic.subject_id
+      exam_id: selectedExam,  // Include exam_id in the topic data
+      subject_id: topic.subject_id,
+      topic_name: topic.topic_name
     }));
 
     // Post selection data and topic data
@@ -94,7 +95,8 @@ const Topics = () => {
       .then(() => axios.post('http://localhost:8000/api/submit-topics', { topics: topicData }))
       .then(() => alert('Selection and topics saved successfully'))
       .catch(error => console.error('Error saving selection or topics:', error));
-  };
+};
+
 
   return (
     <div className='examform'>
@@ -118,7 +120,7 @@ const Topics = () => {
                   type='checkbox'
                   id={`subject-${subject.subject_id}`}
                   value={subject.subject_id}
-                  checked={selectedSubjects.includes(subject.subject_id)}
+                //   checked={selectedSubjects.includes(subject.subject_id)}
                   onChange={handleSubjectChange}
                   className="checkbox-input"
                 />

@@ -124,25 +124,26 @@ app.post('/api/submit-selection', (req, res) => {
 });
  
 // Route to handle topics submission
+// Route to handle topics submission
 app.post('/api/submit-topics', (req, res) => {
     const { topics } = req.body;  // Extract topics from the request body
- 
+
     if (!topics || !Array.isArray(topics) || topics.length === 0) {
         return res.status(400).send('At least one topic must be provided');
     }
- 
+
     pool.getConnection((err, connection) => {
         if (err) {
             console.error('Error connecting to MySQL:', err);
             return res.status(500).send('Database connection error');
         }
- 
+
         // Loop through each topic and insert it into the Topics table
         const insertPromises = topics.map((topic) => {
             return new Promise((resolve, reject) => {
                 connection.query(
-                    'INSERT INTO topics (topic_name, subject_id) VALUES (?, ?)',
-                    [topic.topic_name, topic.subject_id],
+                    'INSERT INTO topics (exam_id, subject_id, topic_name) VALUES (?, ?, ?)',
+                    [topic.exam_id, topic.subject_id, topic.topic_name],
                     (err, results) => {
                         if (err) {
                             reject(err);
@@ -153,7 +154,7 @@ app.post('/api/submit-topics', (req, res) => {
                 );
             });
         });
- 
+
         Promise.all(insertPromises)
             .then(() => {
                 connection.release();  // Release connection back to the pool
@@ -166,7 +167,7 @@ app.post('/api/submit-topics', (req, res) => {
             });
     });
 });
- 
+
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
