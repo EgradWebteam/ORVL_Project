@@ -77,6 +77,24 @@ app.get('/api/subjects/:subject_id/topics', (req, res) => {
         });
     });
 });
+// Route to fetch topics for a specific subject
+app.get('/api/topics/:subjectId', (req, res) => {
+    const subjectId = req.params.subjectId;
+    pool.getConnection((err, connection) => {
+      if (err) {
+        console.error('Error connecting to MySQL:', err);
+        return res.status(500).send('Database connection error');
+      }
+      connection.query('SELECT * FROM topics WHERE subject_id = ?', [subjectId], (err, results) => {
+        connection.release();  // Release connection back to the pool
+        if (err) {
+          console.error('Error fetching topics:', err);
+          return res.status(500).send('Error fetching topics');
+        }
+        res.json(results);
+      });
+    });
+  });
 // // Route to handle form submission
 app.post('/api/submit-selection', (req, res) => {
     const { exam_id, selectedsubjects } = req.body;  // Destructure examId and selected subjects from the request body
