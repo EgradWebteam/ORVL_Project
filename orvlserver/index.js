@@ -77,50 +77,50 @@ app.get('/api/subjects/:subject_id/topics', (req, res) => {
         });
     });
 });
-// Route to handle form submission
-app.post('/api/submit-selection', (req, res) => {
-    const { exam_id, selectedsubjects } = req.body;  // Destructure examId and selected subjects from the request body
+// // Route to handle form submission
+// app.post('/api/submit-selection', (req, res) => {
+//     const { exam_id, selectedsubjects } = req.body;  // Destructure examId and selected subjects from the request body
 
-    if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
-        return res.status(400).send('Exam and at least one subject must be selected');
-    }
+//     if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
+//         return res.status(400).send('Exam and at least one subject must be selected');
+//     }
 
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.error('Error connecting to MySQL:', err);
-            return res.status(500).send('Database connection error');
-        }
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).send('Database connection error');
+//         }
 
-        // Loop through each selected subject and insert it into the Selections table
-        const insertPromises = selectedsubjects.map((subject_id) => {
-            return new Promise((resolve, reject) => {
-                connection.query(
-                    'INSERT INTO selections (exam_id, subject_id) VALUES (?, ?)',
-                    [exam_id, subject_id],
-                    (err, results) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(results);
-                        }
-                    }
-                );
-            });
-        });
+//         // Loop through each selected subject and insert it into the Selections table
+//         const insertPromises = selectedsubjects.map((subject_id) => {
+//             return new Promise((resolve, reject) => {
+//                 connection.query(
+//                     'INSERT INTO selections (exam_id, subject_id) VALUES (?, ?)',
+//                     [exam_id, subject_id],
+//                     (err, results) => {
+//                         if (err) {
+//                             reject(err);
+//                         } else {
+//                             resolve(results);
+//                         }
+//                     }
+//                 );
+//             });
+//         });
 
-        Promise.all(insertPromises)
-            .then(() => {
-                connection.release();  // Release connection back to the pool
-                res.status(200).send('Selection saved successfully');
-            })
-            .catch((err) => {
-                connection.release();  // Release connection even if there's an error
-                console.error('Error saving selection:', err);
-                res.status(500).send('Error saving selection');
-            });
-    });
-});
+//         Promise.all(insertPromises)
+//             .then(() => {
+//                 connection.release();  // Release connection back to the pool
+//                 res.status(200).send('Selection saved successfully');
+//             })
+//             .catch((err) => {
+//                 connection.release();  // Release connection even if there's an error
+//                 console.error('Error saving selection:', err);
+//                 res.status(500).send('Error saving selection');
+//             });
+//     });
+// });
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//     console.log(`Server is running on http://localhost:${port}`);
+// });
