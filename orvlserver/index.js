@@ -59,24 +59,50 @@ app.get('/api/exam/:exam_id/subjects', (req, res) => {
         });
     });
 });
-// Fetch topics for a specific subject
-app.get('/api/subjects/:subject_id/topics', (req, res) => {
-    const subject_id = req.params.subject_id;
+// to submit topics for a specific exam and subject.
+app.post('/api/submit-topics', (req, res) => {
+    const { exam_id, subject_id, topics } = req.body; // topics is an array of topic_name
+
+    if (!exam_id || !subject_id || !topics || topics.length === 0) {
+        return res.status(400).send('Exam, subject, and at least one topic must be provided');
+    }
+
     pool.getConnection((err, connection) => {
         if (err) {
-            console.error('MySQL Connection Error:', err);
+            console.error('Error connecting to MySQL:', err);
             return res.status(500).send('Database connection error');
         }
-        connection.query('SELECT * FROM topics WHERE subject_id = ?', [subject_id], (err, results) => {
-            connection.release();
-            if (err) {
-                console.error('Error fetching topics:', err);
-                return res.status(500).send('Error fetching topics');
-            }
-            res.json(results);
+
+        // Insert topics into the topics table
+        const insertPromises = topics.map((topic_name) => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    'INSERT INTO topics (exam_id, subject_id, topic_name) VALUES (?, ?, ?)',
+                    [exam_id, subject_id, topic_name],
+                    (err, results) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(results);
+                        }
+                    }
+                );
+            });
         });
+
+        Promise.all(insertPromises)
+            .then(() => {
+                connection.release();
+                res.status(200).send('Topics saved successfully');
+            })
+            .catch((err) => {
+                connection.release();
+                console.error('Error saving topics:', err);
+                res.status(500).send('Error saving topics');
+            });
     });
 });
+
 // Route to handle form submission
 app.post('/api/submit-selection', (req, res) => {
     const { exam_id, selectedsubjects } = req.body;  // Destructure examId and selected subjects from the request body
