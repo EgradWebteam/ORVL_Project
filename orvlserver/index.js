@@ -1,12 +1,16 @@
 const express = require('express');  
 const mysql = require('mysql2');  
 const bodyParser = require('body-parser');
-const cors = require('cors');  // Import cors middleware
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
  
 const app = express();  
 const port = 8000;
  
-app.use(bodyParser.json());        
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));      
  
 // Configure CORS to allow requests from your React frontend (running on localhost:3000)
 app.use(cors({
@@ -14,7 +18,18 @@ app.use(cors({
     methods: ['GET', 'POST'],  // Allow only GET and POST requests
     allowedHeaders: ['Content-Type'],  // Allow Content-Type header
 }));
- 
+ // Set up multer for image uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        cb(null, `${Date.now()}${ext}`);
+    }
+});
+const upload = multer({ storage });
+
 // Create a connection pool
 const pool = mysql.createPool({
     host: 'localhost',
@@ -167,7 +182,48 @@ app.post('/api/submit-topics', (req, res) => {
             });
     });
 });
+/// Route to upload an image for an exam
+app.post('/api/exam/:exam_id/upload-image', upload.single('image'), (req, res) => {
+    const exam_id = req.params.exam_id;
+    const image_filename = req.file.filename;
 
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+
+        connection.query('INSERT INTO exam_images (exam_id, image_filename) VALUES (?, ?)', [exam_id, image_filename], (err, results) => {
+            connection.release();
+            if (err) {
+                console.error('Error saving image details:', err);
+                return res.status(500).send('Error saving image details');
+            }
+            res.status(200).send('Image uploaded successfully');
+        });
+    });
+});
+
+// Route to fetch images for a specific exam
+app.get('/api/exam/:exam_id/images', (req, res) => {
+    const exam_id = req.params.exam_id;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+
+        connection.query('SELECT image_filename FROM exam_images WHERE exam_id = ?', [exam_id], (err, results) => {
+            connection.release();
+            if (err) {
+                console.error('Error fetching images:', err);
+                return res.status(500).send('Error fetching images');
+            }
+            res.json(results.map(row => ({ image_url: `http://localhost:8000/uploads/${row.image_filename}` })));
+        });
+    });
+});
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
