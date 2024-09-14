@@ -183,31 +183,30 @@ app.post('/api/submit-topics', (req, res) => {
             });
     });
 });
-// Route to fetch all exams with associated images
-app.get('/api/exams-with-images', (req, res) => {
+// Modify your backend route to include images
+app.get('/api/exams', (req, res) => {
     pool.getConnection((err, connection) => {
+      if (err) {
+        console.error('Error connecting to MySQL:', err);
+        return res.status(500).send('Database connection error');
+      }
+  
+      const query = `
+        SELECT exams.exam_id, exams.exam_name, exam_images.image_url 
+        FROM exams 
+        LEFT JOIN exam_images ON exams.exam_id = exam_images.exam_id`;
+  
+      connection.query(query, (err, results) => {
+        connection.release();
         if (err) {
-            console.error('Error connecting to MySQL:', err);
-            return res.status(500).send('Database connection error');
+          console.error('Error fetching exams:', err);
+          return res.status(500).send('Error fetching exams');
         }
-
-        // Join exams with exam_images to get the image URLs for each exam
-        const query = `
-            SELECT exams_id, exams_name, exam_images.image_url 
-            FROM exams 
-            LEFT JOIN exam_images ON exams_id = exam_images.exam_id
-        `;
-        
-        connection.query(query, (err, results) => {
-            connection.release();
-            if (err) {
-                console.error('Error fetching exams:', err);
-                return res.status(500).send('Error fetching exams');
-            }
-            res.json(results);  // Send exams along with their images
-        });
+        res.json(results);
+      });
     });
-});
+  });
+  
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
