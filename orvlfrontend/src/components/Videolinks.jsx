@@ -6,8 +6,9 @@ const Videolinks = () => {
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   const [subjects, setSubjects] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState(''); // Manage selected subject
+  const [selectedSubject, setSelectedSubject] = useState('');
   const [topics, setTopics] = useState([]);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   useEffect(() => {
     // Fetch exams when component mounts
@@ -35,6 +36,21 @@ const Videolinks = () => {
     }
   }, [selectedExam]);
 
+  useEffect(() => {
+    // Fetch topics when a subject is selected
+    if (selectedSubject) {
+      axios.get(`http://localhost:8000/api/subjects/${selectedSubject}/topics`)
+        .then(response => {
+          console.log('Fetched topics:', response.data);
+          setTopics(response.data);
+        })
+        .catch(error => console.error('Error fetching topics:', error));
+    } else {
+      setTopics([]);
+      setSelectedTopic(''); // Clear selected topic when subject changes
+    }
+  }, [selectedSubject]);
+
   const handleExamChange = (event) => {
     setSelectedExam(event.target.value);
   };
@@ -42,24 +58,11 @@ const Videolinks = () => {
   const handleSubjectChange = (event) => {
     setSelectedSubject(event.target.value); // Update selectedSubject
     // Initialize topics for the selected subject
-    setTopics([{ subject_id: event.target.value, topic_name: '' }]);
+    setTopics([]); // Clear topics when subject changes
   };
 
-  const handleTopicChange = (index, event) => {
-    const { value } = event.target;
-    setTopics(prevTopics =>
-      prevTopics.map((topic, i) =>
-        i === index ? { ...topic, topic_name: value } : topic
-      )
-    );
-  };
-
-  const handleAddTopic = () => {
-    setTopics(prevTopics => [...prevTopics, { subject_id: selectedSubject, topic_name: '' }]);
-  };
-
-  const handleRemoveTopic = (index) => {
-    setTopics(prevTopics => prevTopics.filter((_, i) => i !== index));
+  const handleTopicChange = (event) => {
+    setSelectedTopic(event.target.value); // Update selectedTopic
   };
 
   const handleSubmit = (event) => {
@@ -72,7 +75,7 @@ const Videolinks = () => {
     };
 
     const topicData = topics.map(topic => ({
-      exam_id: selectedExam,  // Include exam_id in the topic data
+      exam_id: selectedExam,
       subject_id: topic.subject_id,
       topic_name: topic.topic_name
     }));
@@ -86,7 +89,7 @@ const Videolinks = () => {
 
   return (
     <div className='examform'>
-      <h1>video Selector</h1>
+      <h1>Video Selector</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="exam">Select Exam:</label>
@@ -102,8 +105,8 @@ const Videolinks = () => {
             <h3>Select Subject:</h3>
             <select 
               id="subject-dropdown"
-              value={selectedSubject} // Manage selectedSubject state
-              onChange={handleSubjectChange} 
+              value={selectedSubject}
+              onChange={handleSubjectChange}
               className="dropdown-select"
             >
               <option value="">Select a subject</option>
@@ -120,23 +123,26 @@ const Videolinks = () => {
         )}
         {topics.length > 0 && (
           <div>
-            <h3>Enter Topics for {subjects.find(subject => subject.subject_id === selectedSubject)?.subject_name || ''}</h3>
-            {topics.map((topic, index) => (
-              <div key={index} className="topic-entry">
-                <input
-                  type="text"
-                  value={topic.topic_name}
-                  onChange={(event) => handleTopicChange(index, event)}
-                  placeholder="Enter topic name"
-                />
-                <button type="button" onClick={handleAddTopic}>+</button>
-                <button type="button" onClick={() => handleRemoveTopic(index)}>-</button>
-              </div>
-            ))}
+            <h3>Select Topics:</h3>
+            <select 
+              id="topic-dropdown"
+              value={selectedTopic}
+              onChange={handleTopicChange}
+              className="dropdown-select"
+            >
+              <option value="">Select a topic</option>
+              {topics.map(topic => (
+                <option 
+                  key={topic.topic_id} 
+                  value={topic.topic_id}
+                >
+                  {topic.topic_name}
+                </option>
+              ))}
+            </select>
           </div>
         )}
         <button type="submit">Submit Selection</button>
-        
       </form>
     </div>
   );

@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../components/MainsForm.css';
 
 const Topics = () =>{
-  const [exams, setExams] = useState([]);
+  const [exams, setExams] = useState([]); 
   const [selectedExam, setSelectedExam] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(''); // Manage selected subject
