@@ -183,29 +183,81 @@ app.post('/api/submit-topics', (req, res) => {
             });
     });
 });
-// Modify your backend route to include images
-app.get('/api/exams', (req, res) => {
+// Route to handle adding video details
+app.post('/api/add-video', (req, res) => {
+    const { videoName, videoLink, topicId } = req.body;
+
+    if (!videoName || !videoLink || !topicId) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
     pool.getConnection((err, connection) => {
-      if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return res.status(500).send('Database connection error');
-      }
-  
-      const query = `
-        SELECT exams.exam_id, exams.exam_name, exam_images.image_url 
-        FROM exams 
-        LEFT JOIN exam_images ON exams.exam_id = exam_images.exam_id`;
-  
-      connection.query(query, (err, results) => {
-        connection.release();
         if (err) {
-          console.error('Error fetching exams:', err);
-          return res.status(500).send('Error fetching exams');
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).json({ error: 'Database connection error' });
         }
-        res.json(results);
-      });
+
+        const query = 'INSERT INTO videos (video_name, video_link, topic_id) VALUES (?, ?, ?)';
+
+        connection.query(query, [videoName, videoLink, topicId], (err, results) => {
+            connection.release();  // Release connection back to the pool
+            if (err) {
+                console.error('Error adding video:', err);
+                return res.status(500).json({ error: 'Error adding video', details: err.message });
+            }
+            res.status(201).json({ message: 'Video added successfully', videoId: results.insertId });
+        });
     });
-  });
+});
+// Route to fetch videos for a specific topic
+app.get('/api/videos/:topic_id', (req, res) => {
+    const topicId = req.params.topic_id;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).json({ error: 'Database connection error' });
+        }
+
+        const query = 'SELECT video_id, video_name, video_link FROM videos WHERE topic_id = ?';
+
+        connection.query(query, [topicId], (err, results) => {
+            connection.release();  // Release connection back to the pool
+            if (err) {
+                console.error('Error fetching videos:', err);
+                return res.status(500).json({ error: 'Error fetching videos', details: err.message });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'No videos found for the given topic ID' });
+            }
+            res.json(results);
+        });
+    });
+});
+
+ // Modify your backend route to include images
+// app.get('/api/exams', (req, res) => {
+//     pool.getConnection((err, connection) => {
+//       if (err) {
+//         console.error('Error connecting to MySQL:', err);
+//         return res.status(500).send('Database connection error');
+//       }
+  
+//       const query = `
+//         SELECT exams.exam_id, exams.exam_name, exam_images.image_url 
+//         FROM exams 
+//         LEFT JOIN exam_images ON exams.exam_id = exam_images.exam_id`;
+  
+//       connection.query(query, (err, results) => {
+//         connection.release();
+//         if (err) {
+//           console.error('Error fetching exams:', err);
+//           return res.status(500).send('Error fetching exams');
+//         }
+//         res.json(results);
+//       });
+//     });
+//   });
   
 
 app.listen(port, () => {
