@@ -183,7 +183,7 @@ app.post('/api/submit-topics', (req, res) => {
     });
 });
 // Route to handle image upload
-app.post('/api/upload-image', upload.single('image'), (req, res) => {
+app.post('/api/upload-image', upload.single('exam_image'), (req, res) => {
     const { exam_id } = req.body;
     const image_url = `/uploads/${req.file.filename}`;
 
@@ -209,7 +209,7 @@ app.post('/api/upload-image', upload.single('image'), (req, res) => {
 });
 
 // Route to fetch images for a specific exam
-app.get('/api/exam/:exam_id/image', (req, res) => {
+app.get('/api/exam/:exam_id/exam_images', (req, res) => {
     const exam_id = req.params.exam_id;
     pool.getConnection((err, connection) => {
         if (err) {

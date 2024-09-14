@@ -64,6 +64,7 @@ const MainForm = () => {
  
   return (
     <div className='examform'> 
+    <a href="/videolectures">home</a>
       <h1>Exam Selector</h1>
       <form onSubmit={handleSubmit}>
         <div>
