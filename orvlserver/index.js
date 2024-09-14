@@ -195,7 +195,7 @@ app.get('/api/exams-with-images', (req, res) => {
         const query = `
             SELECT exams_id, exams_name, exam_images.image_url 
             FROM exams 
-            LEFT JOIN exam_images ON exams.id = exam_images.exam_id
+            LEFT JOIN exam_images ON exams_id = exam_images.exam_id
         `;
         
         connection.query(query, (err, results) => {
