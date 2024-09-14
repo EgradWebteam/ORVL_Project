@@ -1,0 +1,97 @@
+.subjectLecturesdiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  
+  }
+  .cardsub{
+    padding-top: 70px;
+    position: relative;
+    
+    border-radius: 10px;
+    background: #2baae0;
+    /* background: linear-gradient(180deg,#0faaea , #2366a7); */
+    overflow: hidden;
+  }
+  .vlsubjectmaindiv{
+    display: flex;
+   
+    gap: 7rem;
+    height: max-content;
+    margin: 4rem;
+    justify-content: center;
+  }
+  
+  .vlsubjectmaindivsub {
+    display: flex;
+    flex-direction: column;
+    gap: 7rem;
+    height: max-content;
+    margin: 4rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .carddiv {
+    display: flex;
+    flex-wrap: wrap;
+    gap:4rem;
+  }
+  .cardsub .ribbon-border{
+    background:#075b95 ;
+    color: #fff;
+    box-shadow: 
+    0 2px 0 0 white, /* Bottom border effect */
+    0 -2px 0 0 white, /* Top border effect */
+    3px 0 0 0 white, /* Right border effect */
+    -3px 0 0 0 white; /* Left border effect */
+    border-radius: 6px;
+  
+    width: 13rem;
+   text-align: center;
+  }
+  .cardsub h2{
+    color: #fff;
+  }
+  .rbh1{
+    background: #2baae0;
+    width: 100%;
+    height: 9vh;
+    margin: 20px 0px;
+    font-size: xx-large;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+  .maincarddiv{
+    display: flex;
+    flex-direction: row;
+  }
+  .vlsubjectcardsub {
+    border-radius: 1rem;
+   
+    align-items: center;
+    height: 20rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    margin-left: 2vw;
+}
+  .videoLecturestitle {
+    font-size: 25px;
+    font-weight: 500;
+    margin:0px 10px;
+    text-align: center;
+    color: #000000;
+    border: 3px solid #075b95;
+    border-radius: 10px;
+    background-color: #3db0f3;
+  }
+  .videocardimg {
+    width: 280px;
+    height: 170px;
+   
+  }
