@@ -10,7 +10,8 @@ const port = 8000;
  
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));      
+app.use('/uploads', express.static('public/uploads'));
+      
  
 // Configure CORS to allow requests from your React frontend (running on localhost:3000)
 app.use(cors({
@@ -182,51 +183,32 @@ app.post('/api/submit-topics', (req, res) => {
             });
     });
 });
-// Route to handle image upload
-app.post('/api/upload-image', upload.single('exam_image'), (req, res) => {
-    const { exam_id } = req.body;
-    const image_url = `/uploads/${req.file.filename}`;
-
-    if (!exam_id || !image_url) {
-        return res.status(400).send('Exam ID and image URL are required');
-    }
-
+// Route to fetch all exams with associated images
+app.get('/api/exams-with-images', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) {
             console.error('Error connecting to MySQL:', err);
             return res.status(500).send('Database connection error');
         }
 
-        connection.query('INSERT INTO exam_images (exam_id, image_url) VALUES (?, ?)', [exam_id, image_url], (err, results) => {
+        // Join exams with exam_images to get the image URLs for each exam
+        const query = `
+            SELECT exams_id, exams_name, exam_images.image_url 
+            FROM exams 
+            LEFT JOIN exam_images ON exams.id = exam_images.exam_id
+        `;
+        
+        connection.query(query, (err, results) => {
             connection.release();
             if (err) {
-                console.error('Error saving image data:', err);
-                return res.status(500).send('Error saving image data');
+                console.error('Error fetching exams:', err);
+                return res.status(500).send('Error fetching exams');
             }
-            res.status(200).send('Image uploaded successfully');
+            res.json(results);  // Send exams along with their images
         });
     });
 });
 
-// Route to fetch images for a specific exam
-app.get('/api/exam/:exam_id/exam_images', (req, res) => {
-    const exam_id = req.params.exam_id;
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.error('Error connecting to MySQL:', err);
-            return res.status(500).send('Database connection error');
-        }
-
-        connection.query('SELECT image_url FROM exam_images WHERE exam_id = ?', [exam_id], (err, results) => {
-            connection.release();
-            if (err) {
-                console.error('Error fetching image:', err);
-                return res.status(500).send('Error fetching image');
-            }
-            res.json(results);
-        });
-    });
-});
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
