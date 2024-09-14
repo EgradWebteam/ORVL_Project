@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../components/MainsForm.css';
 
-const Topics = () =>{
+const Videolinks = () => {
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   const [subjects, setSubjects] = useState([]);
@@ -86,7 +86,7 @@ const Topics = () =>{
 
   return (
     <div className='examform'>
-      <h1>Topic Selector</h1>
+      <h1>video Selector</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="exam">Select Exam:</label>
@@ -136,10 +136,10 @@ const Topics = () =>{
           </div>
         )}
         <button type="submit">Submit Selection</button>
-        <a href="/videolinks">next</a>
+        
       </form>
     </div>
   );
 };
 
-export default Topics;
+export default Videolinks;

@@ -3,6 +3,7 @@ import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import MainForm from './components/MainForm'
 import Topics from './components/Topics';
 import VideoLectures from './components/VideoLectures';
+import Videolinks from './components/Videolinks';
 
  
  
@@ -13,6 +14,7 @@ function App() {
     <Route path = '/' element={<MainForm/>}/>
     <Route path = '/topics' element={<Topics/>}/>
     <Route path = '/videolectures' element={<VideoLectures/>}/>
+    <Route path = '/videolinks' element={<Videolinks/>}/>
   </Routes>
   </BrowserRouter>
   );

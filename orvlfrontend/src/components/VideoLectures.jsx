@@ -1,53 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './videolect.css';
+import '../components/videolect.css'
 
 const VideoLectures = () => {
   const [exams, setExams] = useState([]);
-  const [subjectsByExam, setSubjectsByExam] = useState({});
-  const [imagesByExam, setImagesByExam] = useState({});
 
   useEffect(() => {
+    // Fetch all exams with images and subjects
     const fetchExams = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/exams');
-        const examsData = response.data;
-        setExams(examsData);
+        // Fetch exams and their images
+        const examResponse = await axios.get('http://localhost:8000/api/exams');
+        const examData = examResponse.data;
 
-        // Fetch subjects for each exam
-        const subjectRequests = examsData.map(exam =>
-          axios.get(`http://localhost:8000/api/exam/${exam.exam_id}/subjects`)
-            .then(response => ({ examId: exam.exam_id, subjects: response.data }))
-        );
+        // For each exam, fetch its subjects
+        const examsWithSubjects = await Promise.all(examData.map(async (exam) => {
+          const subjectsResponse = await axios.get(`http://localhost:8000/api/exam/${exam.exam_id}/subjects`);
+          return {
+            ...exam,
+            subjects: subjectsResponse.data,
+          };
+        }));
 
-        // Fetch images for each exam
-        const imageRequests = examsData.map(exam =>
-          axios.get(`http://localhost:8000/api/exam/${exam.exam_id}/exam_images`) // Fixed URL
-            .then(response => ({ examId: exam.exam_id, images: response.data }))
-        );
-
-        // Process subject and image requests
-        const [subjectResults, imageResults] = await Promise.all([
-          Promise.all(subjectRequests),
-          Promise.all(imageRequests)
-        ]);
-
-        // Update state with subjects and images
-        const subjectsMap = {};
-        const imagesMap = {};
-
-        subjectResults.forEach(result => {
-          subjectsMap[result.examId] = result.subjects;
-        });
-
-        imageResults.forEach(result => {
-          imagesMap[result.examId] = result.images;
-        });
-
-        setSubjectsByExam(subjectsMap);
-        setImagesByExam(imagesMap);
+        setExams(examsWithSubjects);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching exams:', error);
       }
     };
 
@@ -55,37 +32,27 @@ const VideoLectures = () => {
   }, []);
 
   return (
-    <div>
+    <div className="exam-cards-container">
       <div className="ribbon-border rbh1">VIDEO LECTURES</div>
       <div className='maincarddiv'>
-        <div className='carddiv'>
-          {exams.map(exam => (
-            <div key={exam.exam_id} className="vlsubjectcardsub cardsub">
-              <h2>{exam.exam_name}</h2>
-              {imagesByExam[exam.exam_id] && (
-                <div>
-                  {imagesByExam[exam.exam_id].map(image => (
-                    <div key={image.image_id}>
-                      <h4 className="image">{image.image_name}</h4>
-                      <img src={image.image_url} alt={image.image_name} className="image-thumbnail" /> {/* Display image */}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {subjectsByExam[exam.exam_id] && (
-                <div>
-                  {subjectsByExam[exam.exam_id].map(subject => (
-                    <div key={subject.subject_id}>
-                      <h4 className="ribbon-border">{subject.subject_name}</h4>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+        <div className='carddiv'></div>
+      {exams.map((exam) => (
+        <div key={exam.exam_id} className="cardsub subjectLecturesdiv">
+            <h2>{exam.exam_name}</h2>
+          <img src={`http://localhost:8000/uploads/${exam.image_url}`} alt={exam.exam_name} className="card-image" />
+          <div className="card-content">
+          
+            <ul>
+              {exam.subjects.map((subject) => (
+                <h4 className="ribbon-border" key={subject.subject_id}>{subject.subject_name}</h4>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
+    </div>
+   
   );
 };
 
