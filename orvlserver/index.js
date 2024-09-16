@@ -121,7 +121,7 @@ app.post('/api/submit-selection', (req, res) => {
                             reject(err);
                         } else {
                             resolve(results);
-                        }
+                        } 
                     }
                 );
             });
