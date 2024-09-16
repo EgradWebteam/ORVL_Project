@@ -296,6 +296,26 @@ app.get('/api/selections', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch selections' });
     }
 });
+// Route to get topics
+app.get('/api/topics', async (req, res) => {
+    try {
+        const [rows] = await promisePool.query('SELECT * FROM topics');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching topics:', error);
+        res.status(500).send('Error fetching topics');
+    }
+});
+// Route to get videos
+app.get('/api/videos', async (req, res) => {
+    try {
+        const [rows] = await promisePool.query('SELECT * FROM videos');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching videos:', error);
+        res.status(500).send('Error fetching videos');
+    }
+});
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
