@@ -4,6 +4,7 @@ import '../components/MainsForm.css';
 import { IoMdHome } from "react-icons/io";
 import Logo_img from './Images/image.png';
 import Leftnavbar from '../components/Leftnavbar';
+import { RxCross2 } from "react-icons/rx";
 
 const Videolinks = () => {
   const [exams, setExams] = useState([]);
@@ -13,6 +14,14 @@ const Videolinks = () => {
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState('');
   const [videos, setVideos] = useState([{ video_name: '', video_link: '' }]);
+  const[videotable,setVideotable]= useState([])
+  const [modal1, setModal1] = useState(false);
+  
+
+  const toggleModal1 = () => {
+    setModal1(!modal1);
+  };
+
 
   useEffect(() => {
     // Fetch exams when component mounts
@@ -87,7 +96,7 @@ const Videolinks = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Prepare data for submission
+    
     const examData = {
         exam_id: selectedExam,
         selectedsubjects: [selectedSubject],
@@ -102,10 +111,23 @@ const Videolinks = () => {
         video_link: video.video_link
     }));
 
-    // Post selection data
+    
     axios.post('http://localhost:8000/api/submit-selection', examData)
         .then(() => axios.post('http://localhost:8000/api/submit-videos', { videos: videoData }))
-        .then(() => alert('Selection and video links saved successfully'))
+        .then(() => {
+          alert('Selection and video links saved successfully')
+          return axios.get('http://localhost:8000/api/videos');
+        })
+        .then(response => {
+          setVideotable(response.data); // Update table data
+          setModal1(false);
+          setSelectedExam('');
+          setSelectedSubject('');
+          setSubjects([]);
+          setTopics([]);
+          setSelectedTopic('')
+          setVideos([])
+        })
         .catch(error => console.error('Error saving selection or videos:', error));
 };
 
@@ -121,7 +143,13 @@ const Videolinks = () => {
         </a>
       </div>
       <Leftnavbar />
-      <div className='examform longform'>
+      <button className='btnes' onClick={toggleModal1}> Video Upload</button>
+
+{modal1 && (
+      <div className='examform '>
+         <div className='modal'>
+            <div className='overlay'></div>
+            <div className='content_m'>
         <h1>Video Upload</h1>
         <form onSubmit={handleSubmit}>
           <div className='div1'>
@@ -209,6 +237,36 @@ const Videolinks = () => {
           )}
           <button type="submit">Submit Selection</button>
         </form>
+        <button className='closebutton' onClick={toggleModal1}><RxCross2 /></button>
+      </div>
+      </div>
+      </div>
+)}
+   <div className='selections-tablecontainer'>
+        <h2>Selection Table</h2>
+        <table className='selections-table'>
+          <thead>
+            <tr>
+              <th>S.no</th>
+              <th>Exam Name</th>
+              <th>Subject Name</th>
+              <th>Topic Name</th>
+              <th>Video Name</th>
+              <th>Video Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            {videotable.map((videot, index) => (
+              <tr key={videot.topic_id}>
+                <td>{index + 1}</td>
+                <td>{videot.exam_name}</td>
+                <td>{videot.subject_name}</td>
+                <td>{videot.topic_name}</td>
+                <td>{videot.topic_link}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

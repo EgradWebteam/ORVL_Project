@@ -286,14 +286,77 @@ app.get('/api/videos', (req, res) => {
     });
 });
 
-// Route to fetch selections
+// // Route to fetch selections
+// app.get('/api/selections', async (req, res) => {
+//     try {
+//         const [rows] = await promisePool.query('SELECT * FROM selections');
+//         res.json(rows);
+//     } catch (error) {
+//         console.error('Error fetching selections:', error);
+//         res.status(500).json({ error: 'Failed to fetch selections' });
+//     }
+// });
+// Route to fetch selections with exam and subject names
 app.get('/api/selections', async (req, res) => {
     try {
-        const [rows] = await promisePool.query('SELECT * FROM selections');
+        const query = `
+            SELECT 
+                selections.selection_id,
+                exams.exam_name,
+                subjects.subject_name
+            FROM selections
+            JOIN exams ON selections.exam_id = exams.exam_id
+            JOIN subjects ON selections.subject_id = subjects.subject_id
+        `;
+ 
+        const [rows] = await promisePool.query(query);
         res.json(rows);
     } catch (error) {
         console.error('Error fetching selections:', error);
         res.status(500).json({ error: 'Failed to fetch selections' });
+    }
+});
+//topic name fetching into table
+app.get('/api/topics', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                exams.exam_name,
+                subjects.subject_name,
+                topics.topic_name
+            FROM topics
+            JOIN subjects ON topics.subject_id = subjects.subject_id
+            JOIN exams ON subjects.exam_id = exams.exam_id
+        `;
+ 
+        const [rows] = await promisePool.query(query);
+        res.json(rows);  // Send JSON response
+    } catch (error) {
+        console.error('Error fetching topics:', error);
+        res.status(500).send('Error fetching topics');
+    }
+});
+// Route to get videos with exam, subject, and topic names
+app.get('/api/videos', async (req, res) => {
+    try {
+        const query = `
+            SELECT
+                exams.exam_name,
+                subjects.subject_name,
+                topics.topic_name,
+                videos.video_name,
+                videos.video_link
+            FROM videos
+            JOIN topics ON videos.topic_id = topics.topic_id
+            JOIN subjects ON videos.subject_id = subjects.subject_id
+            JOIN exams ON videos.exam_id = exams.exam_id
+        `;
+ 
+        const [rows] = await promisePool.query(query);
+        res.json(rows);  // Send JSON response
+    } catch (error) {
+        console.error('Error fetching videos:', error);
+        res.status(500).send('Error fetching videos');
     }
 });
 app.listen(port, () => {

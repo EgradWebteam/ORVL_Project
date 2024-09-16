@@ -16,6 +16,125 @@
     padding: 20px;
     align-items: center;
 }
+/* Overlay and Modal Container */
+.modal, .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(49, 49, 49, 0.8);
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+.overlay {
+    background-color: rgba(49, 49, 49, 0.8);
+}
+
+.content_m {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0000004d;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    z-index: 1001; /* Ensure it's above the overlay */
+    width: 35vw; /* Adjust width as needed */
+    max-height: 80vh; /* Restrict height to 80% of viewport height */
+    overflow-y: auto; /* Add scrollbar if content exceeds max-height */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Close button styling */
+.closebutton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 7px;
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 1002; /* Ensure it's above other content in the modal */
+}
+/* Container for the selection table */
+.selections-table {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Table styling */
+  .selections-table  {
+    width: 70%;
+    border-collapse: collapse;
+  }
+  
+  .selections-table th, .selections-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .selections-table th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+  }
+.conh{
+    background: #176bab;
+    color: #fff;
+    padding: 5px;
+    width: max-content;
+    font-size: 16PX;
+}
+.redspan{
+    color: red;
+    font-size: 16px;
+    font-family: Roboto,sans-serif;
+}
+.conhh4{
+    font-size: 16PX;
+}
+.content_s{
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0000004d;
+    position: fixed;
+    left:37vw;
+    top: 50vh;
+   transform: translate(-50%,-50%);
+    overflow: auto;
+    padding: 20px;
+    z-index: 999;
+    max-height: 80%;
+    max-width: 80%;
+ 
+}
+.btnes{
+    position: relative;
+    left:50%;
+    background-color: #00222c;
+    color: #fff;
+    font-size: larger;
+    padding: 10px;
+    border-radius: 10px;
+    top: 6vh;
+}
+
+.selections-tablecontainer {
+   
+    margin-left: 15vw;
+    margin-top: 30vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
 .examform h1{
     background-color: #00222c;
@@ -23,6 +142,8 @@
     padding: 10px;
     border-radius: 7px;
     font-size: larger;
+    width: fit-content;
+   
 }
 *{
     box-sizing: border-box;
@@ -34,9 +155,16 @@
     display: flex;
     justify-content: space-between;
     padding-left:10vw;
+   
     align-items: center;
     background: #fff;
     box-shadow: 0 7px 29px 0 #64646f33;
+}
+.headerjeem{
+    position: sticky; /* Fixed positioning for the sidebar */
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 .headerjee img{
     height:95px;
