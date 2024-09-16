@@ -81,7 +81,7 @@ const Topics = () =>{
     }));
 
     axios.post('http://localhost:8000/api/submit-selection', examData)
-      .then(() => axios.post('http://localhost:8000/api/add-video', { topics: topicData }))
+      .then(() => axios.post('http://localhost:8000/api/submit-topics', { topics: topicData }))
       .then(() => alert('Selection and topics saved successfully'))
       .catch(error => console.error('Error saving selection or topics:', error));
   };
@@ -142,6 +142,7 @@ const Topics = () =>{
                   value={topic.topic_name}
                   onChange={(event) => handleTopicChange(index, event)}
                   placeholder="Enter topic name"
+                  className='inputtopic'
                 />
                 <button type="button" onClick={handleAddTopic}>+</button>
                 <button type="button" onClick={() => handleRemoveTopic(index)}>-</button>

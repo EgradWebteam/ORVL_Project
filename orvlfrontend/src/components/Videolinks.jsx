@@ -184,6 +184,7 @@ const Videolinks = () => {
                     placeholder='Video Name'
                     value={video.video_name}
                     onChange={(e) => handleVideoChange(index, 'video_name', e.target.value)}
+                    className='inputvideo'
                   />
                   <input
                     type='text'
