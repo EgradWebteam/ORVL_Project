@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../components/MainsForm.css';
+import { IoMdHome } from "react-icons/io";
+import Logo_img from './Images/image.png'
+import Leftnavbar from '../components/Leftnavbar'
 
 const Topics = () =>{
   const [exams, setExams] = useState([]); 
@@ -68,29 +71,39 @@ const Topics = () =>{
     // Prepare data for submission
     const examData = {
       exam_id: selectedExam,
-      selectedsubjects: [selectedSubject] // Update to use selectedSubject
+      selectedsubjects: [selectedSubject] 
     };
 
     const topicData = topics.map(topic => ({
-      exam_id: selectedExam,  // Include exam_id in the topic data
+      exam_id: selectedExam,  
       subject_id: topic.subject_id,
       topic_name: topic.topic_name
     }));
 
-    // Post selection data and topic data
     axios.post('http://localhost:8000/api/submit-selection', examData)
-      .then(() => axios.post('http://localhost:8000/api/submit-topics', { topics: topicData }))
+      .then(() => axios.post('http://localhost:8000/api/add-video', { topics: topicData }))
       .then(() => alert('Selection and topics saved successfully'))
       .catch(error => console.error('Error saving selection or topics:', error));
   };
 
   return (
-    <div className='examform'>
-      <h1>Topic Selector</h1>
+    <div>
+    <div className='headerjeem'>
+    <div className='headerjee'>
+<img src = {Logo_img} />
+
+</div>
+    <a className='jeeanchor' href='/Home'>
+    <IoMdHome /> Home
+    </a>
+</div>
+{<Leftnavbar/>}
+    <div className='examform longform'>
+      <h1>Topics Creaction</h1>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className='div1'>
           <label htmlFor="exam">Select Exam:</label>
-          <select id="exam" value={selectedExam} onChange={handleExamChange}>
+          <select id="exam" className='dropdown' value={selectedExam} onChange={handleExamChange}>
             <option value="">--Select an exam--</option>
             {exams.map(exam => (
               <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
@@ -98,13 +111,14 @@ const Topics = () =>{
           </select>
         </div>
         {subjects.length > 0 && (
-          <div>
-            <h3>Select Subject:</h3>
+          <div className='div1'>
+         
+            <label htmlFor="subject-dropdown">Select Subject:</label>
             <select 
               id="subject-dropdown"
               value={selectedSubject} // Manage selectedSubject state
               onChange={handleSubjectChange} 
-              className="dropdown-select"
+              className="dropdown"
             >
               <option value="">Select a subject</option>
               {subjects.map(subject => (
@@ -119,8 +133,8 @@ const Topics = () =>{
           </div>
         )}
         {topics.length > 0 && (
-          <div>
-            <h3>Enter Topics for {subjects.find(subject => subject.subject_id === selectedSubject)?.subject_name || ''}</h3>
+          <div className='div1'>
+            <h3>Enter Topics:</h3>
             {topics.map((topic, index) => (
               <div key={index} className="topic-entry">
                 <input
@@ -136,8 +150,9 @@ const Topics = () =>{
           </div>
         )}
         <button type="submit">Submit Selection</button>
-        <a href="/videolinks">next</a>
+      
       </form>
+    </div>
     </div>
   );
 };

@@ -184,11 +184,37 @@ app.post('/api/submit-topics', (req, res) => {
     });
 });
 // Route to handle adding video details
-app.post('/api/add-video', (req, res) => {
-    const { videoName, videoLink, topicId } = req.body;
+// app.post('/api/add-video', (req, res) => {
+//     const { videoName, videoLink, topicId } = req.body;
 
-    if (!videoName || !videoLink || !topicId) {
-        return res.status(400).json({ error: 'Missing required fields' });
+//     if (!videoName || !videoLink || !topicId) {
+//         return res.status(400).json({ error: 'Missing required fields' });
+//     }
+
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).json({ error: 'Database connection error' });
+//         }
+
+//         const query = 'INSERT INTO videos (video_name, video_link, topic_id) VALUES (?, ?, ?)';
+
+//         connection.query(query, [videoName, videoLink, topicId], (err, results) => {
+//             connection.release();  // Release connection back to the pool
+//             if (err) {
+//                 console.error('Error adding video:', err);
+//                 return res.status(500).json({ error: 'Error adding video', details: err.message });
+//             }
+//             res.status(201).json({ message: 'Video added successfully', videoId: results.insertId });
+//         });
+//     });
+// });
+// Route to handle adding video details
+app.post('/api/submit-videos', (req, res) => {
+    const { videos } = req.body;
+
+    if (!videos || !Array.isArray(videos) || videos.length === 0) {
+        return res.status(400).json({ error: 'No videos provided' });
     }
 
     pool.getConnection((err, connection) => {
@@ -197,18 +223,35 @@ app.post('/api/add-video', (req, res) => {
             return res.status(500).json({ error: 'Database connection error' });
         }
 
-        const query = 'INSERT INTO videos (video_name, video_link, topic_id) VALUES (?, ?, ?)';
-
-        connection.query(query, [videoName, videoLink, topicId], (err, results) => {
-            connection.release();  // Release connection back to the pool
-            if (err) {
-                console.error('Error adding video:', err);
-                return res.status(500).json({ error: 'Error adding video', details: err.message });
-            }
-            res.status(201).json({ message: 'Video added successfully', videoId: results.insertId });
+        const insertPromises = videos.map(video => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    'INSERT INTO videos (exam_id, subject_id, topic_id, video_name, video_link) VALUES (?, ?, ?, ?, ?)',
+                    [video.exam_id, video.subject_id, video.topic_id, video.video_name, video.video_link],
+                    (err, results) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(results);
+                        }
+                    }
+                );
+            });
         });
+
+        Promise.all(insertPromises)
+            .then(() => {
+                connection.release();
+                res.status(200).json({ message: 'Videos added successfully' });
+            })
+            .catch((err) => {
+                connection.release();
+                console.error('Error adding videos:', err);
+                res.status(500).json({ error: 'Error adding videos' });
+            });
     });
 });
+
 // Route to fetch videos for a specific topic
 app.get('/api/videos/:topic_id', (req, res) => {
     const topicId = req.params.topic_id;
@@ -229,6 +272,39 @@ app.get('/api/videos/:topic_id', (req, res) => {
             }
             if (results.length === 0) {
                 return res.status(404).json({ message: 'No videos found for the given topic ID' });
+            }
+            res.json(results);
+        });
+    });
+});
+// Route to fetch videos for a specific exam, subject, and topic
+app.get('/api/videos', (req, res) => {
+    const { examId, subjectId, topicId } = req.query;
+ 
+    if (!examId || !subjectId || !topicId) {
+        return res.status(400).json({ error: 'Missing required query parameters' });
+    }
+ 
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).json({ error: 'Database connection error' });
+        }
+ 
+        const query = `
+            SELECT video_id, video_name, video_link
+            FROM videos
+            WHERE exam_id = ? AND subject_id = ? AND topic_id = ?
+        `;
+ 
+        connection.query(query, [examId, subjectId, topicId], (err, results) => {
+            connection.release();  // Release connection back to the pool
+            if (err) {
+                console.error('Error fetching videos:', err);
+                return res.status(500).json({ error: 'Error fetching videos', details: err.message });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'No videos found for the given parameters' });
             }
             res.json(results);
         });

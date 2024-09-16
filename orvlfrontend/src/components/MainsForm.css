@@ -1,19 +1,155 @@
+
 .examform{
     display: flex;
     flex-direction: column;
-    
+    background: #fff;
+    border-radius: 13px;
+    box-shadow: 0 0 5px #00000080;
     align-items: center;
-    background-color: rgb(160, 243, 215);
-   width: 35vw;
-   height: 60vh;
-   margin-left: 35vw;
-   margin-top: 15vh;
-  
+    width: 20vw;
+    height: auto;
+    position: relative;
+    left:47vw;
+    top: 30vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    align-items: center;
 }
+
 .examform h1{
-    background-color: rgb(1, 1, 61);
+    background-color: #00222c;
     color: #fff;
     padding: 10px;
     border-radius: 7px;
+    font-size: larger;
 }
+*{
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+}
+
+.headerjee{
+    height:120px;
+   
+    padding:10px 200px;
+    background: #fff;
+    box-shadow: 0 7px 29px 0 #64646f33;
+}
+.headerjee img{
+    height:95px;
+    width: 330px;
+}
+
+.jeeanchor{
+    position: relative;
+    bottom: 70px;
+    left: 90%;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+
+
+/* Sidebar styling */
+.sidebar {
+    height: 100vh; /* Full viewport height */
+    width: 15vw; /* Fixed width for the sidebar */
+    background-color:#00222c ; /* Dark background for the sidebar */
+    position: fixed; /* Fixed positioning for the sidebar */
+    top: 118px;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: 50px;
+    gap:4rem;
+    align-items: center; /* Center the buttons horizontally */
+   
+}
+
+/* Define styles for the active button */
+.sidebar button.active {
+    background-color: #007bff; /* Example color */
+    color: white; /* Example text color */
+    border: 1px solid #007bff; /* Example border color */
+  }
+  .examform button{
+    background: #00222c;
+    color: #fff;
+    height: fit-content;
+    width: fit-content;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    border-radius: 8px;
+  }
   
+  /* Optional: Define styles for buttons */
+  .sidebar  button {
+    background-color: #fff; /* Default button color */
+    font-weight: 700;
+    font-size: larger;
+    color: #000; /* Default text color */
+    padding: 10px 20px; /* Button padding */
+    margin: 5px; /* Space between buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 7px;
+  }
+  
+  .sidebar button:hover {
+    background-color: #e2e6ea; /* Hover button color */
+  }
+ /* Basic styling for the custom dropdown */
+.dropdown {
+    border: 1px solid black;              /* Remove default border */
+    border-radius: 4px;        /* Rounded corners */
+    padding: 10px;             /* Padding inside the dropdown */
+    font-size: 14px;           /* Font size */
+    width: 200px;              /* Width of the dropdown */
+    height: 40px;              /* Height of the dropdown */
+    cursor: pointer;           /* Cursor style */
+}
+label{
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+ option {
+    background-color: #fff; 
+    color: black;             
+    padding: 10px;            
+}
+
+
+.div1{
+    padding-bottom: 20px;
+}
+.checkb{
+    font-weight: 400;
+    font-size: 14px;
+    color: #000;
+}
+@media (max-width:600px){
+    .examform{
+        width:450px;
+    }
+ 
+}
+ 
+@media (min-width:600px) and (max-width:768px){
+ 
+}
+ 
+@media (min-width:768px) and (max-width:992px){
+ 
+}
+ 
+@media (min-width:992px) and (max-width:1200px){
+ 
+}
+ 
+@media (min-width:1200px){
+ 
+}

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../components/MainsForm.css'
+import { IoMdHome } from "react-icons/io";
+import Logo_img from './Images/image.png'
+import Leftnavbar from '../components/Leftnavbar'
 
 const MainForm = () => {
   const [exams, setExams] = useState([]);
@@ -63,13 +66,26 @@ const MainForm = () => {
  
  
   return (
-    <div className='examform'> 
-    <a href="/videolectures">home</a>
-      <h1>Exam Selector</h1>
+    <div> 
+    
+    
+      <div className='headerjeem'>
+        <div className='headerjee'>
+    <img src = {Logo_img} />
+    
+    </div>
+        <a className='jeeanchor' href='/Home'>
+        <IoMdHome /> Home
+        </a>
+  </div>
+  {<Leftnavbar/>}
+  <div  className='examform'>
+  
+  <h1>Exam Selection</h1>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className='div1'>
           <label htmlFor="exam">Select Exam:</label>
-          <select id="exam" value={selectedExam} onChange={handleExamChange}>
+          <select id="exam" className='dropdown' value={selectedExam} onChange={handleExamChange}>
             <option value="">--Select an exam--</option>
             {exams.map(exam => (
               <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
@@ -77,8 +93,8 @@ const MainForm = () => {
           </select>
         </div>
         {subjects.length > 0 && (
-          <div>
-            <h3>Select Subjects:</h3>
+          <div className='div1'>
+            <label>Select Subjects:</label>
             {subjects.map(subject => (
               <div key={subject.subject_id}>
                 <input
@@ -89,14 +105,15 @@ const MainForm = () => {
                   onChange={handleSubjectChange}
                    className="checkbox-input"
                 />
-                <label htmlFor={`subject-${subject.subject_id}`}>{subject.subject_name}</label>
+                <label  className="checkb" htmlFor={`subject-${subject.subject_id}`}>{subject.subject_name}</label>
               </div>
             ))}
           </div>
         )}
         <button type="submit">Submit Selection</button>
-        <a href="/topics">next</a>
+ 
       </form>
+      </div>
     </div>
   );
 };

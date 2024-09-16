@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../components/MainsForm.css';
+import { IoMdHome } from "react-icons/io";
+import Logo_img from './Images/image.png';
+import Leftnavbar from '../components/Leftnavbar';
 
 const Videolinks = () => {
   const [exams, setExams] = useState([]);
@@ -9,12 +12,12 @@ const Videolinks = () => {
   const [selectedSubject, setSelectedSubject] = useState('');
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState('');
+  const [videos, setVideos] = useState([{ video_name: '', video_link: '' }]);
 
   useEffect(() => {
     // Fetch exams when component mounts
     axios.get('http://localhost:8000/api/exams')
       .then(response => {
-        console.log('Fetched exams:', response.data);
         setExams(response.data);
       })
       .catch(error => console.error('Error fetching exams:', error));
@@ -25,14 +28,13 @@ const Videolinks = () => {
     if (selectedExam) {
       axios.get(`http://localhost:8000/api/exam/${selectedExam}/subjects`)
         .then(response => {
-          console.log('Fetched subjects:', response.data);
           setSubjects(response.data);
         })
         .catch(error => console.error('Error fetching subjects:', error));
     } else {
       setSubjects([]);
-      setSelectedSubject(''); // Clear selected subject when exam changes
-      setTopics([]); // Clear topics when exam changes
+      setSelectedSubject('');
+      setTopics([]);
     }
   }, [selectedExam]);
 
@@ -41,13 +43,13 @@ const Videolinks = () => {
     if (selectedSubject) {
       axios.get(`http://localhost:8000/api/subjects/${selectedSubject}/topics`)
         .then(response => {
-          console.log('Fetched topics:', response.data);
           setTopics(response.data);
         })
         .catch(error => console.error('Error fetching topics:', error));
     } else {
       setTopics([]);
-      setSelectedTopic(''); // Clear selected topic when subject changes
+      setSelectedTopic('');
+      setVideos([{ video_name: '', video_link: '' }]);
     }
   }, [selectedSubject]);
 
@@ -56,94 +58,148 @@ const Videolinks = () => {
   };
 
   const handleSubjectChange = (event) => {
-    setSelectedSubject(event.target.value); // Update selectedSubject
-    // Initialize topics for the selected subject
-    setTopics([]); // Clear topics when subject changes
+    setSelectedSubject(event.target.value);
+    setTopics([]);
+    setSelectedTopic('');
+    setVideos([{ video_name: '', video_link: '' }]);
   };
 
   const handleTopicChange = (event) => {
-    setSelectedTopic(event.target.value); // Update selectedTopic
+    setSelectedTopic(event.target.value);
+    setVideos([{ video_name: '', video_link: '' }]); // Initialize with one empty video input
+  };
+
+  const handleVideoChange = (index, field, value) => {
+    const newVideos = [...videos];
+    newVideos[index][field] = value;
+    setVideos(newVideos);
+  };
+
+  const addVideoInput = () => {
+    setVideos([...videos, { video_name: '', video_link: '' }]);
+  };
+
+  const removeVideoInput = (index) => {
+    const newVideos = videos.filter((_, i) => i !== index);
+    setVideos(newVideos);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
+
     // Prepare data for submission
     const examData = {
-      exam_id: selectedExam,
-      selectedsubjects: [selectedSubject] // Update to use selectedSubject
+        exam_id: selectedExam,
+        selectedsubjects: [selectedSubject],
+        selectedtopic: [selectedTopic]
     };
 
-    const topicData = topics.map(topic => ({
-      exam_id: selectedExam,
-      subject_id: topic.subject_id,
-      topic_name: topic.topic_name
+    const videoData = videos.map(video => ({
+        exam_id: selectedExam,
+        subject_id: selectedSubject,
+        topic_id: selectedTopic,
+        video_name: video.video_name,
+        video_link: video.video_link
     }));
 
-    // Post selection data and topic data
+    // Post selection data
     axios.post('http://localhost:8000/api/submit-selection', examData)
-      .then(() => axios.post('http://localhost:8000/api/submit-topics', { topics: topicData }))
-      .then(() => alert('Selection and topics saved successfully'))
-      .catch(error => console.error('Error saving selection or topics:', error));
-  };
+        .then(() => axios.post('http://localhost:8000/api/submit-videos', { videos: videoData }))
+        .then(() => alert('Selection and video links saved successfully'))
+        .catch(error => console.error('Error saving selection or videos:', error));
+};
+
 
   return (
-    <div className='examform'>
-      <h1>Video Selector</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="exam">Select Exam:</label>
-          <select id="exam" value={selectedExam} onChange={handleExamChange}>
-            <option value="">--Select an exam--</option>
-            {exams.map(exam => (
-              <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
-            ))}
-          </select>
+    <div>
+      <div className='headerjeem'>
+        <div className='headerjee'>
+          <img src={Logo_img} alt="Logo" />
         </div>
-        {subjects.length > 0 && (
-          <div>
-            <h3>Select Subject:</h3>
-            <select 
-              id="subject-dropdown"
-              value={selectedSubject}
-              onChange={handleSubjectChange}
-              className="dropdown-select"
-            >
-              <option value="">Select a subject</option>
-              {subjects.map(subject => (
-                <option 
-                  key={subject.subject_id} 
-                  value={subject.subject_id}
-                >
-                  {subject.subject_name}
-                </option>
+        <a className='jeeanchor' href='/Home'>
+          <IoMdHome /> Home
+        </a>
+      </div>
+      <Leftnavbar />
+      <div className='examform longform'>
+        <h1>Video Upload</h1>
+        <form onSubmit={handleSubmit}>
+          <div className='div1'>
+            <label htmlFor="exam">Select Exam:</label>
+            <select id="exam" className='dropdown' value={selectedExam} onChange={handleExamChange}>
+              <option value="">--Select an exam--</option>
+              {exams.map(exam => (
+                <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
               ))}
             </select>
           </div>
-        )}
-        {topics.length > 0 && (
-          <div>
-            <h3>Select Topics:</h3>
-            <select 
-              id="topic-dropdown"
-              value={selectedTopic}
-              onChange={handleTopicChange}
-              className="dropdown-select"
-            >
-              <option value="">Select a topic</option>
-              {topics.map(topic => (
-                <option 
-                  key={topic.topic_id} 
-                  value={topic.topic_id}
-                >
-                  {topic.topic_name}
-                </option>
+          {subjects.length > 0 && (
+            <div className='div1'>
+              <label htmlFor="subject-dropdown">Select Subject:</label>
+              <select
+                id="subject-dropdown"
+                value={selectedSubject}
+                onChange={handleSubjectChange}
+                className="dropdown"
+              >
+                <option value="">Select a subject</option>
+                {subjects.map(subject => (
+                  <option
+                    key={subject.subject_id}
+                    value={subject.subject_id}
+                  >
+                    {subject.subject_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {topics.length > 0 && (
+            <div className='div1'>
+              <label htmlFor="topic-dropdown">Select Topic:</label>
+              <select
+                id="topic-dropdown"
+                value={selectedTopic}
+                onChange={handleTopicChange}
+                className="dropdown"
+              >
+                <option value="">Select a topic</option>
+                {topics.map(topic => (
+                  <option
+                    key={topic.topic_id}
+                    value={topic.topic_id}
+                  >
+                    {topic.topic_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {selectedTopic && (
+            <div className='video-inputs'>
+              {videos.map((video, index) => (
+                <div key={index} className='video-input-group'>
+                  <input
+                    type='text'
+                    placeholder='Video Name'
+                    value={video.video_name}
+                    onChange={(e) => handleVideoChange(index, 'video_name', e.target.value)}
+                  />
+                  <input
+                    type='text'
+                    placeholder='Video Link'
+                    value={video.video_link}
+                    onChange={(e) => handleVideoChange(index, 'video_link', e.target.value)}
+                  />
+                  <button type='button' onClick={() => removeVideoInput(index)}>-</button>
+                </div>
               ))}
-            </select>
-          </div>
-        )}
-        <button type="submit">Submit Selection</button>
-      </form>
+              <button type='button' onClick={addVideoInput}>+</button>
+            </div>
+          )}
+          <button type="submit">Submit Selection</button>
+        </form>
+      </div>
     </div>
   );
 };
