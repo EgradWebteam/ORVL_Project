@@ -90,7 +90,7 @@ const Topics = () =>{
     <div>
     <div className='headerjeem'>
     <div className='headerjee'>
-<img src = {Logo_img} />
+<img src = {Logo_img} alt="logo"/>
 
 </div>
     <a className='jeeanchor' href='/Home'>
@@ -135,6 +135,7 @@ const Topics = () =>{
         {topics.length > 0 && (
           <div className='div1'>
             <h3>Enter Topics:</h3>
+            <div className='topics_inp'>
             {topics.map((topic, index) => (
               <div key={index} className="topic-entry">
                 <input
@@ -142,12 +143,15 @@ const Topics = () =>{
                   value={topic.topic_name}
                   onChange={(event) => handleTopicChange(index, event)}
                   placeholder="Enter topic name"
-                  className='inputtopic'
+                  className='input'
                 />
+                <div className='btngap'>
                 <button type="button" onClick={handleAddTopic}>+</button>
                 <button type="button" onClick={() => handleRemoveTopic(index)}>-</button>
+                </div>
               </div>
             ))}
+            </div>
           </div>
         )}
         <button type="submit">Submit Selection</button>

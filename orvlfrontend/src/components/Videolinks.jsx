@@ -176,7 +176,11 @@ const Videolinks = () => {
             </div>
           )}
           {selectedTopic && (
+            
+            <div className='div1'>
+            
             <div className='video-inputs'>
+            <h3>Add Video Links with  Video Names:</h3>
               {videos.map((video, index) => (
                 <div key={index} className='video-input-group'>
                   <input
@@ -184,18 +188,23 @@ const Videolinks = () => {
                     placeholder='Video Name'
                     value={video.video_name}
                     onChange={(e) => handleVideoChange(index, 'video_name', e.target.value)}
-                    className='inputvideo'
+                    className=' input inputvideo'
                   />
                   <input
                     type='text'
                     placeholder='Video Link'
                     value={video.video_link}
                     onChange={(e) => handleVideoChange(index, 'video_link', e.target.value)}
+                     className=' input inputvideo'
                   />
-                  <button type='button' onClick={() => removeVideoInput(index)}>-</button>
+                  <div className='btngap'>
+                   <button type='button' onClick={addVideoInput} className='btn plus'>+</button>
+                  <button type='button' onClick={() => removeVideoInput(index)} className='btn minus'>-</button>
+                  </div>
                 </div>
+              
               ))}
-              <button type='button' onClick={addVideoInput}>+</button>
+               </div>
             </div>
           )}
           <button type="submit">Submit Selection</button>
