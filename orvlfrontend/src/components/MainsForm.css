@@ -46,6 +46,7 @@
     overflow-y: auto; /* Add scrollbar if content exceeds max-height */
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 /* Close button styling */
@@ -62,7 +63,7 @@
 /* Container for the selection table */
 .selections-table {
     margin: 20px;
-    padding: 10px;
+    /* padding: 10px; */
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
@@ -81,9 +82,12 @@
   }
   
   .selections-table th {
-    background-color: #f2f2f2;
-    color: #333;
+    background-color: #00222c;
+    color: #fff;
     font-weight: bold;
+  }
+  .selections-table tr:nth-child(even) {
+    background-color:#f2f2f2; /* Light gray for odd rows */
   }
 .conh{
     background: #176bab;
@@ -91,6 +95,13 @@
     padding: 5px;
     width: max-content;
     font-size: 16PX;
+}
+td a{
+    background-color: #00222c;
+    color: #fff;
+    padding: 5px;
+    border-radius: 6px;
+    text-decoration: none;
 }
 .redspan{
     color: red;
@@ -330,6 +341,61 @@ label{
         cursor: pointer;
         border-radius: 7px;
     }
+    .content_m {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #0000004d;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        z-index: 1001;
+        width: 92vw;
+        max-height: 80vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .selections-table {
+        display: block; /* Make the table block */
+        overflow-x: auto; /* Allow horizontal scrolling */
+      }
+    
+     
+      .selections-table {
+        width: 90%;
+        border-collapse: collapse;
+    }
+      .selections-table tr {
+       
+        padding: 10px;
+      }
+      .selections-tablecontainer {
+        margin-left: 22vw;
+        margin-top: 10vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+      .selections-table td {
+        text-align: center;
+        padding: 5px;
+     
+        position: relative;
+      }
+    
+      .selections-table td::before {
+        content: attr(data-label); /* Use data-label for header */
+        position: absolute;
+        left: 10px;
+        top: 0;
+        font-weight: bold;
+       
+      }
 }
  
 @media (min-width:600px) and (max-width:768px){
@@ -372,6 +438,11 @@ label{
     }
     .headertv{
         font-size: 23px; 
+    }
+    .checkb {
+        font-weight: 400;
+        font-size: 18px;
+        color: #000;
     }
     
  
