@@ -367,42 +367,71 @@ app.get('/api/videos', async (req, res) => {
         res.status(500).send('Error fetching videos');
     }
 });
-// For uploading multiple videos for a specific topic
-app.post('/api/add-topic-videos', (req, res) => {
-    const { topic_id, videos } = req.body;
+// // For uploading multiple videos for a specific topic
+// app.post('/api/add-topic-videos', (req, res) => {
+//     const { topic_id, videos } = req.body;
     
-    if (!topic_id || !Array.isArray(videos) || videos.length === 0) {
-      return res.status(400).json({ error: 'Invalid input data' });
+//     if (!topic_id || !Array.isArray(videos) || videos.length === 0) {
+//       return res.status(400).json({ error: 'Invalid input data' });
+//     }
+    
+//     pool.getConnection((err, connection) => {
+//       if (err) {
+//         console.error('Error connecting to MySQL:', err);
+//         return res.status(500).json({ error: 'Database connection error' });
+//       }
+  
+//       const videoValues = videos.map(video => [
+//         video.exam_id,
+//         video.subject_id,
+//         topic_id,
+//         video.video_name,
+//         video.video_link
+//       ]);
+  
+//       const query = 'INSERT INTO videos (exam_id, subject_id, topic_id, video_name, video_link) VALUES ?';
+  
+//       connection.query(query, [videoValues], (err, results) => {
+//         connection.release();
+//         if (err) {
+//           console.error('Error inserting videos:', err);
+//           return res.status(500).json({ error: 'Failed to add videos' });
+//         }
+//         res.status(200).json({ message: 'Videos added successfully' });
+//       });
+//     });
+//   });
+  // Route to update a specific selection
+app.put('/api/selections/update/:selection_id', async (req, res) => {
+    const selection_id = req.params.selection_id;
+    const { exam_id, subject_id } = req.body;
+
+    if (!exam_id || !subject_id) {
+        return res.status(400).send('Exam and subject must be provided');
     }
-    
-    pool.getConnection((err, connection) => {
-      if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return res.status(500).json({ error: 'Database connection error' });
-      }
-  
-      const videoValues = videos.map(video => [
-        video.exam_id,
-        video.subject_id,
-        topic_id,
-        video.video_name,
-        video.video_link
-      ]);
-  
-      const query = 'INSERT INTO videos (exam_id, subject_id, topic_id, video_name, video_link) VALUES ?';
-  
-      connection.query(query, [videoValues], (err, results) => {
-        connection.release();
-        if (err) {
-          console.error('Error inserting videos:', err);
-          return res.status(500).json({ error: 'Failed to add videos' });
-        }
-        res.status(200).json({ message: 'Videos added successfully' });
-      });
-    });
-  });
-  
- 
+
+    try {
+        const query = 'UPDATE selections SET exam_id = ?, subject_id = ? WHERE selection_id = ?';
+        await promisePool.query(query, [exam_id, subject_id, selection_id]);
+        res.status(200).send('Selection updated successfully');
+    } catch (error) {
+        console.error('Error updating selection:', error);
+        res.status(500).send('Error updating selection');
+    }
+});
+// Route to delete a specific selection
+app.delete('/api/selections/delete/:selection_id', async (req, res) => {
+    const selection_id = req.params.selection_id;
+
+    try {
+        const query = 'DELETE FROM selections WHERE selection_id = ?';
+        await promisePool.query(query, [selection_id]);
+        res.status(200).send('Selection deleted successfully');
+    } catch (error) {
+        console.error('Error deleting selection:', error);
+        res.status(500).send('Error deleting selection');
+    }
+});
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
