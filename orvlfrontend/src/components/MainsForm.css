@@ -117,7 +117,7 @@
 }
 .btnes{
     position: relative;
-    left:50%;
+    left:52%;
     background-color: #00222c;
     color: #fff;
     font-size: larger;
@@ -129,7 +129,7 @@
 .selections-tablecontainer {
    
     margin-left: 15vw;
-    margin-top: 30vh;
+    margin-top: 10vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -340,11 +340,40 @@ label{
 }
  
 @media (min-width:768px) and (max-width:992px){
-    .examform{
+    .content_m{
         width: 70vw;
         position: relative;
-        left: 22vw ;
+        left: 52vw ;
+        display: flex;
+        align-items: center;
     }
+    .dropdown {
+        border: 1px solid black;
+        border-radius: 4px;
+        padding: 10px;
+        font-size: 18px;
+        width: 200px;
+        height: 40px;
+        cursor: pointer;
+    }
+    label {
+        font-size: 23px;
+        font-weight: 700;
+    }
+    .examform h1 {
+      
+        font-size: 28px;
+        
+    }
+    .examform button {
+       
+        font-size: 20px;
+      
+    }
+    .headertv{
+        font-size: 23px; 
+    }
+    
  
 }
  

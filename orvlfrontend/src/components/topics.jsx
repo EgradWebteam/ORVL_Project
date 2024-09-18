@@ -165,10 +165,10 @@ const Topics = () => {
                 )}
                 {topics.length > 0 && (
                   <div className='div1'>
-                    <h3>Enter Topics:</h3>
+                    <h3 className='headertv'>Enter Topics:</h3>
                     <div className='topics_inp'>
                       {topics.map((topic, index) => (
-                        <div key={index} className="topic-entry">
+                        <div key={`${topic.subject_id}-${index}`} className="topic-entry">
                           <input
                             type="text"
                             value={topic.topic_name}
