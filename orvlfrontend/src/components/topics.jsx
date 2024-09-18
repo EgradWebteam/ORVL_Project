@@ -194,7 +194,7 @@ const Topics = () => {
       )}
 
       <div className='selections-tablecontainer'>
-        <h2>Selection Table</h2>
+        <h2>Topics Table</h2>
         <table className='selections-table'>
           <thead>
             <tr>

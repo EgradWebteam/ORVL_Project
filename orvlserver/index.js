@@ -253,7 +253,7 @@ app.get('/api/videos/:topic_id', (req, res) => {
     });
 });
  
-// // Route to fetch videos for a specific exam, subject, and topic
+ // Route to fetch videos for a specific exam, subject, and topic
 // app.get('/api/videos', (req, res) => {
 //     const { examId, subjectId, topicId } = req.query;
  
@@ -367,40 +367,40 @@ app.get('/api/videos', async (req, res) => {
         res.status(500).send('Error fetching videos');
     }
 });
-// For uploading multiple videos for a specific topic
-app.post('/api/add-topic-videos', (req, res) => {
-    const { topic_id, videos } = req.body;
+//// For uploading multiple videos for a specific topic
+// app.post('/api/add-topic-videos', (req, res) => {
+//     const { topic_id, videos } = req.body;
     
-    if (!topic_id || !Array.isArray(videos) || videos.length === 0) {
-      return res.status(400).json({ error: 'Invalid input data' });
-    }
+//     if (!topic_id || !Array.isArray(videos) || videos.length === 0) {
+//       return res.status(400).json({ error: 'Invalid input data' });
+//     }
     
-    pool.getConnection((err, connection) => {
-      if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return res.status(500).json({ error: 'Database connection error' });
-      }
+//     pool.getConnection((err, connection) => {
+//       if (err) {
+//         console.error('Error connecting to MySQL:', err);
+//         return res.status(500).json({ error: 'Database connection error' });
+//       }
   
-      const videoValues = videos.map(video => [
-        video.exam_id,
-        video.subject_id,
-        topic_id,
-        video.video_name,
-        video.video_link
-      ]);
+//       const videoValues = videos.map(video => [
+//         video.exam_id,
+//         video.subject_id,
+//         topic_id,
+//         video.video_name,
+//         video.video_link
+//       ]);
   
-      const query = 'INSERT INTO videos (exam_id, subject_id, topic_id, video_name, video_link) VALUES ?';
+//       const query = 'INSERT INTO videos (exam_id, subject_id, topic_id, video_name, video_link) VALUES ?';
   
-      connection.query(query, [videoValues], (err, results) => {
-        connection.release();
-        if (err) {
-          console.error('Error inserting videos:', err);
-          return res.status(500).json({ error: 'Failed to add videos' });
-        }
-        res.status(200).json({ message: 'Videos added successfully' });
-      });
-    });
-  });
+//       connection.query(query, [videoValues], (err, results) => {
+//         connection.release();
+//         if (err) {
+//           console.error('Error inserting videos:', err);
+//           return res.status(500).json({ error: 'Failed to add videos' });
+//         }
+//         res.status(200).json({ message: 'Videos added successfully' });
+//       });
+//     });
+//   });
   
  
 app.listen(port, () => {
