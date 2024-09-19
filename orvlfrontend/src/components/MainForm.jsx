@@ -7,17 +7,13 @@ import Leftnavbar from '../components/Leftnavbar';
 import { RxCross2 } from "react-icons/rx";
 
 const MainForm = () => {
-  const [modal1, setModal1] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selections, setSelections] = useState([]);
-
-  // Toggle the modal visibility
-  const toggleModal1 = () => {
-    setModal1(!modal1);
-  };
+  const [editingSelection, setEditingSelection] = useState(null);
 
   // Fetch exams when the component mounts
   useEffect(() => {
@@ -41,7 +37,7 @@ const MainForm = () => {
     }
   }, [selectedExam]);
 
-  // Fetch initial selections to display in the table
+  // Fetch initial selections
   useEffect(() => {
     axios.get('http://localhost:8000/api/selections')
       .then(response => {
@@ -50,13 +46,11 @@ const MainForm = () => {
       .catch(error => console.error('Error fetching selections:', error));
   }, []);
 
-  // Handle exam change
   const handleExamChange = (event) => {
     setSelectedExam(event.target.value);
-    setSelectedSubjects([]); // Clear selected subjects when exam changes
+    setSelectedSubjects([]);
   };
 
-  // Handle subject change
   const handleSubjectChange = (event) => {
     const { value, checked } = event.target;
     setSelectedSubjects(prevState =>
@@ -64,7 +58,6 @@ const MainForm = () => {
     );
   };
 
-  // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = {
@@ -72,21 +65,89 @@ const MainForm = () => {
       selectedsubjects: selectedSubjects
     };
 
-    axios.post('http://localhost:8000/api/submit-selection', data)
+    const request = editingSelection
+      ? axios.put(`http://localhost:8000/api/selections/update/${editingSelection}`, data)
+      : axios.post('http://localhost:8000/api/submit-selection', data);
+
+    request
       .then(() => {
-        alert('Selection saved successfully');
-        // Fetch updated selections
+        alert(`${editingSelection ? 'Selection updated' : 'Selection saved'} successfully`);
         return axios.get('http://localhost:8000/api/selections');
       })
       .then(response => {
         setSelections(response.data);
-        // Optionally close modal and reset form
-        setModal1(false);
-        setSelectedExam('');
-        setSelectedSubjects([]);
-        setSubjects([]);
+        resetForm();
       })
       .catch(error => console.error('Error saving selection:', error));
+  };
+
+  const handleEdit = (selection) => {
+    setSelectedExam(selection.exam_id);
+    setSelectedSubjects(selection.subjects.split(', ').map(sub => sub.trim())); // Split subjects if needed
+    setEditingSelection(selection.selection_id);
+    setModalOpen(true);
+  };
+  // const handleDelete = (selection_id) => {
+  //   console.log("Attempting to delete selection with ID:", selection_id); // Add this line
+  //   if (window.confirm('Are you sure you want to delete this selection?')) {
+  //     axios.delete(`http://localhost:8000/api/selections/delete/${selection_id}`)
+  //       .then(() => {
+  //         alert('Selection deleted successfully');
+  //         return axios.get('http://localhost:8000/api/selections');
+  //       })
+  //       .then(response => {
+  //         setSelections(response.data);
+  //       })
+  //       .catch(error => {
+  //         console.error('Error deleting selection:', error.message || error);
+  //         alert('Failed to delete selection. Please try again.'); // User-friendly message
+  //       });
+  //   }
+  // };
+  // const handleDelete = (selection_id) => {
+  //   console.log("Attempting to delete selection with ID:", selection_id); // Add this line
+  //   if (window.confirm('Are you sure you want to delete this selection?')) {
+  //     axios.delete(`http://localhost:8000/api/selections/delete/${selection_id}`)
+  //       .then(() => {
+  //         alert('Selection deleted successfully');
+  //         return axios.get('http://localhost:8000/api/selections');
+  //       })
+  //       .then(response => {
+  //         setSelections(response.data);
+  //       })
+  //       .catch(error => {
+  //         console.error('Error deleting selection:', error.message || error);
+  //         alert('Failed to delete selection. Please try again.');
+  //       });
+  //   }
+  // };
+  const handleDelete = (exam_id) => {
+    console.log("Attempting to delete selection with exam_id:", exam_id); // Log the ID
+    if (window.confirm('Are you sure you want to delete this selection?')) {
+      axios.delete(`http://localhost:8000/api/selections/delete/${exam_id}`)
+        .then(() => {
+          alert('Selection deleted successfully');
+          return axios.get('http://localhost:8000/api/selections');
+        })
+        .then(response => {
+          setSelections(response.data);
+        })
+        .catch(error => {
+          console.error('Error deleting selection:', error.message || error);
+          alert('Failed to delete selection. Please try again.');
+        });
+    }
+  };
+  
+  // Update the delete button in the table
+
+  
+  const resetForm = () => {
+    setModalOpen(false);
+    setSelectedExam('');
+    setSelectedSubjects([]);
+    setSubjects([]);
+    setEditingSelection(null);
   };
 
   return (
@@ -101,14 +162,14 @@ const MainForm = () => {
       </div>
       <Leftnavbar />
 
-      <button className='btnes' onClick={toggleModal1}>Exam Selection</button>
+      <button className='btnes' onClick={() => setModalOpen(true)}>Exam Selection</button>
 
-      {modal1 && (
+      {modalOpen && (
         <div className='examform'>
           <div className='modal'>
             <div className='overlay'></div>
             <div className='content_m'>
-              <h1>Exam Selection</h1>
+              <h1>{editingSelection ? 'Edit Selection' : 'Exam Selection'}</h1>
               <form onSubmit={handleSubmit}>
                 <div className='div1'>
                   <label htmlFor="exam">Select Exam:</label>
@@ -123,12 +184,13 @@ const MainForm = () => {
                   <div className='div1'>
                     <label>Select Subjects:</label>
                     {subjects.map(subject => (
+                      
                       <div key={subject.subject_id}>
                         <input
                           type='checkbox'
                           id={`subject-${subject.subject_id}`}
                           value={subject.subject_id}
-                          // checked={selectedSubjects.includes(subject.subject_id)}
+                    
                           onChange={handleSubjectChange}
                           className="checkbox-input"
                         />
@@ -137,9 +199,9 @@ const MainForm = () => {
                     ))}
                   </div>
                 )}
-                <button type="submit">Submit Selection</button>
+                <button type="submit">{editingSelection ? 'Update Selection' : 'Submit Selection'}</button>
               </form>
-              <button className='closebutton' onClick={toggleModal1}><RxCross2 /></button>
+              <button className='closebutton' onClick={resetForm}><RxCross2 /></button>
             </div>
           </div>
         </div>
@@ -153,14 +215,19 @@ const MainForm = () => {
               <th>S.no</th>
               <th>Exam Name</th>
               <th>Subject Name</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {selections.map((selection,index) => (
+            {selections.map((selection, index) => (
               <tr key={selection.selection_id}>
-                <td>{index+1}</td>
+                <td>{index + 1}</td>
                 <td>{selection.exam_name}</td>
-                <td>{selection.subject_name}</td>
+                <td>{selection.subjects}</td>
+                <td>
+    <button onClick={() => handleEdit(selection)}>Edit</button>
+    <button onClick={() => handleDelete(selection.exam_id)}>Delete</button> {/* Pass exam_id */}
+  </td>
               </tr>
             ))}
           </tbody>

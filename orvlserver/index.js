@@ -1,4 +1,4 @@
-const express = require('express');  
+const express = require('express');
 const mysql = require('mysql2');  
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -7,8 +7,16 @@ const path = require('path');
 const router = express.Router();
  
  
-const app = express();  
+const app = express();
 const port = 8000;
+app.use(cors({
+    origin: 'http://localhost:3000',  // Allow requests from this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allow these HTTP methods
+    allowedHeaders: ['Content-Type'],  // Allow these headers
+}));
+ 
+ 
+ 
  
 // Create a MySQL connection pool
 const pool = mysql.createPool({
@@ -59,7 +67,7 @@ app.get('/api/exams', (req, res) => {
         });
     });
 });
-
+ 
 // Route to fetch subjects for a specific exam
 app.get('/api/exam/:exam_id/subjects', (req, res) => {
     const exam_id = req.params.exam_id;
@@ -78,7 +86,7 @@ app.get('/api/exam/:exam_id/subjects', (req, res) => {
         });
     });
 });
-
+ 
 // Fetch topics for a specific subject
 app.get('/api/subjects/:subject_id/topics', (req, res) => {
     const subject_id = req.params.subject_id;
@@ -97,15 +105,58 @@ app.get('/api/subjects/:subject_id/topics', (req, res) => {
         });
     });
 });
-
-// Route to handle form submission
-app.post('/api/submit-selection', (req, res) => {
+ 
+// // Route to handle form submission
+// app.post('/api/submit-selection', (req, res) => {
+//     const { exam_id, selectedsubjects } = req.body;
+ 
+//     if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
+//         return res.status(400).send('Exam and at least one subject must be selected');
+//     }
+ 
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).send('Database connection error');
+//         }
+ 
+//         const insertPromises = selectedsubjects.map((subject_id) => {
+//             return new Promise((resolve, reject) => {
+//                 connection.query(
+//                     'INSERT INTO selections (exam_id, subject_id) VALUES (?, ?)',
+//                     [exam_id, subject_id],
+//                     (err, results) => {
+//                         if (err) {
+//                             reject(err);
+//                         } else {
+//                             resolve(results);
+//                         }
+//                     }
+//                 );
+//             });
+//         });
+ 
+//         Promise.all(insertPromises)
+//             .then(() => {
+//                 connection.release();
+//                 res.status(200).send('Selection saved successfully');
+//             })
+//             .catch((err) => {
+//                 connection.release();
+//                 console.error('Error saving selection:', err);
+//                 res.status(500).send('Error saving selection');
+//             });
+//     });
+// });
+ // Route to handle form submission or fetch selections
+app.route('/api/submit-selection')
+.post((req, res) => {
     const { exam_id, selectedsubjects } = req.body;
  
     if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
         return res.status(400).send('Exam and at least one subject must be selected');
     }
-
+ 
     pool.getConnection((err, connection) => {
         if (err) {
             console.error('Error connecting to MySQL:', err);
@@ -127,7 +178,7 @@ app.post('/api/submit-selection', (req, res) => {
                 );
             });
         });
-
+ 
         Promise.all(insertPromises)
             .then(() => {
                 connection.release();
@@ -138,6 +189,31 @@ app.post('/api/submit-selection', (req, res) => {
                 console.error('Error saving selection:', err);
                 res.status(500).send('Error saving selection');
             });
+    });
+})
+.get((req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+ 
+        const query = `
+            SELECT e.exam_id, e.exam_name, GROUP_CONCAT(sub.subject_name SEPARATOR ', ') AS subjects
+            FROM selections s
+            JOIN exams e ON s.exam_id = e.exam_id
+            JOIN subjects sub ON s.subject_id = sub.subject_id
+            GROUP BY e.exam_id, e.exam_name
+        `;
+ 
+        connection.query(query, (err, results) => {
+            connection.release();
+            if (err) {
+                console.error('Error fetching selections:', err);
+                return res.status(500).send('Error fetching selections');
+            }
+            res.status(200).json(results);
+        });
     });
 });
  
@@ -291,13 +367,11 @@ app.get('/api/videos/:topic_id', (req, res) => {
 app.get('/api/selections', async (req, res) => {
     try {
         const query = `
-            SELECT
-                selections.selection_id,
-                exams.exam_name,
-                subjects.subject_name
-            FROM selections
-            JOIN exams ON selections.exam_id = exams.exam_id
-            JOIN subjects ON selections.subject_id = subjects.subject_id
+           SELECT e.exam_id, e.exam_name, GROUP_CONCAT(sub.subject_name ) AS subjects
+            FROM selections s
+            JOIN exams e ON s.exam_id = e.exam_id
+            JOIN subjects sub ON s.subject_id = sub.subject_id
+            GROUP BY e.exam_id, e.exam_name
         `;
  
         const [rows] = await promisePool.query(query);
@@ -309,7 +383,7 @@ app.get('/api/selections', async (req, res) => {
 });
 // Route to get topics with exam and subject names
  
-app.get('/api/topics', async (req, res) => {
+app.get('/api/topicsr', async (req, res) => {
  
     try {
  
@@ -344,7 +418,38 @@ app.get('/api/topics', async (req, res) => {
     }
  
 });
+ // Route to fetch topics with GROUP_CONCAT
+app.get('/api/topics', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
  
+        const query = `
+            SELECT 
+                e.exam_name,
+                s.subject_name,
+                GROUP_CONCAT(t.topic_name ORDER BY t.topic_name ) AS topics
+            FROM topics t
+            JOIN exams e ON t.exam_id = e.exam_id
+            JOIN subjects s ON t.subject_id = s.subject_id
+            GROUP BY e.exam_name, s.subject_name
+            ORDER BY e.exam_name, s.subject_name;
+        `;
+ 
+        connection.query(query, (err, results) => {
+            connection.release();
+ 
+            if (err) {
+                console.error('Error fetching topics:', err);
+                return res.status(500).send('Error fetching topics');
+            }
+ 
+            res.status(200).json(results);
+        });
+    });
+});
 app.get('/api/videos', async (req, res) => {
     try {
         const query = `
@@ -370,17 +475,17 @@ app.get('/api/videos', async (req, res) => {
 //// For uploading multiple videos for a specific topic
 // app.post('/api/add-topic-videos', (req, res) => {
 //     const { topic_id, videos } = req.body;
-    
+   
 //     if (!topic_id || !Array.isArray(videos) || videos.length === 0) {
 //       return res.status(400).json({ error: 'Invalid input data' });
 //     }
-    
+   
 //     pool.getConnection((err, connection) => {
 //       if (err) {
 //         console.error('Error connecting to MySQL:', err);
 //         return res.status(500).json({ error: 'Database connection error' });
 //       }
-  
+ 
 //       const videoValues = videos.map(video => [
 //         video.exam_id,
 //         video.subject_id,
@@ -388,9 +493,9 @@ app.get('/api/videos', async (req, res) => {
 //         video.video_name,
 //         video.video_link
 //       ]);
-  
+ 
 //       const query = 'INSERT INTO videos (exam_id, subject_id, topic_id, video_name, video_link) VALUES ?';
-  
+ 
 //       connection.query(query, [videoValues], (err, results) => {
 //         connection.release();
 //         if (err) {
@@ -401,7 +506,189 @@ app.get('/api/videos', async (req, res) => {
 //       });
 //     });
 //   });
-  
+ 
+// Route to update a selection
+app.put('/api/selections/update/:selection_id', (req, res) => {
+    const selection_id = req.params.selection_id;
+    const { exam_id, subject_id } = req.body;
+ 
+    if (!exam_id || !subject_id) {
+        return res.status(400).send('Exam ID and Subject ID are required');
+    }
+ 
+    const query = 'UPDATE selections SET exam_id = ?, subject_id = ? WHERE selection_id = ?';
+   
+    promisePool.query(query, [exam_id, subject_id, selection_id])
+        .then(() => {
+            res.status(200).send('Selection updated successfully');
+        })
+        .catch(error => {
+            console.error('Error updating selection:', error);
+            res.status(500).send('Error updating selection');
+        });
+});
+ 
+ 
+ 
+// // Route to delete a selection by ID
+// app.delete('/api/selections/delete/:selection_id', (req, res) => {
+//     const selection_id = req.params.selection_id; // Ensure you're using the correct variable name
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).send('Database connection error');
+//         }
+ 
+//         connection.query('DELETE FROM selections WHERE selection_id = ?', [selection_id], (err, results) => {
+//             connection.release();
+//             if (err) {
+//                 console.error('Error deleting selection:', err);
+//                 return res.status(500).send('Error deleting selection');
+//             }
+//             // Check if any rows were affected
+//             if (results.affectedRows === 0) {
+//                 return res.status(404).send('Selection not found'); // Handle case where no rows were deleted
+//             }
+//             res.status(204).send();  // No content to send back
+//         });
+//     });
+// });
+// app.delete('/api/selections/delete/:selection_id', (req, res) => {
+//     const selection_id = req.params.selection_id;
+//     console.log('Received selection_id for deletion:', selection_id); // Log the ID
+ 
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).send('Database connection error');
+//         }
+ 
+//         connection.query('DELETE FROM selections WHERE selection_id = ?', [selection_id], (err, results) => {
+//             connection.release();
+//             if (err) {
+//                 console.error('Error deleting selection:', err);
+//                 return res.status(500).send('Error deleting selection');
+//             }
+ 
+//             console.log('Delete results:', results); // Log results from the delete operation
+ 
+//             if (results.affectedRows === 0) {
+//                 return res.status(404).send('Selection not found');
+//             }
+//             res.status(204).send();  // No content to send back
+//         });
+//     });
+// });
+// Route to delete a selection by exam_id
+app.delete('/api/selections/delete/:exam_id', (req, res) => {
+    const exam_id = req.params.exam_id;
+    console.log('Received exam_id for deletion:', exam_id); // Log the ID
+ 
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+ 
+        connection.query('DELETE FROM selections WHERE exam_id = ?', [exam_id], (err, results) => {
+            connection.release();
+            if (err) {
+                console.error('Error deleting selection:', err);
+                return res.status(500).send('Error deleting selection');
+            }
+ 
+            console.log('Delete results:', results); // Log results from the delete operation
+ 
+            if (results.affectedRows === 0) {
+                return res.status(404).send('Selection not found'); // Handle case where no rows were deleted
+            }
+            res.status(204).send();  // No content to send back
+        });
+    });
+});
+ 
+ // Route to update a topic
+
+app.put('/api/topics/update/:topic_id', (req, res) => {
+
+    const topic_id = req.params.topic_id;
+
+    const { exam_id, subject_id, topic_name } = req.body;
+ 
+    if (!exam_id || !subject_id || !topic_name) {
+
+        return res.status(400).send('Exam ID, Subject ID, and Topic Name are required');
+
+    }
+ 
+    const query = 'UPDATE topics SET exam_id = ?, subject_id = ?, topic_name = ? WHERE topic_id = ?';
+ 
+    promisePool.query(query, [exam_id, subject_id, topic_name, topic_id])
+
+        .then(() => {
+
+            res.status(200).send('Topic updated successfully');
+
+        })
+
+        .catch(error => {
+
+            console.error('Error updating topic:', error);
+
+            res.status(500).send('Error updating topic');
+
+        });
+
+});
+
+ 
+// Route to delete a topic by topic_id
+
+app.delete('/api/topics/delete/:topic_id', (req, res) => {
+
+    const topic_id = req.params.topic_id;
+
+    console.log('Received topic_id for deletion:', topic_id); // Log the ID
+ 
+    pool.getConnection((err, connection) => {
+
+        if (err) {
+
+            console.error('Error connecting to MySQL:', err);
+
+            return res.status(500).send('Database connection error');
+
+        }
+ 
+        connection.query('DELETE FROM topics WHERE topic_id = ?', [topic_id], (err, results) => {
+
+            connection.release();
+
+            if (err) {
+
+                console.error('Error deleting topic:', err);
+
+                return res.status(500).send('Error deleting topic');
+
+            }
+ 
+            console.log('Delete results:', results); // Log results from the delete operation
+ 
+            if (results.affectedRows === 0) {
+
+                return res.status(404).send('Topic not found'); // Handle case where no rows were deleted
+
+            }
+
+            res.status(204).send();  // No content to send back
+
+        });
+
+    });
+
+});
+
+ 
  
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

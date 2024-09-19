@@ -7,20 +7,25 @@ import Leftnavbar from '../components/Leftnavbar';
 import { RxCross2 } from "react-icons/rx";
 
 const Topics = () => {
-  const [exams, setExams] = useState([]); 
+  const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [topics, setTopics] = useState([]);
   const [modal1, setModal1] = useState(false);
   const [topictable, setTopictable] = useState([]);
+  const [editModal, setEditModal] = useState(false);
+  const [currentTopic, setCurrentTopic] = useState(null);
 
   const toggleModal1 = () => {
     setModal1(!modal1);
   };
 
+  const toggleEditModal = () => {
+    setEditModal(!editModal);
+  };
+
   useEffect(() => {
-    // Fetch exams when component mounts
     axios.get('http://localhost:8000/api/exams')
       .then(response => {
         console.log('Fetched exams:', response.data);
@@ -30,7 +35,6 @@ const Topics = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch initial topics data for the table
     axios.get('http://localhost:8000/api/topics')
       .then(response => {
         console.log('Fetched topics:', response.data);
@@ -40,7 +44,6 @@ const Topics = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch subjects when an exam is selected
     if (selectedExam) {
       axios.get(`http://localhost:8000/api/exam/${selectedExam}/subjects`)
         .then(response => {
@@ -83,34 +86,65 @@ const Topics = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
-    const examData = {
-      exam_id: selectedExam,
-      selectedsubjects: [selectedSubject]
-    };
 
     const topicData = topics.map(topic => ({
-      exam_id: selectedExam,  
+      exam_id: selectedExam,
       subject_id: topic.subject_id,
       topic_name: topic.topic_name
     }));
 
-    axios.post('http://localhost:8000/api/submit-selection', examData)
-      .then(() => axios.post('http://localhost:8000/api/submit-topics', { topics: topicData }))
+    axios.post('http://localhost:8000/api/submit-topics', { topics: topicData })
       .then(() => {
-        alert('Selection and topics saved successfully');
-        // Fetch updated topics
+        alert('Topics saved successfully');
         return axios.get('http://localhost:8000/api/topics');
       })
       .then(response => {
-        setTopictable(response.data); // Update table data
+        setTopictable(response.data);
         setModal1(false);
         setSelectedExam('');
         setSelectedSubject('');
         setSubjects([]);
         setTopics([]);
       })
-      .catch(error => console.error('Error saving selection or topics:', error));
+      .catch(error => console.error('Error saving topics:', error));
+  };
+
+  const handleDelete = (topic_id) => {
+    axios.delete(`http://localhost:8000/api/topics/delete/${topic_id}`)
+      .then(() => {
+        alert('Topic deleted successfully');
+        return axios.get('http://localhost:8000/api/topics');
+      })
+      .then(response => {
+        setTopictable(response.data);
+      })
+      .catch(error => console.error('Error deleting topic:', error));
+  };
+
+  const handleEdit = (topic) => {
+    setCurrentTopic(topic);
+    setEditModal(true);
+  };
+
+  const handleUpdate = (event) => {
+    event.preventDefault();
+
+    const updatedData = {
+      exam_id: currentTopic.exam_id,
+      subject_id: currentTopic.subject_id,
+      topic_name: currentTopic.topic_name
+    };
+
+    axios.put(`http://localhost:8000/api/topics/update/${currentTopic.topic_id}`, updatedData)
+      .then(() => {
+        alert('Topic updated successfully');
+        setEditModal(false);
+        return axios.get('http://localhost:8000/api/topics');
+      })
+      .then(response => {
+        setTopictable(response.data);
+      })
+      .catch(error => console.error('Error updating topic:', error));
   };
 
   return (
@@ -193,6 +227,38 @@ const Topics = () => {
         </div>
       )}
 
+      {/* Edit Modal */}
+      {editModal && (
+        <div className='examform'>
+          <div className='modal'>
+            <div className='overlay'></div>
+            <div className='content_m'>
+              <h1>Edit Topic</h1>
+              <form onSubmit={handleUpdate}>
+                <div className='div1'>
+                  <label htmlFor="exam">Exam Name:</label>
+                  <input type="text" value={currentTopic?.exam_name} readOnly />
+                </div>
+                <div className='div1'>
+                  <label htmlFor="subject">Subject Name:</label>
+                  <input type="text" value={currentTopic?.subject_name} readOnly />
+                </div>
+                <div className='div1'>
+                  <label htmlFor="topic">Topic Name:</label>
+                  <input
+                    type="text"
+                    value={currentTopic?.topic_name}
+                    onChange={(e) => setCurrentTopic({ ...currentTopic, topic_name: e.target.value })}
+                  />
+                </div>
+                <button type="submit">Update Topic</button>
+                <button className='closebutton' onClick={toggleEditModal}><RxCross2 /></button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className='selections-tablecontainer'>
         <h2>Topics Table</h2>
         <table className='selections-table'>
@@ -202,6 +268,7 @@ const Topics = () => {
               <th>Exam Name</th>
               <th>Subject Name</th>
               <th>Topic Name</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -210,7 +277,11 @@ const Topics = () => {
                 <td>{index + 1}</td>
                 <td>{topict.exam_name}</td>
                 <td>{topict.subject_name}</td>
-                <td>{topict.topic_name}</td>
+                <td>{topict.topics}</td>
+                <td>
+                  <button onClick={() => handleEdit(topict)}>Edit</button>
+                  <button onClick={() => handleDelete(topict.topic_id)}>Delete</button>
+                </td>
               </tr>
             ))}
           </tbody>
