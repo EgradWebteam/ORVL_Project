@@ -224,9 +224,9 @@ const MainForm = () => {
                 <td>{index + 1}</td>
                 <td>{selection.exam_name}</td>
                 <td>{selection.subjects}</td>
-                <td>
-    <button onClick={() => handleEdit(selection)}>Edit</button>
-    <button onClick={() => handleDelete(selection.exam_id)}>Delete</button> {/* Pass exam_id */}
+                <td className='upddel'>
+    <button  className="update" onClick={() => handleEdit(selection)}>Update</button>
+    <button className="delete" onClick={() => handleDelete(selection.exam_id)}>Delete</button> {/* Pass exam_id */}
   </td>
               </tr>
             ))}

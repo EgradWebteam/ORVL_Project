@@ -123,30 +123,40 @@ const Topics = () => {
 
   const handleEdit = (topic) => {
     setCurrentTopic(topic);
+    setSelectedExam(topic.exam_id); // Set selected exam
+    setSelectedSubject(topic.subject_id); // Set selected subject
     setEditModal(true);
   };
 
+ 
+
   const handleUpdate = (event) => {
     event.preventDefault();
-
-    const updatedData = {
-      exam_id: currentTopic.exam_id,
-      subject_id: currentTopic.subject_id,
-      topic_name: currentTopic.topic_name
-    };
-
-    axios.put(`http://localhost:8000/api/topics/update/${currentTopic.topic_id}`, updatedData)
+  
+    const updatedTopicData = [{
+      exam_id: selectedExam,
+      subject_id: selectedSubject,
+      topic_name: currentTopic.topic_name,
+    }];
+  
+    // Send the updated topic to the backend using POST
+    axios.post('http://localhost:8000/api/submit-topics', { topics: updatedTopicData })
       .then(() => {
         alert('Topic updated successfully');
-        setEditModal(false);
+        // Fetch the updated topics list from the backend
         return axios.get('http://localhost:8000/api/topics');
       })
       .then(response => {
-        setTopictable(response.data);
+        setTopictable(response.data); // Update the table with new data
+        setEditModal(false); // Close the edit modal
+        setCurrentTopic(null); // Clear current topic state
       })
-      .catch(error => console.error('Error updating topic:', error));
+      .catch(error => {
+        console.error('Error updating topic:', error);
+        alert('Failed to update the topic. Please try again.');
+      });
   };
-
+  
   return (
     <div>
       <div className='headerjeem'>
@@ -237,11 +247,21 @@ const Topics = () => {
               <form onSubmit={handleUpdate}>
                 <div className='div1'>
                   <label htmlFor="exam">Exam Name:</label>
-                  <input type="text" value={currentTopic?.exam_name} readOnly />
+                  <select id="exam" value={selectedExam} onChange={(e) => setSelectedExam(e.target.value)} className='dropdown'>
+                    <option value="">--Select an exam--</option>
+                    {exams.map(exam => (
+                      <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className='div1'>
                   <label htmlFor="subject">Subject Name:</label>
-                  <input type="text" value={currentTopic?.subject_name} readOnly />
+                  <select id="subject" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} className='dropdown'>
+                    <option value="">--Select a subject--</option>
+                    {subjects.map(subject => (
+                      <option key={subject.subject_id} value={subject.subject_id}>{subject.subject_name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className='div1'>
                   <label htmlFor="topic">Topic Name:</label>
@@ -278,9 +298,9 @@ const Topics = () => {
                 <td>{topict.exam_name}</td>
                 <td>{topict.subject_name}</td>
                 <td>{topict.topics}</td>
-                <td>
-                  <button onClick={() => handleEdit(topict)}>Edit</button>
-                  <button onClick={() => handleDelete(topict.topic_id)}>Delete</button>
+                <td className='upddel'>
+                  <button  className="update" onClick={() => handleEdit(topict)}>Update</button>
+                  <button className='delete' onClick={() => handleDelete(topict.topic_id)}>Delete</button>
                 </td>
               </tr>
             ))}

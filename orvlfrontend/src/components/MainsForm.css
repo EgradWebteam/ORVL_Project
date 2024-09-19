@@ -48,7 +48,27 @@
     flex-direction: column;
     align-items: center;
 }
-
+.update,.delete {
+    width: fit-content;
+    height: fit-content;
+    padding: 6px;
+    color: #fff;
+    border: transparent;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 800;
+}
+.update{
+    background-color: #007bff;
+}
+.delete{
+    background-color: red;
+}
+.upddel{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
 /* Close button styling */
 .closebutton {
     position: absolute;
