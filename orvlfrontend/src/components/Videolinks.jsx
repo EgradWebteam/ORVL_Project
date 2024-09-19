@@ -16,9 +16,23 @@ const Videolinks = () => {
   const [videos, setVideos] = useState([{ video_name: '', video_link: '' }]);
   const [videotable, setVideotable] = useState([]);
   const [modal1, setModal1] = useState(false);
+  const [editingVideoIndex, setEditingVideoIndex] = useState(null);
 
   const toggleModal1 = () => {
     setModal1(!modal1);
+    if (modal1) {
+      resetForm();
+    }
+  };
+
+  const resetForm = () => {
+    setSelectedExam('');
+    setSelectedSubject('');
+    setSubjects([]);
+    setTopics([]);
+    setSelectedTopic('');
+    setVideos([{ video_name: '', video_link: '' }]);
+    setEditingVideoIndex(null);
   };
 
   useEffect(() => {
@@ -32,7 +46,7 @@ const Videolinks = () => {
 
   useEffect(() => {
     // Fetch video table data when component mounts
-    axios.get('http://localhost:8000/api/videos')
+    axios.get('http://localhost:8000/api/videos-summary')
       .then(response => {
         setVideotable(response.data);
       })
@@ -82,7 +96,7 @@ const Videolinks = () => {
 
   const handleTopicChange = (event) => {
     setSelectedTopic(event.target.value);
-    setVideos([{ video_name: '', video_link: '' }]); // Initialize with one empty video input
+    setVideos([{ video_name: '', video_link: '' }]);
   };
 
   const handleVideoChange = (index, field, value) => {
@@ -102,13 +116,7 @@ const Videolinks = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-  
-    const examData = {
-      exam_id: selectedExam,
-      selectedsubjects: [selectedSubject],
-      selectedtopic: [selectedTopic]
-    };
-  
+
     const videoData = videos.map(video => ({
       exam_id: selectedExam,
       subject_id: selectedSubject,
@@ -116,34 +124,55 @@ const Videolinks = () => {
       video_name: video.video_name,
       video_link: video.video_link
     }));
-  
-    axios.post('http://localhost:8000/api/submit-selection', examData)
-      .then(() => axios.post('http://localhost:8000/api/submit-videos', { videos: videoData }))
+
+    axios.post('http://localhost:8000/api/submit-videos', { videos: videoData })
       .then(() => {
-        alert('Selection and video links saved successfully');
-        // Fetch updated video table data
-        return axios.get('http://localhost:8000/api/videos', {
-          params: {
-            examId: selectedExam,
-            subjectId: selectedSubject,
-            topicId: selectedTopic
-          }
-        });
-      })
-      .then(response => {
-        setVideotable(response.data);
-        setModal1(false);
-        setSelectedExam('');
-        setSelectedSubject('');
-        setSubjects([]);
-        setTopics([]);
-        setSelectedTopic('');
-        setVideos([{ video_name: '', video_link: '' }]);
+        alert('Video links saved successfully');
+        fetchVideoTableData();
+        resetForm();
       })
       .catch(error => {
-        console.error('Error saving selection or videos:', error);
+        console.error('Error saving videos:', error);
         alert('An error occurred. Please check the console for more details.');
       });
+  };
+
+  const fetchVideoTableData = () => {
+    axios.get('http://localhost:8000/api/videos', {
+      params: {
+        examId: selectedExam,
+        subjectId: selectedSubject,
+        topicId: selectedTopic
+      }
+    })
+    .then(response => {
+      setVideotable(response.data);
+    })
+    .catch(error => console.error('Error fetching video table data:', error));
+  };
+
+  const handleEditVideo = (index) => {
+    setEditingVideoIndex(index);
+    const videoToEdit = videotable[index];
+    setSelectedExam(videoToEdit.exam_id);
+    setSelectedSubject(videoToEdit.subject_id);
+    setSelectedTopic(videoToEdit.topic_id);
+    setVideos([{ video_name: videoToEdit.video_name, video_link: videoToEdit.video_link }]);
+    setModal1(true);
+  };
+
+  const handleDeleteVideo = (videoId) => {
+    if (window.confirm('Are you sure you want to delete this video?')) {
+      axios.delete(`http://localhost:8000/api/videos/${videoId}`)
+        .then(() => {
+          alert('Video deleted successfully');
+          fetchVideoTableData();
+        })
+        .catch(error => {
+          console.error('Error deleting video:', error);
+          alert('An error occurred while deleting the video.');
+        });
+    }
   };
 
   return (
@@ -160,11 +189,11 @@ const Videolinks = () => {
       <button className='btnes' onClick={toggleModal1}> Video Upload</button>
 
       {modal1 && (
-        <div className='examform '>
+        <div className='examform'>
           <div className='modal'>
             <div className='overlay'></div>
             <div className='content_m'>
-              <h1>Video Upload</h1>
+              <h1>{editingVideoIndex !== null ? 'Edit Video' : 'Video Upload'}</h1>
               <form onSubmit={handleSubmit}>
                 <div className='div1'>
                   <label htmlFor="exam">Select Exam:</label>
@@ -220,7 +249,7 @@ const Videolinks = () => {
                 {selectedTopic && (
                   <div className='div1'>
                     <div className='video-inputs'>
-                      <h3 className='headertv'>Add Video Links with  Video Names:</h3>
+                      <h3 className='headertv'>Add Video Links with Video Names:</h3>
                       {videos.map((video, index) => (
                         <div key={index} className='video-input-group'>
                           <input
@@ -246,13 +275,14 @@ const Videolinks = () => {
                     </div>
                   </div>
                 )}
-                <button type="submit">Submit Selection</button>
+                <button type="submit">{editingVideoIndex !== null ? 'Update Video' : 'Submit Selection'}</button>
               </form>
               <button className='closebutton' onClick={toggleModal1}><RxCross2 /></button>
             </div>
           </div>
         </div>
       )}
+
       <div className='selections-tablecontainer'>
         <h2>Video Links Table</h2>
         <table className='selections-table'>
@@ -263,7 +293,7 @@ const Videolinks = () => {
               <th>Subject Name</th>
               <th>Topic Name</th>
               <th>Video Name</th>
-              <th>Video Link</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -273,8 +303,11 @@ const Videolinks = () => {
                 <td>{videot.exam_name}</td>
                 <td>{videot.subject_name}</td>
                 <td>{videot.topic_name}</td>
-                <td>{videot.video_name}</td>
-                <td><a href={videot.video_link} target="_blank" rel="noopener noreferrer">Watch</a></td>
+                <td>{videot.video_names}</td>
+                <td className='upddel'>
+                  <button onClick={() => handleEditVideo(index)} className='update'>Update</button>
+                  <button onClick={() => handleDeleteVideo(videot.video_id) } className="delete">Delete</button>
+                </td>
               </tr>
             ))}
           </tbody>

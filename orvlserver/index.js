@@ -427,10 +427,12 @@ app.get('/api/topics', (req, res) => {
         }
  
         const query = `
-            SELECT 
+            SELECT
                 e.exam_name,
                 s.subject_name,
-                GROUP_CONCAT(t.topic_name ORDER BY t.topic_name ) AS topics
+              
+                GROUP_CONCAT(t.topic_name ORDER BY t.topic_name ) AS topics,
+                s.subject_id
             FROM topics t
             JOIN exams e ON t.exam_id = e.exam_id
             JOIN subjects s ON t.subject_id = s.subject_id
@@ -608,88 +610,168 @@ app.delete('/api/selections/delete/:exam_id', (req, res) => {
 });
  
  // Route to update a topic
-
+ 
 app.put('/api/topics/update/:topic_id', (req, res) => {
-
+ 
     const topic_id = req.params.topic_id;
-
+ 
     const { exam_id, subject_id, topic_name } = req.body;
  
     if (!exam_id || !subject_id || !topic_name) {
-
+ 
         return res.status(400).send('Exam ID, Subject ID, and Topic Name are required');
-
+ 
     }
  
     const query = 'UPDATE topics SET exam_id = ?, subject_id = ?, topic_name = ? WHERE topic_id = ?';
  
     promisePool.query(query, [exam_id, subject_id, topic_name, topic_id])
-
+ 
         .then(() => {
-
+ 
             res.status(200).send('Topic updated successfully');
-
+ 
         })
-
+ 
         .catch(error => {
-
+ 
             console.error('Error updating topic:', error);
-
+ 
             res.status(500).send('Error updating topic');
-
+ 
         });
-
+ 
 });
-
+ 
  
 // Route to delete a topic by topic_id
-
-app.delete('/api/topics/delete/:topic_id', (req, res) => {
-
-    const topic_id = req.params.topic_id;
-
-    console.log('Received topic_id for deletion:', topic_id); // Log the ID
+ 
+app.delete('/api/topics/delete/:subject_id', (req, res) => {
+ 
+    const subject_id = req.params.subject_id;
+ 
+    console.log('Received topic_id for deletion:', subject_id); // Log the ID
  
     pool.getConnection((err, connection) => {
-
+ 
         if (err) {
-
+ 
             console.error('Error connecting to MySQL:', err);
-
+ 
             return res.status(500).send('Database connection error');
-
+ 
         }
  
-        connection.query('DELETE FROM topics WHERE topic_id = ?', [topic_id], (err, results) => {
-
+        connection.query('DELETE FROM topics WHERE subject_id = ?', [subject_id], (err, results) => {
+ 
             connection.release();
-
+ 
             if (err) {
-
+ 
                 console.error('Error deleting topic:', err);
-
+ 
                 return res.status(500).send('Error deleting topic');
-
+ 
             }
  
             console.log('Delete results:', results); // Log results from the delete operation
  
             if (results.affectedRows === 0) {
-
+ 
                 return res.status(404).send('Topic not found'); // Handle case where no rows were deleted
-
+ 
             }
-
+ 
             res.status(204).send();  // No content to send back
-
+ 
         });
-
+ 
     });
-
+ 
 });
-
  
  
+app.get('/api/videos-summary', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).json({ error: 'Database connection error' });
+        }
+ 
+        const query = `
+            SELECT v.topic_id, 
+                   e.exam_name,
+                   s.subject_name,
+                   t.topic_name,
+                   GROUP_CONCAT(v.video_name ORDER BY v.video_name ASC SEPARATOR ', ') AS video_names,
+                   GROUP_CONCAT(v.video_link ORDER BY v.video_name ASC SEPARATOR ', ') AS video_links
+            FROM videos v
+            JOIN exams e ON v.exam_id = e.exam_id
+            JOIN subjects s ON v.subject_id = s.subject_id
+            JOIN topics t ON v.topic_id = t.topic_id
+            GROUP BY e.exam_name, s.subject_name, t.topic_name
+        `;
+ 
+        connection.query(query, (err, results) => {
+            connection.release();
+            if (err) {
+                console.error('Error fetching video summary:', err);
+                return res.status(500).json({ error: 'Error fetching video summary' });
+            }
+ 
+            res.status(200).json(results);
+        });
+    });
+});
+// Route to update a video
+app.put('/api/videos/update/:video_id', (req, res) => {
+    const video_id = req.params.video_id;
+    const { exam_id, subject_id, topic_id, video_name, video_link } = req.body;
+ 
+    if (!exam_id || !subject_id || !topic_id || !video_name || !video_link) {
+        return res.status(400).send('Exam ID, Subject ID, Topic ID, Video Name, and Video Link are required');
+    }
+ 
+    const query = 'UPDATE videos SET exam_id = ?, subject_id = ?, topic_id = ?, video_name = ?, video_link = ? WHERE video_id = ?';
+ 
+    promisePool.query(query, [exam_id, subject_id, topic_id, video_name, video_link, video_id])
+        .then(() => {
+            res.status(200).send('Video updated successfully');
+        })
+        .catch(error => {
+            console.error('Error updating video:', error);
+            res.status(500).send('Error updating video');
+        });
+});
+// Route to delete a video by video_id
+app.delete('/api/videos/delete/:video_id', (req, res) => {
+    const video_id = req.params.video_id;
+    console.log('Received video_id for deletion:', video_id); // Log the ID
+ 
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+ 
+        connection.query('DELETE FROM videos WHERE video_id = ?', [video_id], (err, results) => {
+            connection.release();
+ 
+            if (err) {
+                console.error('Error deleting video:', err);
+                return res.status(500).send('Error deleting video');
+            }
+ 
+            console.log('Delete results:', results); // Log results from the delete operation
+ 
+            if (results.affectedRows === 0) {
+                return res.status(404).send('Video not found'); // Handle case where no rows were deleted
+            }
+ 
+            res.status(204).send();  // No content to send back
+        });
+    });
+});
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
