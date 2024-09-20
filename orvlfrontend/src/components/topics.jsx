@@ -6,6 +6,7 @@ import Logo_img from './Images/image.png';
 import Leftnavbar from '../components/Leftnavbar';
 import { RxCross2 } from "react-icons/rx";
 
+
 const Topics = () => {
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
@@ -16,6 +17,23 @@ const Topics = () => {
   const [topictable, setTopictable] = useState([]);
   const [editModal, setEditModal] = useState(false);
   const [currentTopic, setCurrentTopic] = useState(null);
+ 
+
+  // useEffect (() =>{
+  //   axios.get(`http://localhost:8000/api/topics/${subject_id}`)
+  //   .then(res => {
+  //   setSelectedExam(res.exam_id)})
+  //   .then(res => {
+  //     setSelectedSubject(res.subject_id)})
+  //   .then(res => setTopics(res.topic_id) )
+     
+
+  //   // setSelectedSubject(res.selectedSubject);
+
+    
+  //   .catch(err => console.log(err))
+    
+  // },[editModal])
 
   const toggleModal1 = () => {
     setModal1(!modal1);
@@ -106,17 +124,7 @@ const Topics = () => {
       .catch(error => console.error('Error saving topics:', error));
   };
 
-  // const handleDelete = (subject_id) => {
-  //   axios.delete(`http://localhost:8000/api/topics/delete/${subject_id}`)
-  //     .then(() => {
-  //       alert('Topic deleted successfully');
-  //       return axios.get('http://localhost:8000/api/topics');
-  //     })
-  //     .then(response => {
-  //       setTopictable(response.data);
-  //     })
-  //     .catch(error => console.error('Error deleting topic:', error));
-  // };
+
   const handleDelete = (subject_id) => {
     console.log("Attempting to delete selection with topic_id:", subject_id); // Log the ID
     if (window.confirm('Are you sure you want to delete this selection?')) {
@@ -135,11 +143,20 @@ const Topics = () => {
     }
   };
   const handleEdit = (topic) => {
-    setCurrentTopic(topic);
-    setSelectedExam(topic.exam_id); // Set selected exam
-    setSelectedSubject(topic.subject_id); // Set selected subject
-    setEditModal(true);
+    axios.get(`http://localhost:8000/api/topics/${topic.topic_id}`) // Adjusted to use topic_id
+      .then(response => {
+        const fetchedTopic = response.data;
+        setSelectedExam(fetchedTopic.exam_id); // Set the fetched exam ID
+        setSelectedSubject(fetchedTopic.subject_id); // Set the fetched subject ID
+        setCurrentTopic(fetchedTopic); // Set the current topic to prefill the edit form
+        setEditModal(true); // Open the edit modal
+      })
+      .catch(error => {
+        console.error('Error fetching topic for edit:', error);
+        alert('Failed to fetch topic data. Please try again.');
+      });
   };
+  
 
   const handleUpdate = (event) => {
     event.preventDefault();
@@ -248,45 +265,45 @@ const Topics = () => {
 
       {/* Edit Modal */}
       {editModal && (
-        <div className='examform'>
-          <div className='modal'>
-            <div className='overlay'></div>
-            <div className='content_m'>
-              <h1>Edit Topic</h1>
-              <form onSubmit={handleUpdate}>
-                <div className='div1'>
-                  <label htmlFor="exam">Exam Name:</label>
-                  <select id="exam" value={selectedExam} onChange={(e) => setSelectedExam(e.target.value)} className='dropdown'>
-                    <option value="">--Select an exam--</option>
-                    {exams.map(exam => (
-                      <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className='div1'>
-                  <label htmlFor="subject">Subject Name:</label>
-                  <select id="subject" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} className='dropdown'>
-                    <option value="">--Select a subject--</option>
-                    {subjects.map(subject => (
-                      <option key={subject.subject_id} value={subject.subject_id}>{subject.subject_name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className='div1'>
-                  <label htmlFor="topic">Topic Name:</label>
-                  <input
-                    type="text"
-                    value={currentTopic?.topic_name}
-                    onChange={(e) => setCurrentTopic({ ...currentTopic, topic_name: e.target.value })}
-                  />
-                </div>
-                <button type="submit">Update Topic</button>
-                <button className='closebutton' onClick={toggleEditModal}><RxCross2 /></button>
-              </form>
-            </div>
+  <div className='examform'>
+    <div className='modal'>
+      <div className='overlay'></div>
+      <div className='content_m'>
+        <h1>Edit Topic</h1>
+        <form onSubmit={handleUpdate}>
+          <div className='div1'>
+            <label htmlFor="exam">Exam Name:</label>
+            <select id="exam" value={selectedExam} onChange={(e) => setSelectedExam(e.target.value)} className='dropdown'>
+              <option value="">--Select an exam--</option>
+              {exams.map(exam => (
+                <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
+              ))}
+            </select>
           </div>
-        </div>
-      )}
+          <div className='div1'>
+            <label htmlFor="subject">Subject Name:</label>
+            <select id="subject" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} className='dropdown'>
+              <option value="">--Select a subject--</option>
+              {subjects.map(subject => (
+                <option key={subject.subject_id} value={subject.subject_id}>{subject.subject_name}</option>
+              ))}
+            </select>
+          </div>
+          <div className='div1'>
+            <label htmlFor="topic">Topic Name:</label>
+            <input
+              type="text"
+              value={currentTopic?.topic_name || ''} // Pre-fill with the current topic name
+              onChange={(e) => setCurrentTopic({ ...currentTopic, topic_name: e.target.value })}
+            />
+          </div>
+          <button type="submit">Update Topic</button>
+          <button className='closebutton' onClick={toggleEditModal}><RxCross2 /></button>
+        </form>
+      </div>
+    </div>
+  </div>
+)}
 
       <div className='selections-tablecontainer'>
         <h2>Topics Table</h2>

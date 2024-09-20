@@ -329,41 +329,7 @@ app.get('/api/videos/:topic_id', (req, res) => {
     });
 });
  
- // Route to fetch videos for a specific exam, subject, and topic
-// app.get('/api/videos', (req, res) => {
-//     const { examId, subjectId, topicId } = req.query;
- 
-//     if (!examId || !subjectId || !topicId) {
-//         return res.status(400).json({ error: 'Missing required query parameters' });
-//     }
- 
-//     pool.getConnection((err, connection) => {
-//         if (err) {
-//             console.error('Error connecting to MySQL:', err);
-//             return res.status(500).json({ error: 'Database connection error' });
-//         }
- 
-//         const query = `
-//             SELECT video_id, video_name, video_link
-//             FROM videos
-//             WHERE exam_id = ? AND subject_id = ? AND topic_id = ?
-//         `;
- 
-//         connection.query(query, [examId, subjectId, topicId], (err, results) => {
-//             connection.release();
-//             if (err) {
-//                 console.error('Error fetching videos:', err);
-//                 return res.status(500).json({ error: 'Error fetching videos', details: err.message });
-//             }
-//             if (results.length === 0) {
-//                 return res.status(404).json({ message: 'No videos found for the given parameters' });
-//             }
-//             res.json(results);
-//         });
-//     });
-// });
- 
-// Route to fetch selections with exam and subject names
+
 app.get('/api/selections', async (req, res) => {
     try {
         const query = `
@@ -418,6 +384,7 @@ app.get('/api/topicsr', async (req, res) => {
     }
  
 });
+
  // Route to fetch topics with GROUP_CONCAT
 app.get('/api/topics', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -428,8 +395,10 @@ app.get('/api/topics', (req, res) => {
  
         const query = `
             SELECT
+                e.exam_id,
                 e.exam_name,
                 s.subject_name,
+                t.topic_id,
               
                 GROUP_CONCAT(t.topic_name ORDER BY t.topic_name ) AS topics,
                 s.subject_id
@@ -452,28 +421,94 @@ app.get('/api/topics', (req, res) => {
         });
     });
 });
-app.get('/api/videos', async (req, res) => {
-    try {
-        const query = `
-            SELECT
-                exams.exam_name,
-                subjects.subject_name,
-                topics.topic_name,
-                videos.video_name,
-                videos.video_link
-            FROM videos
-            JOIN topics ON videos.topic_id = topics.topic_id
-            JOIN subjects ON videos.subject_id = subjects.subject_id
-            JOIN exams ON videos.exam_id = exams.exam_id
-        `;
- 
-        const [rows] = await promisePool.query(query);
-        res.json(rows);  // Send JSON response
-    } catch (error) {
-        console.error('Error fetching videos:', error);
-        res.status(500).send('Error fetching videos');
-    }
+app.get('/api/topics/:topic_id', (req, res) => {
+    const topicId = req.params.topic_id;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+
+        const query = `SELECT * FROM topics WHERE topic_id = ?`;
+        
+        connection.query(query, [topicId], (err, results) => {
+            connection.release();
+
+            if (err) {
+                console.error('Error fetching topic:', err);
+                return res.status(500).send('Error fetching topic');
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Topic not found' });
+            }
+
+            res.status(200).json(results[0]); // Return the first matching topic
+        });
+    });
 });
+
+
+// app.get('/api/videos', async (req, res) => {
+//     try {
+//         const query = `
+//             SELECT
+//                 exams.exam_id,
+//                 subjects.subject_id,
+//                 topics.topic_id
+//                 exams.exam_name,
+//                 subjects.subject_name,
+//                 topics.topic_name,
+//                 videos.video_name,
+//                 videos.video_link,
+//             FROM videos
+//             JOIN topics ON videos.topic_id = topics.topic_id
+//             JOIN subjects ON videos.subject_id = subjects.subject_id
+//             JOIN exams ON videos.exam_id = exams.exam_id
+//         `;
+ 
+//         const [rows] = await promisePool.query(query);
+//         res.json(rows);  // Send JSON response
+//     } catch (error) {
+//         console.error('Error fetching videos:', error);
+//         res.status(500).send('Error fetching videos');
+//     }
+// });
+// app.get('/api/videos/:video_id', async (req, res) => {
+//     const videoId = req.params.video_id;
+
+//     try {
+//         const query = `
+//             SELECT
+//                 exams.exam_id,
+//                 subjects.subject_id,
+//                 topics.topic_id,
+//                 exams.exam_name,
+//                 subjects.subject_name,
+//                 topics.topic_name,
+//                 videos.video_name,
+//                 videos.video_link
+//             FROM videos
+//             JOIN topics ON videos.topic_id = topics.topic_id
+//             JOIN subjects ON videos.subject_id = subjects.subject_id
+//             JOIN exams ON videos.exam_id = exams.exam_id
+//             WHERE videos.video_id = ?
+//         `;
+
+//         const [rows] = await promisePool.query(query, [videoId]);
+
+//         if (rows.length === 0) {
+//             return res.status(404).json({ message: 'Video not found' });
+//         }
+
+//         res.json(rows[0]);  // Send JSON response for the specific video
+//     } catch (error) {
+//         console.error('Error fetching video:', error);
+//         res.status(500).send('Error fetching video');
+//     }
+// });
+
 //// For uploading multiple videos for a specific topic
 // app.post('/api/add-topic-videos', (req, res) => {
 //     const { topic_id, videos } = req.body;
@@ -510,6 +545,69 @@ app.get('/api/videos', async (req, res) => {
 //   });
  
 // Route to update a selection
+app.get('/api/videos', (req, res) => {
+    const query = `
+        SELECT 
+            v.video_id, 
+            t.topic_id,
+            e.exam_id,
+            s.subject_id,
+            e.exam_name,
+            s.subject_name,
+            t.topic_name,
+            GROUP_CONCAT(v.video_name ORDER BY v.video_name ASC SEPARATOR ', ') AS video_names,
+            GROUP_CONCAT(v.video_link ORDER BY v.video_name ASC SEPARATOR ', ') AS video_links 
+        FROM videos v
+        JOIN exams e ON v.exam_id = e.exam_id
+        JOIN subjects s ON v.subject_id = s.subject_id
+        JOIN topics t ON v.topic_id = t.topic_id
+        GROUP BY e.exam_name, s.subject_name, t.topic_name
+    `;
+
+    pool.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching video summary:', err);
+            return res.status(500).json({ error: 'Error fetching video summary' });
+        }
+        res.status(200).json(results);
+    });
+});
+
+// Get a video by ID
+// Route to get video details by video ID
+app.get('/api/videos/:video_id', (req, res) => {
+    const videoId = req.params.video_id;
+    const query = `
+        SELECT 
+            v.video_id, 
+            t.topic_id,
+            e.exam_id,
+            s.subject_id,
+            e.exam_name,
+            s.subject_name,
+            t.topic_name,
+            v.video_name,
+            v.video_link
+        FROM videos v
+        JOIN exams e ON v.exam_id = e.exam_id
+        JOIN subjects s ON v.subject_id = s.subject_id
+        JOIN topics t ON v.topic_id = t.topic_id
+        WHERE v.video_id = ?`;
+
+    pool.query(query, [videoId], (err, results) => {
+        if (err) {
+            console.error('Error fetching video details:', err);
+            return res.status(500).json({ error: 'Error fetching video details' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Video not found' });
+        }
+        res.status(200).json(results[0]); // Return the first (and only) result
+    });
+});
+
+
+
 app.put('/api/selections/update/:selection_id', (req, res) => {
     const selection_id = req.params.selection_id;
     const { exam_id, subject_id } = req.body;
@@ -702,6 +800,8 @@ app.get('/api/videos-summary', (req, res) => {
             SELECT 
             v.video_id, 
             t.topic_id,
+            e.exam_id,
+            s.subject_id,
                    e.exam_name,
                    s.subject_name,
                    t.topic_name,
@@ -725,6 +825,48 @@ app.get('/api/videos-summary', (req, res) => {
         });
     });
 });
+// app.get('/api/videos/:videoId', (req, res) => {
+//     const videoId = req.params.videoId;
+
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).json({ error: 'Database connection error' });
+//         }
+
+//         const query = `
+//             SELECT 
+//                 v.video_id, 
+//                 t.topic_id,
+//                 e.exam_id,
+//                 s.subject_id,
+//                 e.exam_name,
+//                 s.subject_name,
+//                 t.topic_name,
+//                 v.video_name,
+//                 v.video_link
+//             FROM videos v
+//             JOIN exams e ON v.exam_id = e.exam_id
+//             JOIN subjects s ON v.subject_id = s.subject_id
+//             JOIN topics t ON v.topic_id = t.topic_id
+//             WHERE v.video_id = ?;`;
+
+//         connection.query(query, [videoId], (err, results) => {
+//             connection.release();
+//             if (err) {
+//                 console.error('Error fetching video:', err);
+//                 return res.status(500).json({ error: 'Error fetching video' });
+//             }
+
+//             if (results.length === 0) {
+//                 return res.status(404).json({ error: 'Video not found' });
+//             }
+
+//             res.status(200).json(results[0]); // Send the first result
+//         });
+//     });
+// });
+
 // Route to update a video
 app.put('/api/videos/update/:video_id', (req, res) => {
     const video_id = req.params.video_id;

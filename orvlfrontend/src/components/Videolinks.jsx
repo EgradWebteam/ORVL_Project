@@ -5,7 +5,7 @@ import { IoMdHome } from "react-icons/io";
 import Logo_img from './Images/image.png';
 import Leftnavbar from '../components/Leftnavbar';
 import { RxCross2 } from "react-icons/rx";
-
+ 
 const Videolinks = () => {
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
@@ -17,14 +17,14 @@ const Videolinks = () => {
   const [videotable, setVideotable] = useState([]);
   const [modal1, setModal1] = useState(false);
   const [editingVideoIndex, setEditingVideoIndex] = useState(null);
-
+ 
   const toggleModal1 = () => {
     setModal1(!modal1);
     if (modal1) {
       resetForm();
     }
   };
-
+ 
   const resetForm = () => {
     setSelectedExam('');
     setSelectedSubject('');
@@ -34,7 +34,7 @@ const Videolinks = () => {
     setVideos([{ video_name: '', video_link: '' }]);
     setEditingVideoIndex(null);
   };
-
+ 
   useEffect(() => {
     // Fetch exams when component mounts
     axios.get('http://localhost:8000/api/exams')
@@ -43,7 +43,7 @@ const Videolinks = () => {
       })
       .catch(error => console.error('Error fetching exams:', error));
   }, []);
-
+ 
   useEffect(() => {
     // Fetch video table data when component mounts
     axios.get('http://localhost:8000/api/videos-summary')
@@ -52,7 +52,7 @@ const Videolinks = () => {
       })
       .catch(error => console.error('Error fetching video table data:', error));
   }, []);
-
+ 
   useEffect(() => {
     // Fetch subjects when an exam is selected
     if (selectedExam) {
@@ -67,7 +67,7 @@ const Videolinks = () => {
       setTopics([]);
     }
   }, [selectedExam]);
-
+ 
   useEffect(() => {
     // Fetch topics when a subject is selected
     if (selectedSubject) {
@@ -82,41 +82,41 @@ const Videolinks = () => {
       setVideos([{ video_name: '', video_link: '' }]);
     }
   }, [selectedSubject]);
-
+ 
   const handleExamChange = (event) => {
     setSelectedExam(event.target.value);
   };
-
+ 
   const handleSubjectChange = (event) => {
     setSelectedSubject(event.target.value);
     setTopics([]);
     setSelectedTopic('');
     setVideos([{ video_name: '', video_link: '' }]);
   };
-
+ 
   const handleTopicChange = (event) => {
     setSelectedTopic(event.target.value);
     setVideos([{ video_name: '', video_link: '' }]);
   };
-
+ 
   const handleVideoChange = (index, field, value) => {
     const newVideos = [...videos];
     newVideos[index][field] = value;
     setVideos(newVideos);
   };
-
+ 
   const addVideoInput = () => {
     setVideos([...videos, { video_name: '', video_link: '' }]);
   };
-
+ 
   const removeVideoInput = (index) => {
     const newVideos = videos.filter((_, i) => i !== index);
     setVideos(newVideos);
   };
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+ 
     const videoData = videos.map(video => ({
       exam_id: selectedExam,
       subject_id: selectedSubject,
@@ -124,7 +124,7 @@ const Videolinks = () => {
       video_name: video.video_name,
       video_link: video.video_link
     }));
-
+ 
     axios.post('http://localhost:8000/api/submit-videos', { videos: videoData })
       .then(() => {
         alert('Video links saved successfully');
@@ -136,7 +136,7 @@ const Videolinks = () => {
         alert('An error occurred. Please check the console for more details.');
       });
   };
-
+ 
   const fetchVideoTableData = () => {
     axios.get('http://localhost:8000/api/videos', {
       params: {
@@ -150,7 +150,7 @@ const Videolinks = () => {
     })
     .catch(error => console.error('Error fetching video table data:', error));
   };
-
+ 
   const handleEditVideo = (index) => {
     setEditingVideoIndex(index);
     const videoToEdit = videotable[index];
@@ -160,7 +160,7 @@ const Videolinks = () => {
     setVideos([{ video_name: videoToEdit.video_name, video_link: videoToEdit.video_link }]);
     setModal1(true);
   };
-
+ 
   const handleDeleteVideo = (topic_id) => {
     if (window.confirm('Are you sure you want to delete this video?')) {
       axios.delete(`http://localhost:8000/api/videos/delete/${topic_id}`)
@@ -174,7 +174,7 @@ const Videolinks = () => {
         });
     }
   };
-
+ 
   return (
     <div>
       <div className='headerjeem'>
@@ -187,7 +187,7 @@ const Videolinks = () => {
       </div>
       <Leftnavbar />
       <button className='btnes' onClick={toggleModal1}> Video Upload</button>
-
+ 
       {modal1 && (
         <div className='examform'>
           <div className='modal'>
@@ -282,7 +282,7 @@ const Videolinks = () => {
           </div>
         </div>
       )}
-
+ 
       <div className='selections-tablecontainer'>
         <h2>Video Links Table</h2>
         <table className='selections-table'>
@@ -316,5 +316,5 @@ const Videolinks = () => {
     </div>
   );
 };
-
+ 
 export default Videolinks;
