@@ -105,6 +105,96 @@ app.get('/api/subjects/:subject_id/topics', (req, res) => {
         });
     });
 });
+ // Route to update a selection
+app.put('/api/selections/update/:selection_id', (req, res) => {
+    const selection_id = req.params.selection_id;
+    const { exam_id, subject_id } = req.body;
+ 
+    if (!exam_id || !subject_id) {
+        return res.status(400).send('Exam ID and Subject ID are required');
+    }
+ 
+    // Check if the new selection already exists
+    const checkQuery = 'SELECT COUNT(*) AS count FROM selections WHERE exam_id = ? AND subject_id = ? AND selection_id != ?';
+   
+    promisePool.query(checkQuery, [exam_id, subject_id, selection_id])
+        .then(([rows]) => {
+            if (rows.count > 0) {
+                return res.status(409).send('Selection already exists with this exam and subject');
+            }
+ 
+            const query = 'UPDATE selections SET exam_id = ?, subject_id = ? WHERE selection_id = ?';
+            return promisePool.query(query, [exam_id, subject_id, selection_id]);
+        })
+        .then(() => {
+            res.status(200).send('Selection updated successfully');
+        })
+        .catch(error => {
+            console.error('Error updating selection:', error);
+            res.status(500).send('Error updating selection');
+        });
+});
+ 
+ 
+// Route to handle form submission or fetch selections
+app.route('/api/submit-selection')
+.post((req, res) => {
+    const { exam_id, selectedsubjects } = req.body;
+ 
+    if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
+        return res.status(400).send('Exam and at least one subject must be selected');
+    }
+ 
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            return res.status(500).send('Database connection error');
+        }
+ 
+        const insertPromises = selectedsubjects.map((subject_id) => {
+            return new Promise((resolve, reject) => {
+                // Check if the selection already exists
+                connection.query(
+                    'SELECT COUNT(*) AS count FROM selections WHERE exam_id = ? AND subject_id = ?',
+                    [exam_id, subject_id],
+                    (err, results) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        if (results[0].count > 0) {
+                            // Skip insertion if already exists
+                            return resolve(`Selection for exam ${exam_id} and subject ${subject_id} already exists`);
+                        }
+ 
+                        // If not exists, proceed with insertion
+                        connection.query(
+                            'INSERT INTO selections (exam_id, subject_id) VALUES (?, ?)',
+                            [exam_id, subject_id],
+                            (err, results) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(results);
+                                }
+                            }
+                        );
+                    }
+                );
+            });
+        });
+ 
+        Promise.all(insertPromises)
+            .then((responses) => {
+                connection.release();
+                res.status(200).send('Selection saved successfully. ' + responses.join(' '));
+            })
+            .catch((err) => {
+                connection.release();
+                console.error('Error saving selection:', err);
+                res.status(500).send('Error saving selection');
+            });
+    });
+});
  
 // // Route to handle form submission
 // app.post('/api/submit-selection', (req, res) => {
@@ -148,74 +238,74 @@ app.get('/api/subjects/:subject_id/topics', (req, res) => {
 //             });
 //     });
 // });
- // Route to handle form submission or fetch selections
-app.route('/api/submit-selection')
-.post((req, res) => {
-    const { exam_id, selectedsubjects } = req.body;
+//  // Route to handle form submission or fetch selections
+// app.route('/api/submit-selection')
+// .post((req, res) => {
+//     const { exam_id, selectedsubjects } = req.body;
  
-    if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
-        return res.status(400).send('Exam and at least one subject must be selected');
-    }
+//     if (!exam_id || !selectedsubjects || selectedsubjects.length === 0) {
+//         return res.status(400).send('Exam and at least one subject must be selected');
+//     }
  
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.error('Error connecting to MySQL:', err);
-            return res.status(500).send('Database connection error');
-        }
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).send('Database connection error');
+//         }
  
-        const insertPromises = selectedsubjects.map((subject_id) => {
-            return new Promise((resolve, reject) => {
-                connection.query(
-                    'INSERT INTO selections (exam_id, subject_id) VALUES (?, ?)',
-                    [exam_id, subject_id],
-                    (err, results) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(results);
-                        }
-                    }
-                );
-            });
-        });
+//         const insertPromises = selectedsubjects.map((subject_id) => {
+//             return new Promise((resolve, reject) => {
+//                 connection.query(
+//                     'INSERT INTO selections (exam_id, subject_id) VALUES (?, ?)',
+//                     [exam_id, subject_id],
+//                     (err, results) => {
+//                         if (err) {
+//                             reject(err);
+//                         } else {
+//                             resolve(results);
+//                         }
+//                     }
+//                 );
+//             });
+//         });
  
-        Promise.all(insertPromises)
-            .then(() => {
-                connection.release();
-                res.status(200).send('Selection saved successfully');
-            })
-            .catch((err) => {
-                connection.release();
-                console.error('Error saving selection:', err);
-                res.status(500).send('Error saving selection');
-            });
-    });
-})
-.get((req, res) => {
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.error('Error connecting to MySQL:', err);
-            return res.status(500).send('Database connection error');
-        }
+//         Promise.all(insertPromises)
+//             .then(() => {
+//                 connection.release();
+//                 res.status(200).send('Selection saved successfully');
+//             })
+//             .catch((err) => {
+//                 connection.release();
+//                 console.error('Error saving selection:', err);
+//                 res.status(500).send('Error saving selection');
+//             });
+//     });
+// })
+// .get((req, res) => {
+//     pool.getConnection((err, connection) => {
+//         if (err) {
+//             console.error('Error connecting to MySQL:', err);
+//             return res.status(500).send('Database connection error');
+//         }
  
-        const query = `
-            SELECT e.exam_id, e.exam_name, GROUP_CONCAT(sub.subject_name SEPARATOR ', ') AS subjects
-            FROM selections s
-            JOIN exams e ON s.exam_id = e.exam_id
-            JOIN subjects sub ON s.subject_id = sub.subject_id
-            GROUP BY e.exam_id, e.exam_name
-        `;
+//         const query = `
+//             SELECT e.exam_id, e.exam_name, GROUP_CONCAT(sub.subject_name SEPARATOR ', ') AS subjects
+//             FROM selections s
+//             JOIN exams e ON s.exam_id = e.exam_id
+//             JOIN subjects sub ON s.subject_id = sub.subject_id
+//             GROUP BY e.exam_id, e.exam_name
+//         `;
  
-        connection.query(query, (err, results) => {
-            connection.release();
-            if (err) {
-                console.error('Error fetching selections:', err);
-                return res.status(500).send('Error fetching selections');
-            }
-            res.status(200).json(results);
-        });
-    });
-});
+//         connection.query(query, (err, results) => {
+//             connection.release();
+//             if (err) {
+//                 console.error('Error fetching selections:', err);
+//                 return res.status(500).send('Error fetching selections');
+//             }
+//             res.status(200).json(results);
+//         });
+//     });
+// });
  
 // Route to handle topics submission
 app.post('/api/submit-topics', (req, res) => {
@@ -608,25 +698,25 @@ app.get('/api/videos/:video_id', (req, res) => {
 
 
 
-app.put('/api/selections/update/:selection_id', (req, res) => {
-    const selection_id = req.params.selection_id;
-    const { exam_id, subject_id } = req.body;
+// app.put('/api/selections/update/:selection_id', (req, res) => {
+//     const selection_id = req.params.selection_id;
+//     const { exam_id, subject_id } = req.body;
  
-    if (!exam_id || !subject_id) {
-        return res.status(400).send('Exam ID and Subject ID are required');
-    }
+//     if (!exam_id || !subject_id) {
+//         return res.status(400).send('Exam ID and Subject ID are required');
+//     }
  
-    const query = 'UPDATE selections SET exam_id = ?, subject_id = ? WHERE selection_id = ?';
+//     const query = 'UPDATE selections SET exam_id = ?, subject_id = ? WHERE selection_id = ?';
    
-    promisePool.query(query, [exam_id, subject_id, selection_id])
-        .then(() => {
-            res.status(200).send('Selection updated successfully');
-        })
-        .catch(error => {
-            console.error('Error updating selection:', error);
-            res.status(500).send('Error updating selection');
-        });
-});
+//     promisePool.query(query, [exam_id, subject_id, selection_id])
+//         .then(() => {
+//             res.status(200).send('Selection updated successfully');
+//         })
+//         .catch(error => {
+//             console.error('Error updating selection:', error);
+//             res.status(500).send('Error updating selection');
+//         });
+// });
  
  
  
