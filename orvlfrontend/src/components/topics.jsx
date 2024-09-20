@@ -5,7 +5,7 @@ import { IoMdHome } from "react-icons/io";
 import Logo_img from './Images/image.png';
 import Leftnavbar from '../components/Leftnavbar';
 import { RxCross2 } from "react-icons/rx";
- 
+
 const Topics = () => {
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
@@ -16,38 +16,35 @@ const Topics = () => {
   const [topictable, setTopictable] = useState([]);
   const [editModal, setEditModal] = useState(false);
   const [currentTopic, setCurrentTopic] = useState(null);
- 
+
   const toggleModal1 = () => {
     setModal1(!modal1);
   };
- 
+
   const toggleEditModal = () => {
     setEditModal(!editModal);
   };
- 
+
   useEffect(() => {
     axios.get('http://localhost:8000/api/exams')
       .then(response => {
-        console.log('Fetched exams:', response.data);
         setExams(response.data);
       })
       .catch(error => console.error('Error fetching exams:', error));
   }, []);
- 
+
   useEffect(() => {
     axios.get('http://localhost:8000/api/topics')
       .then(response => {
-        console.log('Fetched topics:', response.data);
         setTopictable(response.data);
       })
       .catch(error => console.error('Error fetching topics:', error));
   }, []);
- 
+
   useEffect(() => {
     if (selectedExam) {
       axios.get(`http://localhost:8000/api/exam/${selectedExam}/subjects`)
         .then(response => {
-          console.log('Fetched subjects:', response.data);
           setSubjects(response.data);
         })
         .catch(error => console.error('Error fetching subjects:', error));
@@ -57,16 +54,16 @@ const Topics = () => {
       setTopics([]);
     }
   }, [selectedExam]);
- 
+
   const handleExamChange = (event) => {
     setSelectedExam(event.target.value);
   };
- 
+
   const handleSubjectChange = (event) => {
     setSelectedSubject(event.target.value);
     setTopics([{ subject_id: event.target.value, topic_name: '' }]);
   };
- 
+
   const handleTopicChange = (index, event) => {
     const { value } = event.target;
     setTopics(prevTopics =>
@@ -75,24 +72,24 @@ const Topics = () => {
       )
     );
   };
- 
+
   const handleAddTopic = () => {
     setTopics(prevTopics => [...prevTopics, { subject_id: selectedSubject, topic_name: '' }]);
   };
- 
+
   const handleRemoveTopic = (index) => {
     setTopics(prevTopics => prevTopics.filter((_, i) => i !== index));
   };
- 
+
   const handleSubmit = (event) => {
     event.preventDefault();
- 
+
     const topicData = topics.map(topic => ({
       exam_id: selectedExam,
       subject_id: topic.subject_id,
       topic_name: topic.topic_name
     }));
- 
+
     axios.post('http://localhost:8000/api/submit-topics', { topics: topicData })
       .then(() => {
         alert('Topics saved successfully');
@@ -108,55 +105,67 @@ const Topics = () => {
       })
       .catch(error => console.error('Error saving topics:', error));
   };
- 
+
+  // const handleDelete = (subject_id) => {
+  //   axios.delete(`http://localhost:8000/api/topics/delete/${subject_id}`)
+  //     .then(() => {
+  //       alert('Topic deleted successfully');
+  //       return axios.get('http://localhost:8000/api/topics');
+  //     })
+  //     .then(response => {
+  //       setTopictable(response.data);
+  //     })
+  //     .catch(error => console.error('Error deleting topic:', error));
+  // };
   const handleDelete = (subject_id) => {
-    axios.delete(`http://localhost:8000/api/topics/delete/${subject_id}`)
-      .then(() => {
-        alert('Topic deleted successfully');
-        return axios.get('http://localhost:8000/api/topics');
-      })
-      .then(response => {
-        setTopictable(response.data);
-      })
-      .catch(error => console.error('Error deleting topic:', error));
+    console.log("Attempting to delete selection with topic_id:", subject_id); // Log the ID
+    if (window.confirm('Are you sure you want to delete this selection?')) {
+      axios.delete(`http://localhost:8000/api/topics/delete/${subject_id}`)
+        .then(() => {
+          alert('Selection deleted successfully');
+          return axios.get('http://localhost:8000/api/topics');
+        })
+        .then(response => {
+          setTopictable(response.data);
+        })
+        .catch(error => {
+          console.error('Error deleting selection:', error.message || error);
+          alert('Failed to delete selection. Please try again.');
+        });
+    }
   };
- 
   const handleEdit = (topic) => {
     setCurrentTopic(topic);
     setSelectedExam(topic.exam_id); // Set selected exam
     setSelectedSubject(topic.subject_id); // Set selected subject
     setEditModal(true);
   };
- 
- 
- 
+
   const handleUpdate = (event) => {
     event.preventDefault();
- 
+
     const updatedTopicData = [{
       exam_id: selectedExam,
       subject_id: selectedSubject,
       topic_name: currentTopic.topic_name,
     }];
- 
-    // Send the updated topic to the backend using POST
+
     axios.post('http://localhost:8000/api/submit-topics', { topics: updatedTopicData })
       .then(() => {
         alert('Topic updated successfully');
-        // Fetch the updated topics list from the backend
         return axios.get('http://localhost:8000/api/topics');
       })
       .then(response => {
-        setTopictable(response.data); // Update the table with new data
-        setEditModal(false); // Close the edit modal
-        setCurrentTopic(null); // Clear current topic state
+        setTopictable(response.data);
+        setEditModal(false);
+        setCurrentTopic(null);
       })
       .catch(error => {
         console.error('Error updating topic:', error);
         alert('Failed to update the topic. Please try again.');
       });
   };
- 
+
   return (
     <div>
       <div className='headerjeem'>
@@ -169,7 +178,7 @@ const Topics = () => {
       </div>
       <Leftnavbar />
       <button className='btnes' onClick={toggleModal1}> Topic Creation</button>
- 
+
       {modal1 && (
         <div className='examform'>
           <div className='modal'>
@@ -189,16 +198,16 @@ const Topics = () => {
                 {subjects.length > 0 && (
                   <div className='div1'>
                     <label htmlFor="subject-dropdown">Select Subject:</label>
-                    <select
+                    <select 
                       id="subject-dropdown"
                       value={selectedSubject}
-                      onChange={handleSubjectChange}
+                      onChange={handleSubjectChange} 
                       className="dropdown"
                     >
                       <option value="">Select a subject</option>
                       {subjects.map(subject => (
-                        <option
-                          key={subject.subject_id}
+                        <option 
+                          key={subject.subject_id} 
                           value={subject.subject_id}
                         >
                           {subject.subject_name}
@@ -236,7 +245,7 @@ const Topics = () => {
           </div>
         </div>
       )}
- 
+
       {/* Edit Modal */}
       {editModal && (
         <div className='examform'>
@@ -278,7 +287,7 @@ const Topics = () => {
           </div>
         </div>
       )}
- 
+
       <div className='selections-tablecontainer'>
         <h2>Topics Table</h2>
         <table className='selections-table'>
@@ -299,7 +308,7 @@ const Topics = () => {
                 <td>{topict.subject_name}</td>
                 <td>{topict.topics}</td>
                 <td className='upddel'>
-                  <button  className="update" onClick={() => handleEdit(topict)}>Update</button>
+                  <button className="update" onClick={() => handleEdit(topict)}>Update</button>
                   <button className='delete' onClick={() => handleDelete(topict.subject_id)}>Delete</button>
                 </td>
               </tr>
@@ -310,6 +319,5 @@ const Topics = () => {
     </div>
   );
 };
- 
+
 export default Topics;
- 

@@ -161,9 +161,9 @@ const Videolinks = () => {
     setModal1(true);
   };
 
-  const handleDeleteVideo = (videoId) => {
+  const handleDeleteVideo = (topic_id) => {
     if (window.confirm('Are you sure you want to delete this video?')) {
-      axios.delete(`http://localhost:8000/api/videos/${videoId}`)
+      axios.delete(`http://localhost:8000/api/videos/delete/${topic_id}`)
         .then(() => {
           alert('Video deleted successfully');
           fetchVideoTableData();
@@ -306,7 +306,7 @@ const Videolinks = () => {
                 <td>{videot.video_names}</td>
                 <td className='upddel'>
                   <button onClick={() => handleEditVideo(index)} className='update'>Update</button>
-                  <button onClick={() => handleDeleteVideo(videot.video_id) } className="delete">Delete</button>
+                  <button onClick={() => handleDeleteVideo(videot.topic_id) } className="delete">Delete</button>
                 </td>
               </tr>
             ))}

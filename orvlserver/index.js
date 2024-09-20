@@ -699,12 +699,14 @@ app.get('/api/videos-summary', (req, res) => {
         }
  
         const query = `
-            SELECT v.topic_id, 
+            SELECT 
+            v.video_id, 
+            t.topic_id,
                    e.exam_name,
                    s.subject_name,
                    t.topic_name,
                    GROUP_CONCAT(v.video_name ORDER BY v.video_name ASC SEPARATOR ', ') AS video_names,
-                   GROUP_CONCAT(v.video_link ORDER BY v.video_name ASC SEPARATOR ', ') AS video_links
+               GROUP_CONCAT(v.video_link ORDER BY v.video_name ASC SEPARATOR ', ') AS video_links 
             FROM videos v
             JOIN exams e ON v.exam_id = e.exam_id
             JOIN subjects s ON v.subject_id = s.subject_id
@@ -743,10 +745,10 @@ app.put('/api/videos/update/:video_id', (req, res) => {
             res.status(500).send('Error updating video');
         });
 });
-// Route to delete a video by video_id
-app.delete('/api/videos/delete/:video_id', (req, res) => {
-    const video_id = req.params.video_id;
-    console.log('Received video_id for deletion:', video_id); // Log the ID
+// Route to delete a video by topic_id
+app.delete('/api/videos/delete/:topic_id', (req, res) => {
+    const topic_id = req.params.topic_id;
+    console.log('Received video_id for deletion:', topic_id); // Log the ID
  
     pool.getConnection((err, connection) => {
         if (err) {
@@ -754,7 +756,7 @@ app.delete('/api/videos/delete/:video_id', (req, res) => {
             return res.status(500).send('Database connection error');
         }
  
-        connection.query('DELETE FROM videos WHERE video_id = ?', [video_id], (err, results) => {
+        connection.query('DELETE FROM videos WHERE topic_id = ?', [topic_id], (err, results) => {
             connection.release();
  
             if (err) {
@@ -772,6 +774,7 @@ app.delete('/api/videos/delete/:video_id', (req, res) => {
         });
     });
 });
+ 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
