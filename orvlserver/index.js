@@ -105,35 +105,71 @@ app.get('/api/subjects/:subject_id/topics', (req, res) => {
         });
     });
 });
- // Route to update a selection
-app.put('/api/selections/update/:selection_id', (req, res) => {
-    const selection_id = req.params.selection_id;
-    const { exam_id, subject_id } = req.body;
- 
-    if (!exam_id || !subject_id) {
-        return res.status(400).send('Exam ID and Subject ID are required');
-    }
- 
-    // Check if the new selection already exists
-    const checkQuery = 'SELECT COUNT(*) AS count FROM selections WHERE exam_id = ? AND subject_id = ? AND selection_id != ?';
+router.put(
+    "/api/selections/update/:exam_id/:subject_id",
+    async (req, res) => {
+      const exam_id = req.params.exam_id;
+      const subject_id = req.params.subject_id;
+      const {
+        newExamName,
+        newSubjectName,
+      } = req.body;
    
-    promisePool.query(checkQuery, [exam_id, subject_id, selection_id])
-        .then(([rows]) => {
-            if (rows.count > 0) {
-                return res.status(409).send('Selection already exists with this exam and subject');
-            }
+      const updateQuery = `
+        UPDATE selections
+        SET exam_name = ?, subject_id = ?
+        WHERE exam_id = ? AND subject_id = ?`;
+   
+      try {
+        await db.query(updateQuery, [
+          newExamName,
+          newSubjectName,
+          exam_id,
+          subject_id,
+        ]);
+   
+        // Optionally fetch the updated record (if needed)
+        const updateResult = await db.query(
+          "SELECT * FROM selections WHERE exam_id = ? AND subject_id = ?",
+          [exam_id, subject_id]
+        );
+   
+        res.json({ message: "Selection updated successfully", data: updateResult });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+  );
+ // Route to update a selection
+// app.put('/api/selections/update/:selection_id', (req, res) => {
+//     const selection_id = req.params.selection_id;
+//     const { exam_id, subject_id } = req.body;
  
-            const query = 'UPDATE selections SET exam_id = ?, subject_id = ? WHERE selection_id = ?';
-            return promisePool.query(query, [exam_id, subject_id, selection_id]);
-        })
-        .then(() => {
-            res.status(200).send('Selection updated successfully');
-        })
-        .catch(error => {
-            console.error('Error updating selection:', error);
-            res.status(500).send('Error updating selection');
-        });
-});
+//     if (!exam_id || !subject_id) {
+//         return res.status(400).send('Exam ID and Subject ID are required');
+//     }
+ 
+//     // Check if the new selection already exists
+//     const checkQuery = 'SELECT COUNT(*) AS count FROM selections WHERE exam_id = ? AND subject_id = ? AND selection_id != ?';
+   
+//     promisePool.query(checkQuery, [exam_id, subject_id, selection_id])
+//         .then(([rows]) => {
+//             if (rows.count > 0) {
+//                 return res.status(409).send('Selection already exists with this exam and subject');
+//             }
+ 
+//             const query = 'UPDATE selections SET exam_id = ?, subject_id = ? WHERE selection_id = ?';
+//             return promisePool.query(query, [exam_id, subject_id, selection_id]);
+//         })
+//         .then(() => {
+//             res.status(200).send('Selection updated successfully');
+//         })
+//         .catch(error => {
+//             console.error('Error updating selection:', error);
+//             res.status(500).send('Error updating selection');
+//         });
+// });
  
  
 // Route to handle form submission or fetch selections
@@ -718,7 +754,50 @@ app.get('/api/videos/:video_id', (req, res) => {
 //         });
 // });
  
- 
+// Route to update a selection
+app.put('/api/selections/update/:selection_id/:exam_id/:subject_id', async (req, res) => {
+    const selection_id = req.params.selection_id;
+    const exam_id = req.params.exam_id;
+    const subject_id = req.params.subject_id;
+  
+  
+    const {
+       examId,
+        subjectId
+    } = req.body;
+  
+  
+    const updateQuery = `UPDATE selections
+                         SET exam_id=?, subject_id=?
+                         WHERE selection_id=?`;
+  
+  
+    try {
+        // Check if the new selection already exists
+        const checkQuery = 'SELECT COUNT(*) AS count FROM selections WHERE exam_id = ? AND subject_id = ? AND selection_id != ?';
+        const [checkRows] = await promisePool.query(checkQuery, [exam_id, subject_id, selection_id]);
+  
+  
+        if (checkRows[0].count > 0) {
+            return res.status(409).send('Selection already exists with this exam and subject');
+        }
+  
+  
+        // Execute the update
+        await promisePool.query(updateQuery, [exam_id, subject_id, selection_id]);
+  
+  
+        // Log the updated selection
+        const updatedSelection = await promisePool.query('SELECT * FROM selections WHERE selection_id = ?', [selection_id]);
+        console.log("Update Result:", updatedSelection[0]);
+  
+  
+        res.json({ message: "Selection updated successfully" });
+    } catch (error) {
+        console.error('Error updating selection:', error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+ }); 
  
 // // Route to delete a selection by ID
 // app.delete('/api/selections/delete/:selection_id', (req, res) => {

@@ -15,9 +15,10 @@ const Topics = () => {
   const [topics, setTopics] = useState([]);
   const [modal1, setModal1] = useState(false);
   const [topictable, setTopictable] = useState([]);
-  const [editModal, setEditModal] = useState(false);
+  // const [editModal, setEditModal] = useState(false);
   const [currentTopic, setCurrentTopic] = useState(null);
- 
+  const [editingTopicIndex, setEditingTopicIndex] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // useEffect (() =>{
   //   axios.get(`http://localhost:8000/api/topics/${subject_id}`)
@@ -26,22 +27,22 @@ const Topics = () => {
   //   .then(res => {
   //     setSelectedSubject(res.subject_id)})
   //   .then(res => setTopics(res.topic_id) )
-     
+
 
   //   // setSelectedSubject(res.selectedSubject);
 
-    
+
   //   .catch(err => console.log(err))
-    
+
   // },[editModal])
 
   const toggleModal1 = () => {
     setModal1(!modal1);
   };
 
-  const toggleEditModal = () => {
-    setEditModal(!editModal);
-  };
+  // const toggleEditModal = () => {
+  //   setEditModal(!editModal);
+  // };
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/exams')
@@ -55,9 +56,11 @@ const Topics = () => {
     axios.get('http://localhost:8000/api/topics')
       .then(response => {
         setTopictable(response.data);
+        console.log('Fetched topics:', response.data); // Log the response
       })
       .catch(error => console.error('Error fetching topics:', error));
   }, []);
+  
 
   useEffect(() => {
     if (selectedExam) {
@@ -120,6 +123,7 @@ const Topics = () => {
         setSelectedSubject('');
         setSubjects([]);
         setTopics([]);
+        resetForm();
       })
       .catch(error => console.error('Error saving topics:', error));
   };
@@ -142,47 +146,62 @@ const Topics = () => {
         });
     }
   };
-  const handleEdit = (topic) => {
-    axios.get(`http://localhost:8000/api/topics/${topic.topic_id}`) // Adjusted to use topic_id
-      .then(response => {
-        const fetchedTopic = response.data;
-        setSelectedExam(fetchedTopic.exam_id); // Set the fetched exam ID
-        setSelectedSubject(fetchedTopic.subject_id); // Set the fetched subject ID
-        setCurrentTopic(fetchedTopic); // Set the current topic to prefill the edit form
-        setEditModal(true); // Open the edit modal
-      })
-      .catch(error => {
-        console.error('Error fetching topic for edit:', error);
-        alert('Failed to fetch topic data. Please try again.');
-      });
+  // const handleEdit = (topic) => {
+  //   axios.get(`http://localhost:8000/api/topics/${topic.topic_id}`) // Adjusted to use topic_id
+  //     .then(response => {
+  //       const fetchedTopic = response.data;
+  //       setSelectedExam(fetchedTopic.exam_id); // Set the fetched exam ID
+  //       setSelectedSubject(fetchedTopic.subject_id); // Set the fetched subject ID
+  //       setCurrentTopic(fetchedTopic); // Set the current topic to prefill the edit form
+  //       setEditModal(true); // Open the edit modal
+  //     })
+  //     .catch(error => {
+  //       console.error('Error fetching topic for edit:', error);
+  //       alert('Failed to fetch topic data. Please try again.');
+  //     });
+  // };
+  const handleEdit = (index) => {
+    if (index < 0 || index >= topictable.length) {
+      console.error('Invalid index:', index);
+      return; // Early return if index is out of bounds
+    }
+  
+    const topicToEdit = topictable[index];
+    console.log('Editing topic:', topicToEdit);
+  
+    setSelectedExam(topicToEdit.exam_id);
+    setSelectedSubject(topicToEdit.subject_id);
+  
+    const topicsToEdit = topicToEdit.topics.split(',').map(name => ({
+      subject_id: topicToEdit.subject_id,
+      topic_name: name.trim()
+    }));
+  
+    setTopics(topicsToEdit);
+    setEditingTopicIndex(index);
+    setModal1(true);
   };
   
-
-  const handleUpdate = (event) => {
-    event.preventDefault();
-
-    const updatedTopicData = [{
-      exam_id: selectedExam,
-      subject_id: selectedSubject,
-      topic_name: currentTopic.topic_name,
-    }];
-
-    axios.post('http://localhost:8000/api/submit-topics', { topics: updatedTopicData })
-      .then(() => {
-        alert('Topic updated successfully');
-        return axios.get('http://localhost:8000/api/topics');
-      })
-      .then(response => {
-        setTopictable(response.data);
-        setEditModal(false);
-        setCurrentTopic(null);
-      })
-      .catch(error => {
-        console.error('Error updating topic:', error);
-        alert('Failed to update the topic. Please try again.');
-      });
+  
+  const resetForm = () => {
+    setSelectedExam('');
+    setSelectedSubject('');
+    setSubjects([]);
+    setTopics([]);
+   
+    setEditingTopicIndex(null);
   };
+  // Filter topics based on searchTerm
+  const filteredTopics = topictable.filter(topic =>
+    topic.topics.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
+  // Handle search input change
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+  
+ 
   return (
     <div>
       <div className='headerjeem'>
@@ -194,6 +213,9 @@ const Topics = () => {
         </a>
       </div>
       <Leftnavbar />
+      <div className='headerpageh1'>
+        <h1> Topic Creation  Page</h1>
+      </div>
       <button className='btnes' onClick={toggleModal1}> Topic Creation</button>
 
       {modal1 && (
@@ -201,7 +223,7 @@ const Topics = () => {
           <div className='modal'>
             <div className='overlay'></div>
             <div className='content_m'>
-              <h1>Topics Creation</h1>
+              <h1>{editingTopicIndex !== null ? 'Edit Topics' : 'Topics Creation'}</h1>
               <form onSubmit={handleSubmit}>
                 <div className='div1'>
                   <label htmlFor="exam">Select Exam:</label>
@@ -215,16 +237,16 @@ const Topics = () => {
                 {subjects.length > 0 && (
                   <div className='div1'>
                     <label htmlFor="subject-dropdown">Select Subject:</label>
-                    <select 
+                    <select
                       id="subject-dropdown"
                       value={selectedSubject}
-                      onChange={handleSubjectChange} 
+                      onChange={handleSubjectChange}
                       className="dropdown"
                     >
                       <option value="">Select a subject</option>
                       {subjects.map(subject => (
-                        <option 
-                          key={subject.subject_id} 
+                        <option
+                          key={subject.subject_id}
                           value={subject.subject_id}
                         >
                           {subject.subject_name}
@@ -246,16 +268,18 @@ const Topics = () => {
                             placeholder="Enter topic name"
                             className='input'
                           />
-                          <div className='btngap'>
-                            <button type="button" onClick={handleAddTopic}>+</button>
-                            <button type="button" onClick={() => handleRemoveTopic(index)}>-</button>
-                          </div>
+                         
+                           
+                            <button type="button"  className="adc remsec" onClick={() => handleRemoveTopic(index)}><span>-</span></button>
+                         
                         </div>
                       ))}
+                          <button type="button"  className="adc addsec"  onClick={handleAddTopic}><span>+</span></button>
                     </div>
                   </div>
                 )}
-                <button type="submit">Submit Selection</button>
+             
+                <button type="submit">{editingTopicIndex !== null ? 'Update Topic' : 'Submit Selection'}</button>
               </form>
               <button className='closebutton' onClick={toggleModal1}><RxCross2 /></button>
             </div>
@@ -263,50 +287,17 @@ const Topics = () => {
         </div>
       )}
 
-      {/* Edit Modal */}
-      {editModal && (
-  <div className='examform'>
-    <div className='modal'>
-      <div className='overlay'></div>
-      <div className='content_m'>
-        <h1>Edit Topic</h1>
-        <form onSubmit={handleUpdate}>
-          <div className='div1'>
-            <label htmlFor="exam">Exam Name:</label>
-            <select id="exam" value={selectedExam} onChange={(e) => setSelectedExam(e.target.value)} className='dropdown'>
-              <option value="">--Select an exam--</option>
-              {exams.map(exam => (
-                <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
-              ))}
-            </select>
-          </div>
-          <div className='div1'>
-            <label htmlFor="subject">Subject Name:</label>
-            <select id="subject" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} className='dropdown'>
-              <option value="">--Select a subject--</option>
-              {subjects.map(subject => (
-                <option key={subject.subject_id} value={subject.subject_id}>{subject.subject_name}</option>
-              ))}
-            </select>
-          </div>
-          <div className='div1'>
-            <label htmlFor="topic">Topic Name:</label>
-            <input
-              type="text"
-              value={currentTopic?.topic_name || ''} // Pre-fill with the current topic name
-              onChange={(e) => setCurrentTopic({ ...currentTopic, topic_name: e.target.value })}
-            />
-          </div>
-          <button type="submit">Update Topic</button>
-          <button className='closebutton' onClick={toggleEditModal}><RxCross2 /></button>
-        </form>
-      </div>
-    </div>
-  </div>
-)}
-
+    
       <div className='selections-tablecontainer'>
+
         <h2>Topics Table</h2>
+        <input 
+          type="text" 
+          placeholder="Search topics..." 
+          value={searchTerm} 
+          onChange={handleSearchChange} 
+          className="search-bar"
+        />
         <table className='selections-table'>
           <thead>
             <tr>
@@ -318,18 +309,19 @@ const Topics = () => {
             </tr>
           </thead>
           <tbody>
-            {topictable.map((topict, index) => (
-              <tr key={topict.topic_id}>
-                <td>{index + 1}</td>
-                <td>{topict.exam_name}</td>
-                <td>{topict.subject_name}</td>
-                <td>{topict.topics}</td>
-                <td className='upddel'>
-                  <button className="update" onClick={() => handleEdit(topict)}>Update</button>
-                  <button className='delete' onClick={() => handleDelete(topict.subject_id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
+          {filteredTopics.map((topict, index) => (
+          <tr key={topict.topic_id}>
+            <td>{index + 1}</td>
+            <td>{topict.exam_name}</td>
+            <td>{topict.subject_name}</td>
+            <td>{topict.topics}</td>
+            <td className='upddel'>
+              <button className="update" onClick={() => handleEdit(index)}>Update</button>
+              <button className='delete' onClick={() => handleDelete(topict.subject_id)}>Delete</button>
+            </td>
+          </tr>
+        ))}
+
           </tbody>
         </table>
       </div>

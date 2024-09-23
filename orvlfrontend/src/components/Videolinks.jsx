@@ -14,6 +14,7 @@ const Videolinks = () => {
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState('');
   const [videos, setVideos] = useState([{ video_name: '', video_link: '' }]);
+  const [selectedVideos,setSelectedVideos] =useState([]);
   const [videotable, setVideotable] = useState([]);
   const [modal1, setModal1] = useState(false);
   const [editingVideoIndex, setEditingVideoIndex] = useState(null);
@@ -80,6 +81,7 @@ const Videolinks = () => {
       setTopics([]);
       setSelectedTopic('');
       setVideos([{ video_name: '', video_link: '' }]);
+      setSelectedVideos([])
     }
   }, [selectedSubject]);
  
@@ -130,6 +132,7 @@ const Videolinks = () => {
         alert('Video links saved successfully');
         fetchVideoTableData();
         resetForm();
+        setModal1(!modal1);
       })
       .catch(error => {
         console.error('Error saving videos:', error);
@@ -142,7 +145,8 @@ const Videolinks = () => {
       params: {
         examId: selectedExam,
         subjectId: selectedSubject,
-        topicId: selectedTopic
+        topicId: selectedTopic,
+        
       }
     })
     .then(response => {
@@ -150,16 +154,27 @@ const Videolinks = () => {
     })
     .catch(error => console.error('Error fetching video table data:', error));
   };
- 
   const handleEditVideo = (index) => {
     setEditingVideoIndex(index);
     const videoToEdit = videotable[index];
+    
+    // Log the videoToEdit object to inspect its structure
+    console.log(videoToEdit);
+  
     setSelectedExam(videoToEdit.exam_id);
     setSelectedSubject(videoToEdit.subject_id);
     setSelectedTopic(videoToEdit.topic_id);
-    setVideos([{ video_name: videoToEdit.video_name, video_link: videoToEdit.video_link }]);
+  
+    // Check if video_names is an array and video_links is also properly structured
+    const videosToEdit = videoToEdit.video_names.split(',').map((name, i) => ({
+      video_name: name.trim(),
+      video_link: videoToEdit.video_links.split(',')[i]?.trim() || '' // Ensure to handle undefined cases
+  }));
+    setVideos(videosToEdit);
     setModal1(true);
   };
+  
+  
  
   const handleDeleteVideo = (topic_id) => {
     if (window.confirm('Are you sure you want to delete this video?')) {
@@ -186,6 +201,9 @@ const Videolinks = () => {
         </a>
       </div>
       <Leftnavbar />
+      <div className='headerpageh1'>
+        <h1> Video Upload Page</h1>
+      </div>
       <button className='btnes' onClick={toggleModal1}> Video Upload</button>
  
       {modal1 && (
@@ -197,7 +215,7 @@ const Videolinks = () => {
               <form onSubmit={handleSubmit}>
                 <div className='div1'>
                   <label htmlFor="exam">Select Exam:</label>
-                  <select id="exam" className='dropdown' value={selectedExam} onChange={handleExamChange}>
+                  <select id="exam" className='dropdown dd1' value={selectedExam} onChange={handleExamChange}>
                     <option value="">--Select an exam--</option>
                     {exams.map(exam => (
                       <option key={exam.exam_id} value={exam.exam_id}>{exam.exam_name}</option>
@@ -211,7 +229,7 @@ const Videolinks = () => {
                       id="subject-dropdown"
                       value={selectedSubject}
                       onChange={handleSubjectChange}
-                      className="dropdown"
+                      className="dropdown dd2"
                     >
                       <option value="">Select a subject</option>
                       {subjects.map(subject => (
@@ -232,7 +250,7 @@ const Videolinks = () => {
                       id="topic-dropdown"
                       value={selectedTopic}
                       onChange={handleTopicChange}
-                      className="dropdown"
+                      className="dropdown dd1"
                     >
                       <option value="">Select a topic</option>
                       {topics.map(topic => (
@@ -246,35 +264,40 @@ const Videolinks = () => {
                     </select>
                   </div>
                 )}
-                {selectedTopic && (
-                  <div className='div1'>
-                    <div className='video-inputs'>
-                      <h3 className='headertv'>Add Video Links with Video Names:</h3>
-                      {videos.map((video, index) => (
-                        <div key={index} className='video-input-group'>
-                          <input
-                            type='text'
-                            placeholder='Video Name'
-                            value={video.video_name}
-                            onChange={(e) => handleVideoChange(index, 'video_name', e.target.value)}
-                            className=' input inputvideo'
-                          />
-                          <input
-                            type='text'
-                            placeholder='Video Link'
-                            value={video.video_link}
-                            onChange={(e) => handleVideoChange(index, 'video_link', e.target.value)}
-                            className=' input inputvideo'
-                          />
-                          <div className='btngap'>
-                            <button type='button' onClick={addVideoInput} className='btn plus'>+</button>
-                            <button type='button' onClick={() => removeVideoInput(index)} className='btn minus'>-</button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+             {selectedTopic && (
+  <div className='div1'>
+    <div className='video-inputs'>
+      <h3 className='headertv'>Add Video Links with Video Names:</h3>
+      {videos.map((video, index) => (
+        <div className='inputbtnflex'>
+        <div key={index} className='video-input-group'>
+          <input
+            type='text'
+            placeholder='Video Name'
+            value={video.video_name}
+            onChange={(e) => handleVideoChange(index, 'video_name', e.target.value)}
+            className='input inputvideo'
+          />
+          
+          <input
+            type='text'
+            placeholder='Video Link'
+            value={video.video_link}
+            onChange={(e) => handleVideoChange(index, 'video_link', e.target.value)}
+            className='input inputvideo'
+          /></div>
+          <button type='button' onClick={() => removeVideoInput(index)} className='btn minus adc remsec'>-</button>
+        </div>
+      
+      ))}
+       
+         <button type='button' onClick={addVideoInput} className='btn plus adc addsec'>+</button>
+         
+       
+    </div>
+  </div>
+)}
+
                 <button type="submit">{editingVideoIndex !== null ? 'Update Video' : 'Submit Selection'}</button>
               </form>
               <button className='closebutton' onClick={toggleModal1}><RxCross2 /></button>

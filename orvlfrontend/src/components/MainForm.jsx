@@ -24,7 +24,6 @@ const MainForm = () => {
       .catch(error => console.error('Error fetching exams:', error));
   }, []);
 
-  // Fetch subjects when an exam is selected
   useEffect(() => {
     if (selectedExam) {
       axios.get(`http://localhost:8000/api/exam/${selectedExam}/subjects`)
@@ -36,6 +35,7 @@ const MainForm = () => {
       setSubjects([]);
     }
   }, [selectedExam]);
+  
 
   // Fetch initial selections
   useEffect(() => {
@@ -66,8 +66,9 @@ const MainForm = () => {
     };
 
     const request = editingSelection
-      ? axios.put(`http://localhost:8000/api/selections/update/${editingSelection}`, data)
+      ? axios.put(`http://localhost:8000/api/selections/update/${editingSelection}/${selectedExam}/${selectedSubjects}`, data)
       : axios.post('http://localhost:8000/api/submit-selection', data);
+      alert(`Update Sucessfully`)
 
     request
       .then(() => {
@@ -81,12 +82,24 @@ const MainForm = () => {
       .catch(error => console.error('Error saving selection:', error));
   };
 
-  const handleEdit = (selection) => {
-    setSelectedExam(selection.exam_id);
-    setSelectedSubjects(selection.subjects.split(', ').map(sub => sub.trim())); // Split subjects if needed
-    setEditingSelection(selection.selection_id);
-    setModalOpen(true);
+  const handleEdit = (index) => {
+    const selectionToEdit = selections[index];
+    console.log('Editing selection:', selectionToEdit); // Log selected item
+  
+    if (selectionToEdit) {
+      setEditingSelection(selectionToEdit.selection_id);
+      setSelectedExam(selectionToEdit.exam_id);
+  
+      const selectionSubjects = selectionToEdit.subjects.split(',').map(name => name.trim());
+      console.log('Selected subjects:', selectionSubjects); // Log selected subjects
+      setSelectedSubjects(selectionSubjects);
+      setModalOpen(true);
+    } else {
+      console.error('Selection not found for index:', index);
+    }
   };
+  
+  
   // const handleDelete = (selection_id) => {
   //   console.log("Attempting to delete selection with ID:", selection_id); // Add this line
   //   if (window.confirm('Are you sure you want to delete this selection?')) {
@@ -149,7 +162,7 @@ const MainForm = () => {
     setSubjects([]);
     setEditingSelection(null);
   };
-
+  
   return (
     <div>
       <div className='headerjeem'>
@@ -161,7 +174,9 @@ const MainForm = () => {
         </a>
       </div>
       <Leftnavbar />
-
+      <div className='headerpageh1'>
+        <h1> Exam Selection Page</h1>
+      </div>
       <button className='btnes' onClick={() => setModalOpen(true)}>Exam Selection</button>
 
       {modalOpen && (
@@ -169,7 +184,7 @@ const MainForm = () => {
           <div className='modal'>
             <div className='overlay'></div>
             <div className='content_m'>
-              <h1>{editingSelection ? 'Edit Selection' : 'Exam Selection'}</h1>
+              <h1>{editingSelection  !== null ? 'Edit Selection' : 'Exam Selection'}</h1>
               <form onSubmit={handleSubmit}>
                 <div className='div1'>
                   <label htmlFor="exam">Select Exam:</label>
@@ -184,22 +199,24 @@ const MainForm = () => {
                   <div className='div1'>
                     <label>Select Subjects:</label>
                     {subjects.map(subject => (
-                      
-                      <div key={subject.subject_id}>
-                        <input
-                          type='checkbox'
-                          id={`subject-${subject.subject_id}`}
-                          value={subject.subject_id}
-                    
-                          onChange={handleSubjectChange}
-                          className="checkbox-input"
-                        />
-                        <label className="checkb" htmlFor={`subject-${subject.subject_id}`}>{subject.subject_name}</label>
-                      </div>
-                    ))}
+  <div key={subject.subject_id}>
+    <input
+      type='checkbox'
+      id={`subject-${subject.subject_id}`}
+      value={subject.subject_id}
+     
+      onChange={handleSubjectChange}
+      className="checkbox-input"
+    />
+    <label className="checkb" htmlFor={`subject-${subject.subject_id}`}>{subject.subject_name}</label>
+  </div>
+))}
+
+
+
                   </div>
                 )}
-                <button type="submit">{editingSelection ? 'Update Selection' : 'Submit Selection'}</button>
+                <button type="submit">{editingSelection  !== null? 'Update Selection' : 'Submit Selection'}</button>
               </form>
               <button className='closebutton' onClick={resetForm}><RxCross2 /></button>
             </div>
@@ -225,7 +242,7 @@ const MainForm = () => {
                 <td>{selection.exam_name}</td>
                 <td>{selection.subjects}</td>
                 <td className='upddel'>
-    <button  className="update" onClick={() => handleEdit(selection)}>Update</button>
+    <button  className="update" onClick={() => handleEdit(index)}>Update</button>
     <button className="delete" onClick={() => handleDelete(selection.exam_id)}>Delete</button> {/* Pass exam_id */}
   </td>
               </tr>

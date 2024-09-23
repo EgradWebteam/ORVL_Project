@@ -26,7 +26,18 @@
     background: rgba(49, 49, 49, 0.8);
     z-index: 1000; /* Ensure it's above other content */
 }
-
+.inputbtnflex{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
+}
+.topic-entry {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
 .overlay {
     background-color: rgba(49, 49, 49, 0.8);
 }
@@ -148,7 +159,7 @@ td a{
 }
 .btnes{
     position: relative;
-    left:52%;
+    left:85%;
     background-color: #00222c;
     color: #fff;
     font-size: larger;
@@ -258,18 +269,34 @@ td a{
     border-radius: 7px;
   }
   
-  .sidebar button:hover {
-    background-color: #e2e6ea; /* Hover button color */
-  }
+  select#exam {
+    margin-left: 2rem;
+}
+button.adc {
+    border-radius: 70%;
+    font-size: larger;
+    font-weight: bolder;
+    width:2rem
+ 
+}
+button.adc.remsec {
+    background: red;
+    
+    height: fit-content;
+}
+button.adc.addsec {
+    background: green;
+}
  /* Basic styling for the custom dropdown */
 .dropdown {
-    border: 1px solid black;              /* Remove default border */
-    border-radius: 4px;        /* Rounded corners */
-    padding: 10px;             /* Padding inside the dropdown */
-    font-size: 14px;           /* Font size */
-    width: 200px;              /* Width of the dropdown */
-    height: 40px;              /* Height of the dropdown */
-    cursor: pointer;           /* Cursor style */
+    border: 1px solid black;             
+    border-radius: 4px;       
+    padding: 10px;             
+    font-size: 14px;          
+    width: 200px;              
+    height: 40px;              
+    cursor: pointer;    
+    margin-left: 1.3rem;      
 }
 label{
     font-size: 16px;
@@ -300,18 +327,45 @@ label{
     border: 2px solid #ccc; 
     border-radius: 5px;
     font-size: 16px; 
-    color: #333; 
+    color: #000;
+    font-weight: 400;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     transition: border-color 0.3s, box-shadow 0.3s; 
 }
-
+.headerpageh1 {
+    background: #e0f8ff;
+    height: 8vh;
+    margin-left: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* color: #fff; */
+}
+.headerpageh1 {
+    background: #e0f8ff;
+    height: 8vh;
+    margin-left: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* color: #fff; */
+}
+input.search-bar {
+    width: 59vw;
+    height: 4vh;
+    border-radius: 13px;
+    padding-left: 30px;
+    font-size: larger;
+}
 /* Styling for the input box on focus */
 .input:focus {
     border-color: #007bff; /* Border color on focus */
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Shadow on focus */
     outline: none; /* Remove default outline */
 }
-
+.dd2{
+    margin-left: 0.5rem;
+}
 .btngap{
     display: flex;
     justify-content: space-between;
@@ -400,7 +454,13 @@ label{
         justify-content: center;
         align-items: center;
     }
-    
+    .btnes {
+        position: relative;
+        left: 58%;
+    }
+    .headerpageh1 {
+        padding-left: 23px;
+    }
       .selections-table td {
         text-align: center;
         padding: 5px;
@@ -463,6 +523,10 @@ label{
         font-weight: 400;
         font-size: 18px;
         color: #000;
+    }
+    .btnes {
+        position: relative;
+        left: 79%;
     }
     
  
