@@ -1,0 +1,200 @@
+.divboxdd{
+  box-shadow: inset 3px 3px 6px 0 #ccdbe8, inset -3px -3px 6px 1px #ffffff80;
+ 
+  padding: 5rem 2rem 2rem;
+ 
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+ 
+  align-items: center;
+}
+svg.fad {
+  position: relative;
+  top: -22px;
+  left: 41px;
+}svg.fam {
+  position: relative;
+  top: 4px;
+  left: -3px;
+}
+ 
+.divboxd {
+  width: 70%;
+  height: 20vw;
+  position: relative;
+  top: 183px;
+  display: flex;
+  flex-direction: row;
+  z-index:1000;
+  gap: 4rem;
+  }
+.divboxing {
+  position: absolute;
+  top: 121px;
+  height: 10vh;
+  width: 100%;
+  background:#000;
+  color:#fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.headerjeedm{
+  height:120px;
+ width: 100%;
+  padding:10px 200px;
+  box-shadow: 0 7px 29px 0 #64646f33;
+  display: flex;
+  justify-content: space-between;
+}
+.headerjed img{
+  height:95px;
+  width: 330px;
+}
+ 
+.jeeanchoring{
+ 
+ 
+ position: relative;
+ top:37px;
+ left:54px;
+  color: #000;
+  font-size: 1rem;
+  font-weight: 700;
+}
+ 
+.headerjeedm {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+.shift-data {
+  top: -173px;
+  left: 14px;
+  background-color: rgb(251, 243, 246);
+  padding: 25px 40px;
+  height: 85vh;
+  width: 90vw;
+  position: relative;
+  box-shadow: inset 3px 3px 6px 0 #ccdbe8, inset -3px -3px 6px 1px #ffffff80;
+}
+ 
+.h2box{
+  background: #77032a;
+  color: #fff;
+  font-size: 15px;
+  width: 100px;
+  height: 30px;
+  padding: 3px 26px;
+  border-radius: 12px;
+}
+ 
+.downjeetable tr:nth-child(n-1){
+  background-color:rgb(238, 209, 220) ;
+  border: 1px snow;
+ 
+}
+ 
+.downjeetable{
+  border-collapse: collapse;
+  text-indent: initial;
+  unicode-bidi: isolate;
+  border-spacing: 2px;
+  margin-bottom: 30px;
+  box-shadow: inset 1px -1px 2px -1px #77032a;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 20px;
+  width: 100%;
+  height: 50%;
+  background-color: white;
+  border-radius: 10px;
+  border: 2px solid rgb(5, 5, 5);
+}
+.downjeetable td{
+  padding-left: 161px;
+  font-weight: bolder;
+  color: #000;
+  font-size: larger;
+ 
+}
+.downjeetable th{
+  font-size: x-large;
+ 
+  border: 2px solid rgb(5, 5, 5);
+}
+.downjeetable td {
+  border: 1px solid rgb(5, 5, 5);
+  height: 40px;
+}
+.downjeetable td a{
+  color: #000;
+}
+.downjeetable td:nth-child(odd){
+  background-color:#e7b3b30f ;
+}
+.downjeetable td:nth-child(2n){
+  background-color:rgb(238, 209, 220) ;
+}
+ 
+.pdfmpc {
+  position: relative;
+  left: 1px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13rem;
+}
+/* .pdfmpc a {
+width: 145px;
+height: 9;
+border-radius: 7px;
+background-color: #77032a;
+margin-bottom: 8px;
+color: #fff;
+padding-left: 10px;
+} */
+ 
+.downjeetable th{
+  padding-left: 3px;
+  background: #77032a;
+  color:#fff;
+  height: 50px;
+}
+.boxmonth{
+  border-radius: 8px;
+  box-shadow: 0 2px 4px #0000001a;
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  background-color: #fff;
+  color: #000;
+ 
+}
+.sdh2{
+ 
+  border-radius: 25px;
+  color: #77032a;
+  box-shadow: inset 3px 3px 6px 0 #77032a, inset -3px -3px 6px 1px #77032a;
+  font-family: imoji;
+  font-size: 20px;
+ 
+  font-weight: 700;
+  margin-bottom: 3rem;
+  height: auto;
+  font-size: 30px;
+  text-align: center;
+}
+#dropdown {
+  position: relative;
+  top: -25px;
+  left: 1400px;
+  background: #77032a;
+  color: #fff;
+  width:100px;
+  height: 35px;
+  font-weight: bolder;
+  font-size: large;
+  border-radius: 10px;
+ padding:4px 9px
+}

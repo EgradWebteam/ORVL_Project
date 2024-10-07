@@ -1,0 +1,285 @@
+const express = require('express');
+const multer = require('multer');
+const mysql = require('mysql2');
+const path = require('path');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+
+
+const app = express();
+const port = 5001; // Changed port number
+
+// Middleware setup
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'application/pdf') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only PDF files are allowed!'), false);
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5 MB limit
+});
+
+// Database connection
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: '', // Replace with your MySQL password
+  database: 'user_registration', // Replace with your MySQL database name
+  connectionLimit: 10
+});
+
+const promisePool = pool.promise();
+
+// Route for handling form submission
+app.post('/register', upload.fields([
+  { name: 'tenth_certificate', maxCount: 1 },
+  { name: 'twelfth_certificate', maxCount: 1 },
+  { name: 'btech_certificate', maxCount: 1 }
+]), async (req, res) => {
+  const {
+    name,
+    fathername,
+    dob,
+    gender,
+    mobile_no,
+    email,
+    present_streetadd,
+    present_addressline2,
+    present_city,
+    present_state,
+    present_zipcode,
+    present_country,
+    permanent_streetadd,
+    permanent_addressline2,
+    permanent_city,
+    permanent_state,
+    permanent_zipcode,
+    permanent_country,
+    tenth_percentage,
+    twelfth_percentage,
+    btech_percentage,
+    university_roll_no,
+    branch,
+    college_state,
+    college_city,
+    college_name,
+    coaching,
+    batch,
+    rollno,
+    centername
+  } = req.body;
+
+  console.log("SAVING DATA", req.body);
+  console.log('Received form data:', req.body);
+  console.log('Coaching status:', coaching);
+  console.log('Batch:', batch);
+  console.log('Roll No:', rollno);
+  console.log('Center Name:', centername);
+
+  // Extract file paths
+  const tenth_certificate = req.files['tenth_certificate'] ? req.files['tenth_certificate'][0].filename : null;
+  const twelfth_certificate = req.files['twelfth_certificate'] ? req.files['twelfth_certificate'][0].filename : null;
+  const btech_certificate = req.files['btech_certificate'] ? req.files['btech_certificate'][0].filename : null;
+//   const validateForm = () => {
+  const errors = [];
+  if (!name) errors.push('Name is required.');
+  if (!fathername) errors.push('Father\'s name is required.');
+  if (!dob) errors.push('Date of birth is required.');
+  if (!gender) errors.push('Gender is required.');
+  if (!mobile_no) errors.push('Mobile number is required.');
+  if (!present_streetadd) errors.push('Street Address is required.');
+  if (!present_addressline2) errors.push('Address Line 2 is required.');
+  if (!present_city) errors.push('City is required.');
+  if (!present_state) errors.push('State/Provision/region is required.');
+  if(! present_zipcode) errors.push('Zip/Postal Code is required.');
+  if (!present_country) errors.push('Country is required.');
+  if (!permanent_streetadd) errors.push('Street Address is required.');
+  if (!permanent_addressline2) errors.push('Address Line 2 is required.');
+  if (!permanent_city) errors.push('City is required.');
+  if (!permanent_state) errors.push('State/Provision/region is required.');
+  if(!permanent_zipcode) errors.push('Zip/Postal Code is required.');
+  
+  if (!permanent_country) errors.push('Country is required.');
+  if (!tenth_percentage) errors.push('10th class Percentage is required.');
+  if (!twelfth_percentage) errors.push('12th class Percentage is required.');
+  if (!btech_percentage) errors.push(' BTech Percentag is required.');
+  if (!university_roll_no) errors.push('University Roll No is required.');
+  if (!college_city) errors.push('Branch is required.');
+  if (!college_state) errors.push('College City is required.');
+  if (!college_name) errors.push('College State is required.');
+  if (!branch) errors.push('College Name is required.');
+  if (!tenth_certificate) errors.push('10th Class certificate is required.'); 
+  if (!twelfth_certificate) errors.push('12th Class certificate is required.'); 
+  if (!btech_certificate) errors.push('B.Tech certificate is required.');
+  if (!coaching) errors.push('Coaching details are required.');
+
+  if (coaching === 'yes') {
+    if (!batch) errors.push('Batch is required.');
+    if (!rollno) errors.push('Roll No is required.');
+    if (!centername) errors.push('Center Name is required.');
+  } else if (coaching === 'no') {
+  }
+  
+
+  if (errors.length > 0) {
+    return res.status(400).json({ message: errors.join(' ') });
+  }
+  const coachingDetails = coaching === 'no' ? [null, null, null] : [batch, rollno, centername];
+  const [batchValue, rollnoValue, centernameValue] = coachingDetails;
+const data = [
+    name, fathername, mobile_no, gender, email, dob,
+    present_streetadd, present_addressline2, present_city, present_state, present_zipcode, present_country,
+    permanent_streetadd, permanent_addressline2, permanent_city, permanent_state, permanent_zipcode, permanent_country,
+    tenth_percentage, twelfth_percentage, btech_percentage, university_roll_no, college_city,
+    college_state, college_name, branch,
+    tenth_certificate, twelfth_certificate, btech_certificate, coaching,
+    coaching === 'yes' ? batch : null,  // Add batch only if coaching is 'yes'
+    coaching === 'yes' ? rollno : null, // Add rollno only if coaching is 'yes'
+    coaching === 'yes' ? centername : null 
+  ];
+
+  // Conditionally add batch, rollno, centername based on coaching
+  if (coaching === 'yes') {
+    data.push(batch, rollno, centername);
+  } else {
+    data.push(null, null, null);
+  }
+
+  try {
+    // Insert data into the database
+    await promisePool.query(
+      `INSERT INTO users (
+        name, fathername, mobile_no, gender, email, dob,
+        present_streetadd, present_addressline2, present_city, present_state, present_zipcode, present_country,
+        permanent_streetadd, permanent_addressline2, permanent_city, permanent_state, permanent_zipcode, permanent_country,
+        tenth_percentage, twelfth_percentage, btech_percentage, university_roll_no, college_city,
+        college_state, college_name, branch,
+        tenth_certificate, twelfth_certificate, btech_certificate, coaching,batch,rollno,centername
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)`,
+      [
+        name, fathername, mobile_no, gender, email, dob,
+        present_streetadd, present_addressline2, present_city, present_state, present_zipcode, present_country,
+        permanent_streetadd, permanent_addressline2, permanent_city, permanent_state, permanent_zipcode, permanent_country,
+        tenth_percentage, twelfth_percentage, btech_percentage, university_roll_no, college_city,
+        college_state, college_name, branch,
+        tenth_certificate, twelfth_certificate, btech_certificate, coaching,
+        coaching === 'yes' ? batch : null,
+  coaching === 'yes' ? rollno : null,
+  coaching === 'yes' ? centername : null
+      ]
+    );
+    res.json({ message: 'Registration successful!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error registering user!' });
+  }
+});
+
+// Route to get user details
+app.get('/users', async (req, res) => {
+  try {
+    const [rows] = await promisePool.query('SELECT * FROM users');
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching user details!' });
+  }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    // Multer-specific errors
+    res.status(400).json({ message: err.message });
+  } else if (err) {
+    // General errors
+    res.status(500).json({ message: err.message });
+  } else {
+    next();
+  }
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+       const insertPromises = videos.map(video => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    'INSERT INTO videos (exam_id, subject_id, topic_id, video_name, video_link) VALUES (?, ?, ?, ?, ?)',
+                    [video.exam_id, video.subject_id, video.topic_id, video.video_name, video.video_link],
+                    (err, results) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(results);
+                        }
+                    }
+                );
+            });
+        });
+
+        Promise.all(insertPromises)
+            .then(() => {
+                connection.release();
+                res.status(200).json({ message: 'Videos added successfully' });
+            })
+            .catch((err) => {
+                connection.release();
+                console.error('Error adding videos:', err);
+                res.status(500).json({ error: 'Error adding videos' });
+            });
+    });
+});
+
+
+ // Modify your backend route to include images
+// app.get('/api/exams', (req, res) => {
+//     pool.getConnection((err, connection) => {
+//       if (err) {
+//         console.error('Error connecting to MySQL:', err);
+//         return res.status(500).send('Database connection error');
+//       }
+  
+//       const query = `
+//         SELECT exams.exam_id, exams.exam_name, exam_images.image_url 
+//         FROM exams 
+//         LEFT JOIN exam_images ON exams.exam_id = exam_images.exam_id`;
+  
+//       connection.query(query, (err, results) => {
+//         connection.release();
+//         if (err) {
+//           console.error('Error fetching exams:', err);
+//           return res.status(500).send('Error fetching exams');
+//         }
+//         res.json(results);
+//       });
+//     });
+//   });
+  
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
+ 

@@ -1,0 +1,80 @@
+*{
+    box-sizing: border-box;
+}
+.couhead{
+    padding-bottom: 30px;
+}
+.couhead .couh1{
+    text-align: center;
+}
+.coursesmain{
+    background-color: #c8e7f9;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+}
+.courseflex{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    justify-content: flex-start;
+    margin: 0 auto;
+    width: 75%;
+    align-items: center;
+}
+.coursecard{
+    
+    width: 25rem;
+    margin: 0px auto;
+    border-radius: 20px;
+    box-shadow: 0 0 78px -19px #000;
+    transition: 1s;
+    background-color:#a6d2e1;
+    border-radius: 2rem;
+    text-align: center;
+    
+
+}
+.corimg img{
+    height: 250px;
+    width: 100%;
+}
+.headtext h2{
+    background-color: #fff;
+    border-radius: 20px 20px 0 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    padding: 1rem;
+}
+.butn{
+    background-color: #fff;
+    border-radius: 0 0 20px 20px;
+}
+.cbtn{
+    background-color: #a6d2e1;
+    color: #211d1d;
+    border-radius: 10px;
+    margin: .5rem auto;
+    
+    padding: .5rem;
+}
+.ac{
+    font-size:24px;
+    color: #000;
+    font-weight: bold;
+    width: auto;
+    height: auto;
+}
+.ac::after{
+    content: '>';
+    font-weight: 100;
+    font-size: medium;
+}
+.cbtn:hover,.ac:hover{
+    background: #2f2467;
+    color: #fff;
+    
+
+}
+.coursecard:hover{
+    transform: translateY(-1.5rem);
+}

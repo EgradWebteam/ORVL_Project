@@ -1,0 +1,245 @@
+.divboxts {
+    align-items: center;
+    background-color: #000;
+    color: #fff ;
+    display: flex;
+    height: 9vh;
+    justify-content: center;
+    position: relative;
+    top: -33px;
+    width: 100%;
+}
+.headerf{
+    background: #fff;
+
+}
+.jeetsh111{
+    position: relative;
+    top: -14px;
+}
+.jeetsh1{
+    font-size: 30px;
+    margin-bottom: 0;
+    /* text-align: center; */
+}
+.dpjts{
+  
+   
+    padding-bottom: .5rem;
+    margin: 10px auto 0;
+    width: 80%;
+    /* display: flex;
+  
+    justify-content: center;
+    align-items: center; */
+}
+.parajeets{
+    font-size: large;
+    line-height: 2.5rem;
+    text-align: justify;
+}
+.wotsh2{
+    color: #01c3ff !important;
+    font-size: 1.5rem;
+}
+.wotsbg{
+    background-color: #e0f8ff;
+    margin: 0 auto;
+}
+.wots{
+    width: 80%;
+ 
+    /* position: relative;
+    left: 11rem; */
+    margin: 0 auto;
+}
+.wotsm {
+    padding: 10px 0px;
+}
+.ulwots{
+   
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+.liots{
+    background: linear-gradient(330deg, #fff, #fff);
+    border-radius: 7px;
+    box-shadow: 0 0 32px -19px #000;
+    display: flex;
+    flex-direction: column;
+    height: 268px;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    padding: 1rem;
+    text-align: justify;
+    transition: .5s;
+    width: 345px;
+}
+.liots:hover{
+        background: #f0fafd;
+        border: .5px solid #0000002c;
+        border-radius: 18px;
+        box-shadow: 0 0 10px -7px #a8ebff;
+        transform: scale(0.9568);
+}
+.wotsimg{
+    background: #e0f8ff;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.wotsimg img{
+    width: 120px;
+    height: 120px;
+}
+
+.buyjee{
+    margin: 0 auto;
+    width: 80%;
+}
+.buyh2{
+    color: #01c3ff;
+    font-size: 1.5rem;
+    margin-top: 10px;
+}
+.buyjees{
+    display: flex;
+    flex-direction: wrap;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+.buycard {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 0 29px -21px #000;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin: 0 auto;
+    padding: .8rem;
+    transition: .5s;
+    width: 265px;
+    align-items: center;
+    justify-content: center;
+}
+.buycard:hover{
+    box-shadow: 0 0 29px -12px #01c3ff;
+    transform: scale(.98);
+}
+.buyimg img{
+    width: 100%;
+    height: auto;
+}
+.datebuy{
+    background-color: #e3f8ff;
+    padding: .5rem 1rem;
+    border-radius: 0 8px 0 18px;
+    color: #000;
+    font-weight: bolder;
+    margin-bottom: 10px;
+}
+.buynow{
+    margin-bottom: 10px;
+}
+.buynow,.buynow a{
+    background-color: black;
+    color: #fff;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 15px;
+}
+.buybtn{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2rem;
+}
+.BUYPARA{
+    background: red;
+    border-radius: 15px 0 15px 0;
+    color: #fff;
+    font-weight: 400;
+    padding: .2rem .5rem
+}
+.abuy{
+    color: #021cff;
+ 
+    font-size: 1rem;
+}
+.abuy:hover{
+    font-size:1.2rem;
+}
+.fots{
+    background-color: #e0f8ff;
+    margin-top: 15px;
+}
+.fotssubc{
+    margin: 0 auto;
+    width: 80%;
+
+}
+.fotssubc h2{
+    color:#01c3ff ;
+}
+.fcardflex{
+    display: flex;
+    flex-direction: wrap;
+    justify-content: space-around;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.fcard{
+    border-radius: 8px;
+    height: auto;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
+    text-align: center;
+    transition: transform .3s ease;
+    width: calc(24.333% - 20px);
+    margin-bottom: 15px;
+
+}
+.fcard:hover{
+    background-color: #fff;
+    border-radius: 32% 45px;
+    box-shadow: 0 5px 10px -5px #ff958d;
+    transform: translateY(-5px);
+}
+.imgf{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.imgf img{
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+
+}
+.pref{
+
+    line-height: 1.5rem;
+    text-align: center;
+    font-size: large;
+
+}
+.fcarddis{
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+}

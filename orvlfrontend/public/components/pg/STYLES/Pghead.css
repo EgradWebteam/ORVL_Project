@@ -1,0 +1,23 @@
+.pgmarq{
+    margin-top: 20px;
+    height: 85px;
+
+
+}
+.pgmarqc{
+    
+    box-shadow: 0 0 12px 0 #e79090;
+    padding-top: 10px;
+
+}
+.UPD{
+   font-size: large;
+    color: #fff;
+
+    font-weight: bold;
+    text-shadow: 0 0 .6rem #ffe6ff, 0 0 1.5rem #ff65bd, -.2rem .1rem 1rem #ff65bd, .2rem .1rem 1rem #ff65bd, 0 -.5rem 2rem #ff2483, 0 .5rem 3rem #ff2483;
+}
+.BANNERIMAGE img{
+    height: 600px;
+    width: 100%;
+}

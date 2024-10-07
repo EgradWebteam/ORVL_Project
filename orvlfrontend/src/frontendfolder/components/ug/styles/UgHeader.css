@@ -1,0 +1,171 @@
+*{
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+    letter-spacing: 0;
+    line-height: 160%;
+   
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    word-spacing: .2rem;
+   
+}
+.marq{
+    margin-top: 20px;
+    height: 35px;
+}
+.marqc{
+    box-shadow: 0 0 5px #00000080;
+    padding-top: 5px;
+
+}
+.fadown{
+    position: relative;
+    top: 3px;
+}
+.exam_dropdown{
+    DISPLAY: flex;
+    FLEX-DIRECTION: column;
+    GAP: 2PX;
+    background-color: #f9f9f9;
+    box-shadow: 0 8px 16px 0 #0003;
+    margin: 10px 0;
+    min-width: 160px;
+    position: absolute;
+    z-index: 1;
+}
+.ancdrop{
+    color: #000;
+    display: block;
+    font-size: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+}
+.subcontainer{
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: .3rem 3rem;
+    width: 85%;
+
+}
+img{
+    height:95px;
+    width: 330px;
+}
+.button{
+    color: #ffff;
+    padding: 8px 16px;
+    align-items: center;
+    background: #01c3ff;
+    border-radius: 20px;
+    box-shadow: 0 0 5px 3px #0003;
+    display: flex;
+    font-size: 1.3rem;
+    font-weight: 500;
+    justify-content: center;
+
+}
+
+.navlist,.examdrop{
+    color:#fff;
+    font-weight: 500;
+    font-size: 1rem;
+    position:relative;
+    padding-left: 30px;
+
+}
+.examdrop{
+    padding-left: 20px;
+}
+.navbar{
+    background: #000000;
+   
+    margin: 0 auto;
+    padding: 8px 0px;
+    
+}
+.navlist:hover {
+    color: #fff;
+    font-weight: bold;
+    animation: nhover .5s alternate forwards; /* Fixed the animation duration */
+    /* text-decoration: underline; /*Adjust the value as needed for the desired gap
+    text-underline-offset: 10px;
+    text-decoration-color: blue !important; Customize the color of the underline */
+    animation: navhover .5s alternate forwards;
+}
+
+.navmenu .navlist:hover{
+       
+        color: #fff;
+        animation: nhover .5s alternate forwards;
+        
+}
+.Slide{
+    /* transition: 'left 1s', */
+   
+    transition:width 0.1s;
+    -webkit-transition:'1s' ;
+   
+}
+.slide {
+    height: 600px;
+    width: 100%;
+    padding-top: 10px;
+}
+.fixconc{
+    background-color: #fff;
+    height: 147px;
+    position: sticky;
+    top: .2px;
+    z-index: 10;
+    
+}
+
+.navmenu{
+    display: flex;
+    flex-direction: row;
+    padding: 0px 120px;
+   
+    
+}
+ @keyframes nhover{
+    0%{
+    border-bottom: 2px solid red;
+    transform: translatex(-3.5rem);
+    transform: scale(1.5);
+
+
+    }
+    50%{
+      
+      border-bottom: 2px solid #01c3ff;
+
+    }
+    100%{
+       
+        border-bottom: 2px solid #01c3ff;
+        width: 99%;
+}
+   
+}
+.thumbs-wrapper.axis-vertical {
+    display: none;
+}
+
+p.carousel-status {
+    display: none;
+}
+button.control-arrow.control-next {
+    display: none;
+}
+.slide{
+    height: 600px;
+    width: 100%;
+    padding-top: 10px
+}
+.slide img{
+    height: 600px;
+    width: 100%;
+}

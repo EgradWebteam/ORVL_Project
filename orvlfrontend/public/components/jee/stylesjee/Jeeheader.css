@@ -1,0 +1,54 @@
+*{
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+}
+
+.headerjee{
+    height:120px;
+   
+    padding:10px 200px;
+    background: #fff;
+    box-shadow: 0 7px 29px 0 #64646f33;
+}
+.headerjee img{
+    height:95px;
+    width: 330px;
+}
+
+.jeeanchor{
+    position: relative;
+    bottom: 70px;
+    left: 90%;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+}
+.carousel .slide {
+    min-width: 100%;
+    margin: 0;
+    position: relative;
+    top: 20px;
+    text-align: center;
+}
+.divbox{
+    position: relative;
+    top: -23px;
+    align-items: center;
+    color: #000;
+    background-color: #c5e1f3;
+    display: flex;
+    height: 9vh;
+    justify-content: center;
+    margin: 1rem auto;
+    width: 100%;
+
+}
+.jeeh1{
+    font-size: 30px;
+    margin-bottom: 0;
+    text-align: center;
+}
+.coro{
+    position: relative;
+    top: -37px;
+}

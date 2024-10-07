@@ -1,0 +1,60 @@
+.ulneetolv li{
+    list-style: disc;
+    list-style-position: inside;
+}
+.subjectsub{
+    box-shadow: 0 0 8px -5px #000;
+    margin: 10px 0;
+    padding: 10px 0 0 5px;
+    font-family: Merienda, cursive;
+}
+.pyul li{
+    list-style: disc;
+    font-family: Merienda, cursive;
+    list-style-position: inside;
+}
+.pyul{
+    line-height: 2rem;
+    padding: 0 1rem;
+}
+.neetcard{
+    width: 355px;
+    height: auto;
+}
+.py{
+    font-family: Merienda, cursive;
+    font-size: 17px;
+}
+.syll{
+    font-size: 14px;
+}
+.datebuycolor{
+    background-color: #f9f0f1;
+    line-height: 2rem;
+    padding: 0 1rem;
+
+}
+.datebuycolor li{
+    list-style: disc;
+    font-family: Merienda, cursive;
+    list-style-position: inside;
+    font-size: 16px;
+}
+.abuy:hover {
+    font-size: 1.2rem;
+    text-decoration: underline;
+}
+.buybtn1{
+    display: flex;
+    justify-content: space-between;
+    gap: 6rem;
+}
+.smlbuy{
+    padding: 10px 0px 0px;
+}
+.imgf{
+    margin-bottom: 20px;
+}
+.cd{
+    margin-top: 10px;
+}

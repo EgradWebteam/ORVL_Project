@@ -1,0 +1,39 @@
+.BitSatFaq{
+    position: relative;
+    top: -37px;
+}
+.bitsat1{
+    background-color: #d8ccff;
+}
+.bitsat1 a:hover{
+    color: #fff;
+}
+.bitsatsum{
+    background-color: #d8ccff;
+    
+}
+.summary{
+    height: 45px;
+}
+.BitSatFaq h3,.summary{
+    font-size: 16px;
+}
+.bitsatul{
+    padding-bottom: 0px;
+}
+.xl{
+    padding-bottom: 30px;
+}
+.xl h4,.hl h4{
+    padding-left: 10px;
+}
+
+.bti{
+    background-color: #d8ccff;
+}
+.cmb{
+    background-color: #d8ccff;
+}
+.bbtn{
+    background-color:#d8ccff ;
+}

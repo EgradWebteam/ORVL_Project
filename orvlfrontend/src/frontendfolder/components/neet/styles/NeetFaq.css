@@ -1,0 +1,34 @@
+.offneet{
+    display: flex;
+    justify-content: flex-end;
+    width: 97%;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    left: -80%;
+}
+.neet1{
+    background: #cceeed;
+    border: none;
+    border-radius: .3rem;
+    cursor: pointer;
+    font-size:14px;
+    font-weight: 600;
+    padding: .5rem 1rem;
+    transition: .2s ease-in-out;
+    white-space: nowrap;
+    width: fit-content;
+}
+.neetsum{
+    background: #cceeed;
+}
+.faqneet {
+    position: relative;
+    top: -49px;
+}
+.jeeul{
+    padding-bottom: 2rem;
+}
+.acolor{
+    color: black;
+}

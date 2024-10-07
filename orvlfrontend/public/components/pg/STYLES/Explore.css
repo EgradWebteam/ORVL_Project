@@ -1,0 +1,105 @@
+.sub {
+    margin: 0 auto;
+    max-width: 89%;
+    padding: 2rem 0 1rem;
+    scroll-margin-top: 147px;
+}
+.main{
+    padding: 1rem;
+}
+* {
+    letter-spacing: 0;
+    line-height: 160%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    word-spacing: .2rem;
+    font-family: Roboto,sans-serif;
+}
+.textl h1{
+    color: #e79090;
+    font-size: 2rem;
+    padding-bottom: 29px;
+    text-align: center;
+}
+.grid_cards{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 3rem;
+    flex-wrap: wrap;
+    
+}
+.card{
+    background: #fff2f2;
+    box-shadow: 0 0 15px 0 #9b9090;
+    padding: 1rem;
+    transition: transform .7s ease;
+}
+.card_gr{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 11px;
+    height: 100px;
+    width: 185px;
+}
+.cardhead{
+    background-color: #fff !important;
+    box-shadow: 0 0 15px 0 #9b9090;
+    text-align: center;
+    
+  
+    height: 38px;
+    width: 120px;
+}
+.cardhead .uil{
+  opacity: 0;
+}
+.anb{
+    color: #616161;
+}
+.anb h4{
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+.cardbody{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    justify-content: center;
+    align-items: center;
+}
+.cardbody h5{
+    color: #616161;
+    font-size: 15px;
+}
+.card:hover{
+    background-color: #fff;
+    transform: translateY(-10px);
+}
+.cardhead :hover {
+    background: #ffcbcb;
+    color: #fff;
+    display: flex;
+    width: 120px;
+   
+   
+}
+.cardhead:hover::after{
+   content: '>';
+   position: relative;
+   background-color:#ffcbcb ;
+   color: #616161;
+   left: 40px;
+   top: -30px;
+   font-size: 2.5rem;
+}
+.cardbody h5:hover{
+    text-decoration: underline;
+    text-decoration-color: #616161 ;
+
+}

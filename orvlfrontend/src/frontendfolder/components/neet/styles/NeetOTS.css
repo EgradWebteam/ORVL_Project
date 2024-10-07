@@ -1,0 +1,52 @@
+.neetotsh2{
+    color: #01c3ff;
+    font-size: 1.5rem;
+    font-family: Roboto, sans-serif;
+}
+.divots{
+    position: relative;
+    top: -8px;
+}
+.headerjee {
+    height: 105px;
+    padding: 10px 200px;
+    background: #fff;
+    box-shadow: 0 7px 29px 0 #64646f33;
+}
+.neetem{
+    background: #f3f3f3;
+    height: 100px;
+    margin: 0 0 11px;
+    width: 100px;
+    border-radius: 50%;
+}
+.neetem img{
+    height: 90px;
+    width: 90px;
+    border-radius: 50%;
+}
+.pwots{
+    font-size: 15.3px;
+    height: auto;
+    text-align: center;
+    line-height: 1.5rem;
+    font-family: Roboto, sans-serif;
+}
+.neetcard{
+    position:relative;
+    left: -612px;
+}
+.wots{
+    width: 80%;
+    margin:0 auto ;
+}
+.fots {
+        background-color: #e0f8ff;
+        margin-top: 15px;
+        padding-top: 15px;
+    
+}
+.buyjee{
+    width: 80%;
+    margin: 0 auto;
+}

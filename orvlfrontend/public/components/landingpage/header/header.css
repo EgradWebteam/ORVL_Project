@@ -1,0 +1,14 @@
+*{
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+}
+
+.header{
+    height:120px;
+    width:450px;
+    padding:10px 200px;
+}
+img{
+    height:95px;
+    width: 330px;
+}

@@ -1,0 +1,174 @@
+.downh1{
+    height: 10vh;
+ 
+    background-color: #000;
+    color:#fff ;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.downh1 h1{
+    text-align: center;
+}
+
+.downbox{
+    width: 30rem;
+    height: 20rem;
+    box-shadow: 0 7px 29px 0 #64646f33;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    background-color: #e7ffed;
+}
+.maindownbox{
+    background-color: rgb(251, 243, 246);
+    width: 80%;
+    margin: 0 auto;
+    padding:50px 0px;
+}
+.submainbox{
+   
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+   
+    gap: 5rem;
+}
+.downboximg{
+    width: 200px;
+    height:200px;
+   display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.downboximg img{
+    width: 350px;
+    height:190px;
+  
+}
+.downexplore{
+    background-color:#000;
+    color:#fff;
+    width:20px;
+}
+.downexplore a{
+    color:#fff;
+    font-size: larger;
+}
+.downexplore {
+    background-color: #000;
+    color: #fff;
+    width: 75px;
+    height: 39px;
+    padding: 6px;
+    position: relative;
+    bottom: 12px;
+    border-radius: 10px;
+}
+.downexplore:hover{
+    background-color: rgb(21, 21, 109);
+    width: 79px;
+    height: 42;
+}
+.divboxmain111 {
+    height: 10vh;
+    width: 100%;
+    position: relative;
+    background-color: #1aabe9;
+    top: 135px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.content-container {
+    position: relative;
+    top: 178px;
+   
+}
+.grid-CONTAINER{
+     display: grid;
+    grid-template-columns: repeat(3,1fr);
+  
+   padding-left: 220px;
+    justify-content: space-evenly;
+}
+.h1downmain{
+    color: #fff;
+    font-size: 49px;
+    font-weight: 600;
+}
+.imageitem img{
+    height: 400px;
+    width: 250px;
+    position: relative;
+    left:30px;
+
+    
+}
+.imageitem {
+    width: max-content;
+}
+.item {
+    width: max-content;
+}
+.imgtxt h2 {
+    position: relative;
+    top: -73px;
+    left: 97px;
+    color:#fff;
+    width: max-content;
+}
+.wer{
+    padding-left: 30px;
+}
+.img.ade {
+    width: auto;
+    height: auto;
+    position: relative;
+    left: 724px;
+    top: 288px;
+    z-index: 1049;
+}
+@media (max-width:1280px){
+    .grid-CONTAINER{
+        padding-left: 90px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+@media (max-width:600px){
+    .grid-CONTAINER{
+        padding-left: 0px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .divboxmain111 {
+        max-width:100%;
+    }
+    .headerjeedm{
+        width:50%
+    }
+    .headerjeed img {
+        width: 219px;
+        height: 66px;
+        position: relative;
+        left: -179px;
+    }
+    .jeeanchoring {
+        position: relative;
+       
+        
+        left: -104px;
+    }
+    .content-container {
+        width: fit-content;
+    }
+    .jeeanchoring svg{
+        position: relative;
+    left: -20px;
+    top: 26px;
+    }
+}
+

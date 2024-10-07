@@ -1,0 +1,40 @@
+/* .neetboxdd{
+    background: #93e1d8;
+} */
+@media (max-width:600px){
+    .downneett{
+       width: 100vw;
+    }
+    .sdneet{
+        top:280px;
+    }
+    .downneett td{
+        padding-left: 0px;  
+       
+    }
+    .downneett td .at{
+        width:78px;
+        font-size: small;
+        padding-left: 0px;
+    }
+    .neetpdf{
+        display: grid;
+        grid-template-columns: repeat(2, 157px);
+        gap: 1rem;
+    }
+    .rectangle{
+        background: transparent;
+       height:max-content;
+       z-index: 100000;
+     }
+     .rectangle::after{
+         display: none;
+     }
+    .boxmonth h4{
+     color:  rgba(47,135,196,1);
+    }
+    .month-box h3{
+     color: rgba(47,135,196,1) ;
+     padding-left: 10px;
+    }
+}

@@ -1,0 +1,135 @@
+
+    * {
+        letter-spacing: 0;
+        line-height: 160%;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        word-spacing: .2rem;
+        box-sizing: border-box;
+      
+        scroll-behavior: smooth;
+        border: 0;
+        outline: 0;
+        font-family: Roboto, sans-serif;
+    }
+
+.subcontainer1{
+    padding: 0px;
+    background-color:#00222c ;
+    height: auto;
+    width: 100%;
+    color: white;
+   
+}
+.container1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 45px;
+    padding-bottom: 45px;
+    gap: 50px;
+
+}
+#box img{
+    height: 21vh;
+    width: 18vw;
+    background-color:#fff;
+   
+    box-shadow: -1px 1px 20px 6px #fff;
+}
+
+#text h2{
+    font-size:40px;
+}
+#text p{
+   
+    color: #c5d5dd;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 37px;
+    text-align: end;
+}
+
+.subcontainer2{
+    padding: 2rem;
+}
+.container2{
+    display: flex;
+    flex-wrap: wrap;
+    
+    justify-content: space-evenly;
+}
+.container21,.container22{
+    --b: 1px;
+    --s: .45em;
+    --color: #00222c;
+    --_p: var(--s);
+    border: 0;
+    box-shadow: 0 0 12px 2px #00222c;
+    color: var(--color);
+    font-size: 16px;
+    outline: var(--b) solid #00222c;
+    outline-offset: -1px;
+    padding: calc(.5em + var(--s)) calc(.9em + var(--s));
+    touch-action: manipulation;
+    transition: .3s linear, color 0s, background-color 0s;
+    user-select: none;
+    -webkit-user-select: none;
+    height:400px;
+    width: 350px;
+}
+.box11,.box22{
+    display: flex;
+    flex-direction: column;
+   
+
+}
+.ANCHOR{
+    text-decoration: none;
+    color: black;
+    font-size:20px;
+    
+}
+.g{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+ 
+}
+.li{
+    
+    box-shadow: 0 0 5px -3px;
+   gap: 0px;
+   font-size: 1.5rem;
+   font-weight: 700;
+   padding: 11px;
+   
+}
+.li,.g a #h,.g a #he{
+    width: 300px;
+    margin-left: 0%;
+} 
+
+.g a #h,.g a #he{
+    border: 1px solid black;
+    margin: 0px;
+    border-radius: 5px;
+    background-color: #00222c;
+    padding: 11px;
+    color: #fff;
+    text-align: center;
+}
+.li:hover{
+    background-color:rgb(187, 182, 187);
+}
+.h3:hover{
+    font-size:19px;
+    transition: 0.1s;
+    padding-left: 30px;
+    padding-top: 15px;
+    
+}
+

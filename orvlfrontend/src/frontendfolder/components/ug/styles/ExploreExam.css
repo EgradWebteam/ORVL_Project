@@ -1,0 +1,91 @@
+* {
+    letter-spacing: 0;
+    line-height: 160%;
+  
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    word-spacing: .2rem;
+}
+
+#exam {
+    padding: 20px 0;
+    scroll-margin-top: 147px;
+    text-align: center;
+    width: 100%;
+}
+.examh2 {
+    color: #00a3ff;
+    font-size: 2rem;
+    margin: 2rem auto;
+}
+.subcontaineree{
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    gap: 5rem;
+    justify-content: center;
+    margin: 0 auto;
+    width: 95%;
+}
+.ee_grid{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    column-gap: 7.8rem;
+   
+    padding: 0 2rem;
+    row-gap: 3rem;
+}
+.ebox{
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 13px;
+    box-shadow: 0 0 5px #00000080;
+    gap: .8rem;
+    height: 166px;
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+    text-transform: capitalize;
+    width: 250px;
+}
+.ebox:hover{
+    scale: 1.1;
+    transition: 0.2s;
+}
+.ebtn{
+    background: #2d6891;
+    border-radius: 13px;
+    color: #fff;
+    font-family: Noto Sans Display, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: .3rem .5rem;
+
+}
+.ebtn_n{
+    color: #000;
+    font-size: .9rem;
+
+}
+.ebtn_n:hover{
+    text-decoration: underline;
+    color:blue ;
+    
+}
+.eeimg{
+    width:500px;
+}
+.eeimg .imge{
+    width: 100%;
+    height: auto;
+}
+.ugmain{
+    background-color: #fff;
+   
+    position: sticky;
+    top: .2px;
+    z-index: 100;
+    
+}
