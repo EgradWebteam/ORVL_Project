@@ -34,6 +34,7 @@ import MyAccount from './frontendfolder/components/user dashboard/MyAccount';
 import PayRegisterForm from './frontendfolder/pages/PayRegisterform';
 import ProtectedRoute from './ProtectedRoute';
 import CourseCreationForm from './components/Adminside/CourseCreationForm';
+import PaymentPage from './frontendfolder/components/user dashboard/PaymentPage';
 
 
  
@@ -79,6 +80,7 @@ function App() {
                     <Route path="/MyCourses/:id" element={<ProtectedRoute element={<MyCourses />} isAuthenticated={isAuthenticated} />} />
                     <Route path="/BuyCourses/:id" element={<ProtectedRoute element={<BuyCourses />} isAuthenticated={isAuthenticated} />} />
                     <Route path="/MyAccount/:id" element={<ProtectedRoute element={<MyAccount />} isAuthenticated={isAuthenticated} />} />
+                    <Route path="/PayCourse/:courseId" element={<ProtectedRoute element={<PaymentPage/>} isAuthenticated={isAuthenticated} />} />
 
     <Route path = '/topics' element={<Topics/>}/>
     <Route path = '/videolectures' element={<VideoLectures/>}/>

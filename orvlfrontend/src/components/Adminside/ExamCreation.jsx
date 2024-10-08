@@ -5,7 +5,7 @@ import { IoMdHome } from "react-icons/io";
 import Logo_img from '../Images/image.png';
 import Leftnavbar from './Leftnavbar';
 import { RxCross2 } from "react-icons/rx";
-
+ 
 const ExamCreation = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [exams, setExams] = useState([]);
@@ -14,7 +14,7 @@ const ExamCreation = () => {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selections, setSelections] = useState([]);
   const [editingSelection, setEditingSelection] = useState(null);
-
+ 
   // Fetch exams when the component mounts
   useEffect(() => {
     axios.get('http://localhost:8000/ExamCreation/exams')
@@ -23,7 +23,7 @@ const ExamCreation = () => {
       })
       .catch(error => console.error('Error fetching exams:', error));
   }, []);
-  
+ 
   useEffect(() => {
     if (selectedExam) {
         axios.get(`http://localhost:8000/ExamCreation/exam/${selectedExam}/subjects`)
@@ -40,7 +40,7 @@ const ExamCreation = () => {
 useEffect(() => {
   console.log('Updated Selected Subjects:', selectedSubjects);
 }, [selectedSubjects]);
-
+ 
   // Fetch initial selections
   useEffect(() => {
     axios.get('http://localhost:8000/ExamCreation/selections')
@@ -53,17 +53,17 @@ useEffect(() => {
     setSelectedExam(event.target.value);
     setSelectedSubjects([]); // Reset selected subjects when exam changes
 };
-
+ 
 const handleSubjectChange = (event) => {
   const { value, checked } = event.target;
   setSelectedSubjects(prevState =>
       checked ? [...prevState, value] : prevState.filter(subject => subject !== value)
   );
 };
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+ 
     // Log to check current selected subjects
     console.log('Selected Subjects before submission:', selectedSubjects);
    
@@ -71,13 +71,13 @@ const handleSubjectChange = (event) => {
         exam_id: selectedExam,
         selectedsubjects: selectedSubjects,
     };
-
-
-
+ 
+ 
+ 
     const request = editingSelection
         ? axios.put(`http://localhost:8000/ExamCreation/selections/ExamCreation_update/${editingSelection}`, data)
         : axios.post('http://localhost:8000/ExamCreation/submit-selection', data);
-
+ 
     request
         .then(() => {
             alert(`${editingSelection ? 'Selection updated' : 'Selection saved'} successfully`);
@@ -91,59 +91,56 @@ const handleSubjectChange = (event) => {
             console.error('Error saving selection:', error);
         });
 };
-
+ 
 const handleEdit = (index) => {
   const selectionToEdit = selections[index];
   console.log('Selection to Edit:', selectionToEdit);
-
+ 
   if (selectionToEdit) {
       setEditingSelection(selectionToEdit.selection_id);
       setSelectedExam(selectionToEdit.exam_id);
-
+ 
+      // Parse and set selected subjects
       const selectionSubjects = selectionToEdit.subject_ids.split(',').map(id => id.trim());
       console.log('Parsed Subject IDs:', selectionSubjects);
-
-      setSelectedSubjects(selectionSubjects.map(subject => subject.toString()));
-
-      // Log selected subjects after update
-      setTimeout(() => {
-          console.log('Selected Subjects After Update:', selectedSubjects);
-      }, 0);
-
+      setSelectedSubjects(selectionSubjects);
+ 
+      // Open the modal
       setModalOpen(true);
   }
 };
-
-
-  const handleDelete = (exam_id) => {
-    if (window.confirm('Are you sure you want to delete this selection?')) {
-      axios.delete(`http://localhost:5001/ExamCreation/selections/ExamCreation_delete/${exam_id}`)
-        .then(() => {
-          alert('Selection deleted successfully');
-          return axios.get('http://localhost:5001/ExamCreation/selections');
-        })
-        .then(response => {
-          setSelections(response.data);
-        })
-        .catch(error => {
-          console.error('Error deleting selection:', error.message || error);
-          alert('Failed to delete selection. Please try again.');
-        });
-    }
-  };
-
-  const resetForm = () => {
-    setModalOpen(false);
-    setSelectedExam('');
-    setSelectedSubjects([]); // Reset selected subjects
-    setSubjects([]);
-    setEditingSelection(null);
-
+ 
+const handleDelete = (exam_id) => {
+  if (window.confirm('Are you sure you want to delete this selection?')) {
+      axios.delete(`http://localhost:8000/ExamCreation/selections/ExamCreation_delete/${exam_id}`)
+          .then(response => {
+              console.log('Delete response:', response);
+              alert('Selection deleted successfully');
+              return axios.get('http://localhost:8000/ExamCreation/selections');
+          })
+          .then(response => {
+              setSelections(response.data);
+          })
+          .catch(error => {
+              console.error('Error deleting selection:', error.message || error);
+              alert('Failed to delete selection. Please try again.');
+          });
+  }
+};
+ 
+ 
+const resetForm = () => {
+  setModalOpen(false);
+  setSelectedExam('');
+  setEditingSelection(null);
+  // Consider whether to reset selectedSubjects based on the context
+  // setSelectedSubjects([]);
+  setSubjects([]); // Clear subjects if needed
     // Log to confirm reset
     console.log('Form reset: selectedSubjects:', selectedSubjects);
 };
-
-
+ 
+ 
   return (
     <div>
       <div className='headerjeem'>
@@ -159,7 +156,7 @@ const handleEdit = (index) => {
         <h1> Exam Selection Page</h1>
       </div>
       <button className='btnes' onClick={() => setModalOpen(true)}>Exam Selection</button>
-
+ 
       {modalOpen && (
         <div className='examform'>
           <div className='modal'>
@@ -202,7 +199,7 @@ const handleEdit = (index) => {
           </div>
         </div>
       )}
-
+ 
       <div className='selections-tablecontainer'>
         <h2>Selection Table</h2>
         <table className='selections-table'>
@@ -232,5 +229,8 @@ const handleEdit = (index) => {
     </div>
   );
 };
-
+ 
 export default ExamCreation;
+ 
+ 
+ 

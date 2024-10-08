@@ -59,9 +59,9 @@ const Olv = () => {
             alert(response.data.message);
             const userId = response.data.userId; // Get the user ID
       const userRole = response.data.role; // Get the user role
-            // const { token, userId } = response.data; // Assuming your API returns token and userId
-            // localStorage.setItem('authToken', token);
-            // localStorage.setItem('userId', userId);
+            const token = response.data.token; // Assuming your API returns token and userId
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('userId', userId);
             if (userRole === 'admin') {
                 navigate('/Examselection');
             } else {
@@ -233,15 +233,15 @@ const Olv = () => {
                 </div>
                 </div>
                 <div className="exam-cards-containervl">
-    {examscourse.map((examcourse) => (
-        <div className="exam-cardvl" key={examcourse.exam_id}>
-            <div className="imgsrc"><img src={course} alt="img" /></div>
-          <div className="headec"><h5>{examcourse.exam_name}  {examcourse.subjects} {examcourse.course}</h5></div>  
-          <div className="fsvnsv subcardgrid valinosubvid">  <div className='fsvnsv subhcard'>Validity: <div>{formatDate(examcourse.validity)}</div> </div>
-            <div className='fsvnsv subhcard'>no of subjects<div>{examcourse.subject_count}</div></div>
-            <div className='fsvnsv'>no of Videos: <div>{examcourse.number_of_videos}</div></div></div>
+    {examscourse.map((examcos) => (
+        <div className="exam-cardvl" key={examcos.course_id}>
+            <div className="imgsrc"><img src={`data:image/jpeg;base64,${examcos.image}` } alt="img" /></div>
+          <div className="headec"><h5>{examcos.course_name}</h5></div>  
+          <div className="fsvnsv subcardgrid valinosubvid">  <div className='fsvnsv subhcard'>Validity: <div>{formatDate(examcos.end_date)}</div> </div>
+            {/* <div className='fsvnsv subhcard'>no of subjects<div>{examcos.subject_count}</div></div> */}
+            <div className='fsvnsv'>no of Videos: <div>{examcos.video_count}</div></div></div>
            
-           <div className="comcardbuyprice"><div className='fsvnsv  pricebuy'> ${examcourse.total_price}</div> <button className="btnbut" onClick={() => handleBuyNow(examcourse)}>BUY NOW</button>
+           <div className="comcardbuyprice"><div className='fsvnsv  pricebuy'> ${examcos.total_price}</div> <button className="btnbut" onClick={() => handleBuyNow(examcos)}>BUY NOW</button>
         </div></div> 
     ))}
 </div>

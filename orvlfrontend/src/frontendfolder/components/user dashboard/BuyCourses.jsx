@@ -25,9 +25,10 @@ const BuyCourses = () => {
 
       useEffect(() => {
         const fetchCourses = async () => {
+            const userId = id; 
             setLoading(true); // Start loading
             try {
-                const response = await axios.get(`http://localhost:8000/course/courses_main`);
+                const response = await axios.get(`http://localhost:8000/course/courses_main?userId=${userId}`);
                 setCourses(response.data); // Adjust this based on the structure of your response
             } catch (err) {
                 console.error('Error fetching courses:', err);
@@ -82,7 +83,9 @@ const BuyCourses = () => {
         setModalOpen(false);
         setUserInfo({ name: '', email: '', phone: '' }); // Reset user info
     };
-
+    const handleOpenPayment = (exam) => {
+        navigate(`/PayCourse/${course.course_creation_id}`, { state: { course, userInfo } });
+    };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUserInfo({ ...userInfo, [name]: value });
@@ -93,49 +96,59 @@ const BuyCourses = () => {
         await initiatePayment(selectedCourse.course_creation_id, userInfo);
         handleCloseModal();
     };
-const initiatePayment = async (courseId) => {
-    try {
-        const course = courses.find(c => c.course_creation_id === courseId);
-        
-        if (!course) {
-            throw new Error('Course not found');
-        }
-
-        const response = await axios.post('http://localhost:8000/course/create-order', {
-            amount: course.total_price // Amount in smallest currency unit (e.g., paise)
-        });
-
-        const options = {
-            key: 'rzp_test_x3lel82AZIsRl6', // Your Razorpay key ID
-            amount: response.data.amount,
-            currency: response.data.currency,
-            name: 'Course Purchase',
-            description: course.course_name,
-            order_id: response.data.id,
-            handler: async function (response) {
-                // Payment successful
-                await handleBuyCourse(courseId, response);
-            },
-            prefill: {
-                name: 'Your Name', // Replace with user's name
-                email: 'user@example.com', // Replace with user's email
-                contact: '9999999999' // Replace with user's contact number
-            },
-            theme: {
-                color: '#F37254' // Your theme color
+    const initiatePayment = async (courseId) => {
+        try {
+            const course = courses.find(c => c.course_creation_id === courseId);
+            if (!course) {
+                throw new Error('Course not found');
             }
-        };
-
-        const razorpay = new window.Razorpay(options);
-        razorpay.open();
-
-        // Return a success response
-        return { success: true, response };
-    } catch (error) {
-        console.error('Error initiating payment:', error);
-        return { success: false, error }; // Return error info
-    }
-};
+    
+            const response = await axios.post('http://localhost:8000/course/create-order', {
+                amount: course.total_price // Amount in paise
+            });
+    
+            const options = {
+                key: 'rzp_test_x3lel82AZIsRl6',
+                amount: response.data.amount,
+                currency: response.data.currency,
+                name: 'Course Purchase',
+                description: course.course_name,
+                order_id: response.data.id,
+                handler: async function (response) {
+                    if (response.razorpay_payment_id) {
+                        await handleBuyCourse(courseId, response);
+                    } else {
+                        // This block can handle cases where payment was not successful
+                        console.error('Payment failed or was cancelled:', response);
+                        alert('Payment was not successful. Please try again.');
+                    }
+                },
+                prefill: {
+                    name: userInfo.name,
+                    email: userInfo.email,
+                    contact: userInfo.phone
+                },
+                theme: {
+                    color: '#F37254'
+                }
+            };
+    
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+    
+            razorpay.on('closed', function() {
+                // This will be called when the user closes the Razorpay window
+                console.log('Payment window closed by user.');
+                alert('Payment was cancelled. No transaction was made.');
+            });
+    
+        } catch (error) {
+            console.error('Error initiating payment:', error);
+            alert('An error occurred while initiating payment.');
+        }
+    };
+    
+    
 
     return (
         <div>
@@ -149,9 +162,10 @@ const initiatePayment = async (courseId) => {
                     <div className="exam-cards-containervl">
                     
                         {courses.map((course) => (
+                            
                             <div className="exam-cardvl" key={course.course_creation_id}>
-                                <div className="imgsrcimf">  {course.image ? (
-                <img src={`data:image/jpeg;base64,${course.image}`} alt={course.course_name} className='imgppimf' />
+                                <div className="imgsrc">  {course.image ? (
+                <img src={`data:image/jpeg;base64,${course.image}`} alt={course.course_name} />
             ) : (
                 <p>No image available</p>
             )} </div>
@@ -164,6 +178,7 @@ const initiatePayment = async (courseId) => {
                                 <div className="comcardbuyprice">
                                     <div className='fsvnsv pricebuy'>${course.total_price}</div>
                                     <button className="btnbut" onClick={() =>  handleOpenModal(course)}>BUY NOW</button>
+                                    {/* <button className="btnbut" onClick={() =>  handleOpenPayment(course)}>BUY NOW</button> */}
                                 </div>
                             </div>
                         ))}

@@ -4,7 +4,7 @@ const db = require("./database");
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt'); // Import bcrypt for hashing passwords
 const crypto = require('crypto');
-
+const jwt = require('jsonwebtoken');
 function generateRandomPassword(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
     let password = '';
@@ -13,7 +13,7 @@ function generateRandomPassword(length) {
     }
     return password;
 }
-
+const JWT_SECRET = 'your_secret_key';
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -35,8 +35,8 @@ router.post('/login', async (req, res) => {
         }
         req.session.userId = user.id;
         console.log( req.session.userId)
-       
-        res.json({ message: 'Login successful!', userId: user.id, role: user.role  });
+       const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
+        res.json({ message: 'Login successful!',token, userId: user.id, role: user.role  });
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Internal server error.' });

@@ -363,9 +363,9 @@ const handleLoginSubmit = async (e) => {
                     
                     <p><span className='boldfcd'>Course Name : </span>{exam.course_name}</p>
                     <p><span className='boldfcd'>Price: $</span>{exam.total_price}</p>
-                    <p><span className='boldfcd'>Validity: </span>{formatDate(exam.validity)}</p>
-                    <p><span className='boldfcd'>Number of Subjects: </span>{exam.subject_count}</p>
-                    <p><span className='boldfcd'>Number of Videos: </span>{exam.number_of_videos}</p>
+                    <p><span className='boldfcd'>Validity: </span>{formatDate(exam.end_date)}</p>
+                    {/* <p><span className='boldfcd'>Number of Subjects: </span>{exam.subject_count}</p> */}
+                    <p><span className='boldfcd'>Number of Videos: </span>{exam.video_count}</p>
                 </div>
                 </div>
             )}

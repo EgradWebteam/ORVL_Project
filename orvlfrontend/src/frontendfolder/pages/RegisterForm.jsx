@@ -298,7 +298,9 @@ const handleLoginSubmit = async (e) => {
 
       const userId = response.data.userId; // Get the user ID
       const userRole = response.data.role; // Get the user role
-
+      const token = response.data.token; // Assuming your API returns token and userId
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userId', userId);
       console.log('User ID:', userId); // Log the user ID
       console.log('User Role:', userRole); 
       // Navigate based on user role

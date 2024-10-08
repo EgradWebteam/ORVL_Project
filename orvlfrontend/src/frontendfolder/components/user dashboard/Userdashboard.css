@@ -29,6 +29,12 @@
     border: 1px solid #ccc;
     color: #ccc;
 }
+.jsk {
+    display: flex;
+    padding: 10px 0px;
+    justify-content: center;
+    align-items: center;
+}
 .btnflex {
     display: flex;
     
