@@ -56,59 +56,62 @@ useEffect(() => {
  
 const handleSubjectChange = (event) => {
   const { value, checked } = event.target;
-  setSelectedSubjects(prevState =>
-      checked ? [...prevState, value] : prevState.filter(subject => subject !== value)
-  );
+  setSelectedSubjects((prevState) => {
+    const newSelectedSubjects = checked
+      ? [...prevState, value]
+      : prevState.filter(subject => subject !== value);
+    console.log('New Selected Subjects:', newSelectedSubjects);
+    return newSelectedSubjects;
+  });
 };
  
-  const handleSubmit = (event) => {
-    event.preventDefault();
  
-    // Log to check current selected subjects
-    console.log('Selected Subjects before submission:', selectedSubjects);
-   
-    const data = {
-        exam_id: selectedExam,
-        selectedsubjects: selectedSubjects,
-    };
+useEffect(() => {
+  console.log('Updated Selected Subjects:', selectedSubjects);
+}, [selectedSubjects]); // This will log whenever selectedSubjects changes
  
  
+const handleSubmit = (event) => {
+  event.preventDefault();
  
-    const request = editingSelection
-        ? axios.put(`http://localhost:8000/ExamCreation/selections/ExamCreation_update/${editingSelection}`, data)
-        : axios.post('http://localhost:8000/ExamCreation/submit-selection', data);
+  // Use the latest selectedSubjects from state
+  console.log('Selected Subjects before submission:', selectedSubjects);
  
-    request
-        .then(() => {
-            alert(`${editingSelection ? 'Selection updated' : 'Selection saved'} successfully`);
-            return axios.get('http://localhost:8000/ExamCreation/selections');
-        })
-        .then(response => {
-            setSelections(response.data);
-            resetForm();
-        })
-        .catch(error => {
-            console.error('Error saving selection:', error);
-        });
+  const data = {
+    exam_id: selectedExam,
+    selectedsubjects: selectedSubjects,
+  };
+  console.log('Data to submit:', data); // Log data before sending
+ 
+  const request = editingSelection
+    ? axios.put(`http://localhost:8000/ExamCreation/selections/ExamCreation_update/${editingSelection}`, data)
+    : axios.post('http://localhost:8000/ExamCreation/submit-selection', data);
+ 
+  request
+    .then(() => {
+      alert(`${editingSelection ? 'Selection updated' : 'Selection saved'} successfully`);
+      return axios.get('http://localhost:8000/ExamCreation/selections');
+    })
+    .then(response => {
+      setSelections(response.data);
+      resetForm(); // Reset only after successful submission
+    })
+    .catch(error => {
+      console.error('Error saving selection:', error);
+    });
 };
- 
 const handleEdit = (index) => {
   const selectionToEdit = selections[index];
-  console.log('Selection to Edit:', selectionToEdit);
- 
   if (selectionToEdit) {
-      setEditingSelection(selectionToEdit.selection_id);
-      setSelectedExam(selectionToEdit.exam_id);
+    setEditingSelection(selectionToEdit.selection_id);
+    setSelectedExam(selectionToEdit.exam_id);
  
-      // Parse and set selected subjects
-      const selectionSubjects = selectionToEdit.subject_ids.split(',').map(id => id.trim());
-      console.log('Parsed Subject IDs:', selectionSubjects);
-      setSelectedSubjects(selectionSubjects);
- 
-      // Open the modal
-      setModalOpen(true);
+    const selectionSubjects = selectionToEdit.subject_ids.split(',').map(id => id.trim());
+    setSelectedSubjects(selectionSubjects);
+    setModalOpen(true);
   }
 };
+ 
  
 const handleDelete = (exam_id) => {
   if (window.confirm('Are you sure you want to delete this selection?')) {
@@ -128,18 +131,15 @@ const handleDelete = (exam_id) => {
   }
 };
  
- 
 const resetForm = () => {
   setModalOpen(false);
   setSelectedExam('');
   setEditingSelection(null);
+  setSubjects([]);
   // Consider whether to reset selectedSubjects based on the context
-  // setSelectedSubjects([]);
-  setSubjects([]); // Clear subjects if needed
-    // Log to confirm reset
-    console.log('Form reset: selectedSubjects:', selectedSubjects);
+  // setSelectedSubjects([]); // Avoid resetting here if not needed
+  console.log('Form reset: selectedSubjects:', selectedSubjects);
 };
- 
  
   return (
     <div>
@@ -176,20 +176,21 @@ const resetForm = () => {
     <div className='div1'>
         <label>Select Subjects:</label>
         {subjects.map(subject => {
-    const isChecked = selectedSubjects.includes(subject.subject_id.toString());
-    return (
-        <div key={subject.subject_id}>
-            <input
-                type='checkbox'
-                id={`subject-${subject.subject_id}`}
-                value={subject.subject_id}
-                checked={isChecked}
-                onChange={handleSubjectChange}
-            />
-            <label htmlFor={`subject-${subject.subject_id}`}>{subject.subject_name}</label>
-        </div>
-    );
+  const isChecked = selectedSubjects.includes(subject.subject_id.toString());
+  return (
+    <div key={subject.subject_id}>
+      <input
+        type='checkbox'
+        id={`subject-${subject.subject_id}`}
+        value={subject.subject_id}
+        checked={isChecked} // Controlled checkbox
+        onChange={handleSubjectChange}
+      />
+      <label htmlFor={`subject-${subject.subject_id}`}>{subject.subject_name}</label>
+    </div>
+  );
 })}
+ 
     </div>
 )}
                 <button type="submit">{editingSelection !== null ? 'Update Selection' : 'Submit Selection'}</button>
@@ -231,6 +232,7 @@ const resetForm = () => {
 };
  
 export default ExamCreation;
+ 
  
  
  

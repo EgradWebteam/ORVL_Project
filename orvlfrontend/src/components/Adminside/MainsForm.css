@@ -16,7 +16,7 @@
     padding: 20px;
     align-items: center;
 }
-/* Overlay and Modal Container */
+
 .modal, .overlay {
     position: fixed;
     top: 0;
@@ -24,7 +24,7 @@
     width: 100vw;
     height: 100vh;
     background: rgba(49, 49, 49, 0.8);
-    z-index: 1000; /* Ensure it's above other content */
+    z-index: 1000; 
 }
 .inputbtnflex{
     display: flex;
@@ -159,7 +159,7 @@ td a{
 }
 .btnes{
     position: relative;
-    left:85%;
+    left:55%;
     background-color: #00222c;
     color: #fff;
     font-size: larger;

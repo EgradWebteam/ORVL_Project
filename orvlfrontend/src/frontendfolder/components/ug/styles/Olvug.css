@@ -297,7 +297,7 @@
    
     width: 343px; /* fixed width for cards */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* subtle shadow */
-    transition: transform 0.2s; /* smooth hover effect */
+    transition: transform 0.3s; /* smooth hover effect */
 }
 
 .exam-cardvl:hover {

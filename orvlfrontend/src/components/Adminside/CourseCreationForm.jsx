@@ -316,31 +316,52 @@ const CourseCreationForm = () => {
                 </div>
             )}
  
-            <h2>Course List</h2>
-            <div className="course-list">
-                {courses.map((course, index) => (
-                    <div className="course-item" key={course.course_creation_id}>
-                        <div className="course-item-number">{index + 1}</div>
-                        <div className="course-item-exam">{course.exam_name}</div>
-                        <div className="course-item-name">{course.course_name}</div>
-                        <div className="course-item-start-date">{course.start_date}</div>
-                        <div className="course-item-end-date">{course.end_date}</div>
-                        <div className="course-item-cost">{course.cost}</div>
-                        <div className="course-item-discount">{course.discount}</div>
-                        <div className="course-item-total-price">
-                            {(course.cost - (course.cost * (course.discount / 100))).toFixed(2)}
-                        </div>
-                        <div className="course-item-actions">
-                            <button onClick={() => handleEdit(course)}>Edit</button>
-                            <button onClick={() => handleDelete(course.course_creation_id)}>Delete</button>
-                        </div>
-                    </div>
-                ))}
-            </div>
+ <div className='course-list-container'>
+    <h2>Course List</h2>
+    <table className='course-list-table'>
+        <thead>
+            <tr>
+                <th>S.no</th>
+                <th>Exam Name</th>
+                <th>Course Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Cost</th>
+                <th>Discount (%)</th>
+                <th>Discount Amount</th>
+                <th>Total Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {courses.map((course, index) => (
+                <tr key={course.course_creation_id}>
+                    <td>{index + 1}</td>
+                    <td>{course.exam_name}</td>
+                    <td>{course.course_name}</td>
+                    <td>{course.start_date}</td>
+                    <td>{course.end_date}</td>
+                    <td>{course.cost}</td>
+                    <td>{course.discount}</td>
+                    <td>{course.discount_amount}</td>
+                    <td>
+                        {(course.cost - (course.cost * (course.discount / 100))).toFixed(2)}
+                    </td>
+                    <td className='upddel'>
+                        <button className="update" onClick={() => handleEdit(course)}>Edit</button>
+                        <button className="delete" onClick={() => handleDelete(course.course_creation_id)}>Delete</button>
+                    </td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+</div>
+ 
         </div>
     );
 };
  
 export default CourseCreationForm;
+ 
  
  

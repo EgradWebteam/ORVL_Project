@@ -6,6 +6,7 @@ import course from '../ug/Images/course123.jpg';
 import { IoMdHome } from "react-icons/io";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { CgShapeRhombus } from "react-icons/cg";
 
 const BuyCourses = () => {
     const [courses, setCourses] = useState([]);
@@ -37,7 +38,7 @@ const BuyCourses = () => {
                 setLoading(false); // Stop loading
             }
         };
-    
+        
         fetchCourses();
     }, []);
     

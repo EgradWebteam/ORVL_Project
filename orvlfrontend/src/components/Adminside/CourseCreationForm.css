@@ -128,3 +128,19 @@
 .course-item-actions button:hover {
     background-color: #d32f2f; /* Darker red */
 }
+.course-list-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+ 
+.course-list-table th, .course-list-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+ 
+.course-list-table th {
+    background-color: #f2f2f2;
+}
+ 
+ 
