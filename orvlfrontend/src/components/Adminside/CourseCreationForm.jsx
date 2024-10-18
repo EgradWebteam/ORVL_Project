@@ -350,8 +350,6 @@ const CourseCreationForm = () => {
                     </div>
                 </div>
             )}
-              
- 
  <div className='course-list-container'>
     <h1>Course List</h1>
     <table className='course-list-table'>
