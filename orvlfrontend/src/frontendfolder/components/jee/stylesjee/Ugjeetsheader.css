@@ -22,6 +22,35 @@
     margin-bottom: 0;
     /* text-align: center; */
 }
+.divboxts {
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    height: 9vh;
+    justify-content: center;
+    position: relative;
+    top: -33px;
+    width: 100%;
+}
+.headerjee {
+    height: 120px;
+    padding: 10px 200px;
+    background: #fff;
+    box-shadow: 0 7px 29px 0 #64646f33;
+}
+.jeeanchor {
+    position: relative;
+    bottom: 70px;
+    left: 90%;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+}
+.headerjee img {
+    height: 95px;
+    width: 330px;
+}
 .dpjts{
   
    

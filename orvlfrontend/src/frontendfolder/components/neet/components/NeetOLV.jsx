@@ -9,6 +9,7 @@ import i4 from '../images/em4.png'
 import f2 from '../images/f2.png'
 import f3 from '../images/f3.png'
 import f4 from '../images/f4.png'
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import folv1 from '../images/folv1.png'
 import folv2 from '../images/folv2.png'
 import folv3 from '../images/folv3.png'

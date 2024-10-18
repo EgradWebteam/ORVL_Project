@@ -6,7 +6,6 @@ import course from '../ug/Images/course123.jpg';
 import { IoMdHome } from "react-icons/io";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { CgShapeRhombus } from "react-icons/cg";
 
 const BuyCourses = () => {
     const [courses, setCourses] = useState([]);
@@ -69,7 +68,9 @@ const BuyCourses = () => {
                 status: 'paid', // You may want to include this in your backend logic
             });
             alert(purchaseResponse.data.message);
-          
+            if (purchaseResponse.data.redirectUrl) {
+                navigate(purchaseResponse.data.redirectUrl);
+            }
         } catch (error) {
             console.error('Error during purchase:', error);
             alert('Failed to purchase course.');

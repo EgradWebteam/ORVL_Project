@@ -10,6 +10,7 @@ import banner3 from '../Images/JEE ADVANCED MATHEMATICS WEB BANNER 1.97dcff1bd19
 import banner4 from '../Images/NEET Banner - 2.c2bae78eeb8f65413d04.jpg'
 import course from '../Images/course123.jpg'
 import { IoBarChartSharp } from "react-icons/io5";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { CgShapeRhombus } from "react-icons/cg";
 import { PiFileTextFill } from "react-icons/pi";
 import { FaUsers } from "react-icons/fa";

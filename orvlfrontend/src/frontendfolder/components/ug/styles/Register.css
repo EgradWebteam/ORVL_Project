@@ -76,6 +76,128 @@
     width: 60%;
     padding: 20px;
   }
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 500px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 27px;
+}
+.Footerolv {
+  float: left;
+  width: 100%;
+  padding: 65px 0 40px;
+  background-color: #00111d;
+}
+.subfooter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+.foot1 {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.foot1 h2::first-letter {
+   
+  color: #ff8a00;
+
+}
+.ulfpli li:hover {
+   color: #ff8a00;
+   transform: translateX(2px);
+}
+
+.ulfpli li a:hover {
+   color: #ff8a00; 
+   text-decoration: underline;
+}
+.foot1 h2 {
+  color: #fff;
+  font-size: 19px;
+}
+.parafoot a {
+  color: #a9b9c4;
+}
+.parafoot {
+  color: #a9b9c4;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857143;
+}
+.closebuttonlogin {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-weight: 900;
+  padding: 5px 7px;
+  color: #ccc;
+  background-color: #fff;
+}
+.modal-content .buttonlgnsubmit {
+    background-color: rgba(47,135,196,1);
+    color: white;
+    border: none;
+   
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.imglogo::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 50px;
+  background-color: #fff;
+  position: absolute;
+  left: 0px;
+  top: 41px;
+}
+
+.imglogo img {
+  max-height: 50px;
+  position: relative;
+  z-index: 1000;
+  width: 200px;
+  height: 100px;
+}
+.imglogo::after {
+  content: '';
+  position: absolute;
+  top: 41px;
+  left: 190px;
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 50px solid #fff;
+}
+* {
+  letter-spacing: 0;
+  line-height: 160%;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  word-spacing: .2rem;
+}
+.downheader {
+  background: rgb(36, 150, 202) !important;
+  height: 9vh;
+}
+.navlistug {
+  display: flex;
+  flex-direction: row;
+  gap: 5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 2rem;
+}
 .boldfcd {
     font-weight: 700;
     font-size: 16px;
