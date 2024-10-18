@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Leftnavbar from './Leftnavbar';
+import { IoMdHome } from "react-icons/io";
+import Logo_img from '../Images/image.png';
 import './CourseCreationForm.css';
  
 const CourseCreationForm = () => {
@@ -217,31 +220,63 @@ const CourseCreationForm = () => {
     };
  
     return (
+        <div>
+      <div className='headerjeem'>
+        <div className='headerjee'>
+          <img src={Logo_img} alt="Logo" />
+        </div>
+        <a className='jeeanchor' href='/Home'>
+          <IoMdHome /> Home
+        </a>
+      </div>
+      <Leftnavbar />
+      <div className='headerpageh1'>
+        <h1> Course Creation Page</h1>
+      </div>
         <div className="course-creation-container">
-            <h1>Course Creation Form</h1>
-            <button className="add-button" onClick={() => setModalOpen(true)}>Add New Course</button>
+            
+            <button className="btnes1" onClick={() => setModalOpen(true)}>Add New Course</button>
  
             {error && <p className="error-message">{error}</p>}
  
             {modalOpen && (
                 <div className='modal'>
                     <div className='modal-content'>
+                     
                         <h2>{editingCourseId ? 'Edit Course' : 'Create Course'}</h2>
                         <form onSubmit={handleCourseSubmit}>
-                            <select
-                                name="exam_id"
-                                value={courseData.exam_id}
-                                onChange={handleCourseChange}
-                                required
-                            >
-                                <option value="">--Select Exam--</option>
-                                {exams.map((exam) => (
-                                    <option key={exam.exam_id} value={exam.exam_id}>
-                                        {exam.exam_name}
-                                    </option>
-                                ))}
-                            </select>
+                        <div className='group1'>
+    <div className="label">
+        <span>Course Name:</span>
+        <input
+            type="text"
+            name="course_name"
+            placeholder="Course Name"
+            value={courseData.course_name}
+            onChange={handleCourseChange}
+            required
+        />
+    </div>
+    <div className="label">
+        <span>Select Exam:</span>
+        <select
+            name="exam_id"
+            value={courseData.exam_id}
+            onChange={handleCourseChange}
+            required
+        >
+            <option value="">--Select Exam--</option>
+            {exams.map((exam) => (
+                <option key={exam.exam_id} value={exam.exam_id}>
+                    {exam.exam_name}
+                </option>
+            ))}
+        </select>
+    </div>
+</div>
+
                             <div>
+
                                 <h4>Select Subjects:</h4>
                                 {subjects.map((subject) => (
                                     <label key={subject.subject_id}>
@@ -317,7 +352,7 @@ const CourseCreationForm = () => {
             )}
  
  <div className='course-list-container'>
-    <h2>Course List</h2>
+    <h1>Course List</h1>
     <table className='course-list-table'>
         <thead>
             <tr>
@@ -348,7 +383,7 @@ const CourseCreationForm = () => {
                         {(course.cost - (course.cost * (course.discount / 100))).toFixed(2)}
                     </td>
                     <td className='upddel'>
-                        <button className="update" onClick={() => handleEdit(course)}>Edit</button>
+                        <button className="update" onClick={() => handleEdit(course)}>Update</button>
                         <button className="delete" onClick={() => handleDelete(course.course_creation_id)}>Delete</button>
                     </td>
                 </tr>
@@ -356,7 +391,7 @@ const CourseCreationForm = () => {
         </tbody>
     </table>
 </div>
- 
+ </div>
         </div>
     );
 };

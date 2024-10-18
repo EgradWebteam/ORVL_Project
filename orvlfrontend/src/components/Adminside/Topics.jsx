@@ -5,7 +5,7 @@ import { IoMdHome } from "react-icons/io";
 import Logo_img from '../Images/image.png';
 import Leftnavbar from './Leftnavbar';
 import { RxCross2 } from "react-icons/rx";
- 
+
 const Topics = () => {
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
@@ -116,18 +116,19 @@ const Topics = () => {
     }
   };
  
-  const handleDelete = async (topic_id) => {
-    if (window.confirm('Are you sure you want to delete this selection?')) {
-      try {
-        await axios.delete(`http://localhost:8000/TopicCreation/topics/delete/${topic_id}`);
-        alert('Selection deleted successfully');
-        fetchTopics();
-      } catch (error) {
-        console.error('Error deleting selection:', error.message || error);
-        alert('Failed to delete selection. Please try again.');
-      }
+  const handleDeleteAll = async (exam_id) => {
+    if (window.confirm('Are you sure you want to delete all topics for this exam?')) {
+        try {
+            await axios.delete(`http://localhost:8000/TopicCreation/topics/delete-by-exam/${exam_id}`);
+            alert('All topics deleted successfully');
+            fetchTopics(); // Refresh topics
+        } catch (error) {
+            console.error('Error deleting topics:', error.message || error);
+            alert('Failed to delete topics. Please try again.');
+        }
     }
-  };
+};
+
  
   const handleEdit = async (topic) => {
     if (!topic || !topic.topic_id) {
@@ -175,16 +176,16 @@ const Topics = () => {
     }
 };
  
-const addEditTopic = () => {
-  setCurrentTopics([...currentTopics, { topic_id: '', topic_name: '' }]);
-};
+// const addEditTopic = () => {
+//   setCurrentTopics([...currentTopics, { topic_id: '', topic_name: '' }]);
+// };
  
-const removeEditTopic = (index) => {
-  if (currentTopics.length > 1) {
-      const updatedTopics = currentTopics.filter((_, i) => i !== index);
-      setCurrentTopics(updatedTopics);
-  }
-};
+// const removeEditTopic = (index) => {
+//   if (currentTopics.length > 1) {
+//       const updatedTopics = currentTopics.filter((_, i) => i !== index);
+//       setCurrentTopics(updatedTopics);
+//   }
+// };
  
  
   return (
@@ -198,6 +199,9 @@ const removeEditTopic = (index) => {
         </a>
       </div>
       <Leftnavbar />
+      <div className='headerpageh1'>
+        <h1> Topics Upload Page</h1>
+      </div>
       <button className='btnes' onClick={() => setModal1(true)}> Topic Creation</button>
  
       {/* Topic Creation Modal */}
@@ -318,10 +322,10 @@ const removeEditTopic = (index) => {
 ))}
  
                   </div>
-                  <button type="button" onClick={addEditTopic}>+</button>
-                  {currentTopics.length > 1 && (
+                  {/* <button type="button" onClick={addEditTopic}>+</button> */}
+                  {/* {currentTopics.length > 1 && (
                     <button type="button" onClick={() => removeEditTopic(currentTopics.length - 1)}>-</button>
-                  )}
+                  )} */}
                 </div>
                 <button type="submit">Update Topics</button>
                 <button className='closebutton' onClick={() => setEditModal(false)}><RxCross2 /></button>
@@ -353,7 +357,8 @@ const removeEditTopic = (index) => {
                 <td>{topict.topics}</td>
                 <td className='upddel'>
                   <button className="update" onClick={() => handleEdit(topict)}>Update</button>
-                  <button className='delete' onClick={() => handleDelete(topict.topic_id)}>Delete</button>
+                  <button className='delete' onClick={() => handleDeleteAll(topict.exam_id)}>Delete</button>
+
                 </td>
               </tr>
             ))}

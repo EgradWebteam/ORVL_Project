@@ -108,26 +108,20 @@ router.put('/topics/update', async (req, res) => {
  
  
 // Delete API
-router.delete('/topics/delete/:topic_id', async (req, res) => {
-    const topic_id = req.params.topic_id; // Change from subject_id to topic_id
-    console.log('Received topic_id for deletion:', topic_id); // Log the ID
+router.delete('/topics/delete-by-exam/:exam_id', async (req, res) => {
+    const exam_id = req.params.exam_id;
     try {
-        // Execute the delete query
-        const results = await db.query('DELETE FROM topics WHERE topic_id = ?', [topic_id]);
- 
-        console.log('Delete results:', results); // Log results from the delete operation
-       
+        const results = await db.query('DELETE FROM topics WHERE exam_id = ?', [exam_id]);
         if (results.affectedRows === 0) {
-            return res.status(404).send('Topic not found'); // Handle case where no rows were deleted
+            return res.status(404).send('No topics found for this exam');
         }
- 
         res.status(204).send(); // No content to send back
     } catch (err) {
-        console.error('Error deleting topic:', err);
-        return res.status(500).send('Error deleting topic');
+        console.error('Error deleting topics by exam:', err);
+        return res.status(500).send('Error deleting topics');
     }
-   
 });
+
 // Route to fetch a specific topic by its ID
 router.get('/topics/:topic_id', async (req, res) => {
     const topic_id = req.params.topic_id;

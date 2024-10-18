@@ -1,28 +1,77 @@
 .course-creation-container {
     padding: 20px;
     font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
+    /* background-color: #f9f9f9; */
+    margin-left: 22vw;
+        margin-top: 10vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 }
- 
-.add-button {
-    background-color: #4CAF50; /* Green */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-bottom: 20px;
+.btnes1{
+    position: 0;
+    left:55%;
+    background-color: #00222c;
+    color: #fff;
+    font-size: larger;
+    padding: 10px;
+    border-radius: 10px;
+    top: 6vh;
 }
+
  
-.add-button:hover {
-    background-color: #45a049; /* Darker green */
+/* .btnes1:hover {
+    background-color: #6baadd; /* Darker green */
+*/
+.group1 {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    gap: 15px; /* Space between elements */
 }
- 
+
+.label {
+    display: flex;
+    align-items: center; /* Align label with input/select vertically */
+}
+
+.label span {
+    margin-right: 10px; /* Space between label text and input */
+    width: 120px; /* Fixed width for labels to align */
+    font-weight: bold; /* Make label text bold */
+}
+
+input[type="text"], 
+select {
+    width: 100%; /* Make input and select full width of parent */
+    max-width: 300px; /* Set a maximum width */
+    padding: 10px; /* Space inside input/select */
+    font-size: 16px; /* Font size */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding and border in width */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+}
+
+input[type="text"]:focus, 
+select:focus {
+    border-color: #007bff; /* Border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+input[type="text"]:hover, 
+select:hover {
+    border-color: #007bff; /* Change border color on hover */
+}
+
 .error-message {
     color: red;
     margin: 10px 0;
 }
- 
+ .group1 {
+    background-color: rgb(66, 65, 65);
+
+ }
 .modal {
     position: fixed;
     top: 0;
@@ -41,6 +90,7 @@
     border-radius: 5px;
     width: 500px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    
 }
  
 .modal-content h2 {
@@ -64,8 +114,8 @@
     padding: 3px;
 }
  
-.modal-content button {
-    background-color: #4CAF50; /* Green */
+.modal-content btn {
+    background-color: #3c5f8b; /* Green */
     color: white;
     border: none;
     padding: 10px 15px;
@@ -74,8 +124,8 @@
     margin-top: 10px;
 }
  
-.modal-content button:hover {
-    background-color: #45a049; /* Darker green */
+.modal-content btn:hover {
+    background-color: #487ecf; /* Darker green */
 }
  
 .course-list {
@@ -116,7 +166,7 @@
     gap: 10px;
 }
  
-.course-item-actions button {
+.course-item-actions btn {
     background-color: #f44336; /* Red */
     color: white;
     border: none;
@@ -125,7 +175,7 @@
     border-radius: 5px;
 }
  
-.course-item-actions button:hover {
+.course-item-actions btn:hover {
     background-color: #d32f2f; /* Darker red */
 }
 .course-list-table {
@@ -134,13 +184,16 @@
 }
  
 .course-list-table th, .course-list-table td {
-    border: 1px solid #ddd;
+    border: 1px solid hsla(0, 7%, 97%, 0.966);
     padding: 8px;
     text-align: left;
 }
  
 .course-list-table th {
-    background-color: #f2f2f2;
+    background-color: #00222c;
+    color: #fff;
+    
 }
+
  
  

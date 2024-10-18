@@ -147,11 +147,11 @@ td a{
     border-radius: 10px;
     box-shadow: 0 0 10px #0000004d;
     position: fixed;
-    left:37vw;
+    left:50vw;
     top: 50vh;
    transform: translate(-50%,-50%);
     overflow: auto;
-    padding: 20px;
+    padding: 60px;
     z-index: 999;
     max-height: 80%;
     max-width: 80%;
