@@ -218,7 +218,7 @@ const MyAccount = () => {
                             </div>
                             
                             {editprofileupdate && (
-                                <form onSubmit={handleUpdate} className='resetform'>
+                                <form onSubmit={handleUpdate} className='resetform disflexupdate'>
                                     <div className="updateformgrid">
                                         <div className='disflforlabel'>
                                             <label htmlFor="name" className='nephoneno'>Name:</label>

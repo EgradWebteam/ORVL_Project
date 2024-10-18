@@ -1,6 +1,7 @@
 import React from 'react'
 import '../styles/BitsathomeHeader.css'
 import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { IoMdHome } from "react-icons/io";
 import Logo_img from '../images/logo.png'
 import banner1 from '../images/banner2.jpg'

@@ -160,11 +160,7 @@ p.carousel-status {
 button.control-arrow.control-next {
     display: none;
 }
-.slide{
-    height: 600px;
-    width: 100%;
-    padding-top: 10px
-}
+
 .slide img{
     height: 600px;
     width: 100%;

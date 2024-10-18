@@ -71,6 +71,70 @@
     padding: 10px;
     width: fit-content;
 }
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 500px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 27px;
+}
+.closebuttonlogin {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-weight: 900;
+    padding: 5px 7px;
+    color: #8d8c8c;
+    font-size: larger;
+    background-color: #fff;
+    
+}
+.slide{
+    padding-top: 30px;
+}
+.Footerolv {
+    float: left;
+    width: 100%;
+    padding: 65px 0 40px;
+    background-color: #00111d;
+}
+p.carousel-status {
+    display: none;
+}
+.loginitems {
+    border-top: 1px solid #ccc;
+    padding: 20px 0px;
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    border-bottom: 1px solid #ccc;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.lgnh2 {
+    font-size: larger;
+    text-align: left;
+}
+.modal-content .buttonlgnsubmit {
+    background-color: rgba(47,135,196,1);
+    color: white;
+    border: none;
+    /* padding: 5px 15px; */
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
 .imglogo{
     display: flex;
    padding: 10px;
@@ -98,8 +162,33 @@
 .Slider1 .carousel-slider {
    height: 350px;
 }
-  
-
+.modal-content .buttonlgnsubmit {
+    background-color: rgba(47,135,196,1);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.newforgetpass {
+    display: flex;
+    justify-content: space-between;
+}
+.newforgetpass a{
+   color: #337AB7;
+}
+.inptnv, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+button{
+    border: none;
+}
 .slide1{
     height:350px;
 }
@@ -259,14 +348,32 @@
     font-size: 14px;
     line-height: 1.42857143;
 }
+* {
+    letter-spacing: 0;
+    line-height: 160%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    word-spacing: .2rem;
+}
 .foot1{
     width: 250px;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
+.carousel.carousel-slider {
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    top: -37px;
+}
 .parafoot a{
     color:#a9b9c4 ;
+}
+.carousel .control-dots {
+    bottom: 0;
 }
 .foot1 h2::first-letter {
    
@@ -341,8 +448,10 @@
     padding: 20px;
 }
 .pricebuy {
-    background-color: #007bff;
-    color: #fff;
+   
+    color: #007bff;
+    font-size: 18px;
+    font-weight: 700;
 }
 .buych1 {
     text-align: center;
@@ -354,8 +463,7 @@
         display: inline-block;
         padding: 6px 12px;
         margin-bottom: 0;
-        font-size: 14px;
-        font-weight: 400;
+      
         line-height: 1.42857143;
         text-align: center;
         white-space: nowrap;
@@ -368,6 +476,8 @@
 .btnbut {
     background-color: #eee;
     color: #fff;
+    font-size: 14px;
+    font-weight: 400;
     background: #007bff;
   
 }

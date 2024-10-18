@@ -1,8 +1,7 @@
 
 .neet {
     background-color:#cceeed;
-    position: relative;
-    top:-33px;
+ 
     padding-bottom: 16px;
 }
 .neth1{
@@ -10,4 +9,68 @@
 }
 .corneetimg{
     background-color:#cceeed;
+}
+.coursesmain {
+   
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+}
+.couhead {
+    padding-bottom: 30px;
+}
+.couhead .couh1 {
+    text-align: center;
+}
+.courseflex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    justify-content: flex-start;
+    margin: 0 auto;
+    width: 75%;
+    align-items: center;
+}
+.coursecard {
+    width: 25rem;
+    margin: 0px auto;
+    border-radius: 20px;
+    box-shadow: 0 0 78px -19px #000;
+    transition: 1s;
+   
+    border-radius: 2rem;
+    text-align: center;
+}
+.headtext h2 {
+    background-color: #fff;
+    border-radius: 20px 20px 0 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    padding: 1rem;
+}
+.corimg img {
+    height: 250px;
+    width: 100%;
+}
+.butn {
+    background-color: #fff;
+    border-radius: 0 0 20px 20px;
+}
+.cbtn {
+    background-color:#cceeed;
+    color: #211d1d;
+    border-radius: 10px;
+    margin: .5rem auto;
+    padding: .5rem;
+}
+.ac {
+    font-size: 24px;
+    color: #000;
+    font-weight: bold;
+    width: auto;
+    height: auto;
+}
+.ac::after {
+    content: '>';
+    font-weight: 100;
+    font-size: medium;
 }

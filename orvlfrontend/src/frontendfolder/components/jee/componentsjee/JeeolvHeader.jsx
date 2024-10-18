@@ -5,6 +5,7 @@ import slide1 from '../images/slide1.jpg'
 import slide2 from '../images/slide2.jpg'
 import slide3 from '../images/slide3.jpg'
 import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import '../stylesjee/JeeolvHeader.css'
 import olc1 from '../images/olc1.png'
 import olc2 from '../images/olc2.png'
@@ -51,7 +52,7 @@ const JeeolvHeader = () => {
         </h1>
       </div>
       <div className='Carousel'>
-        <Carousel className='Slider'
+        <Carousel className='coro'
           autoPlaySpeed={2}
           autoPlay={true}
           infiniteLoop={true}>

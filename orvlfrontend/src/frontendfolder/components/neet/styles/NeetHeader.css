@@ -1,3 +1,24 @@
 .NEETBOX{
     background: rgb(204, 238, 237);
 }
+.headerjee {
+    height: 120px;
+    padding: 10px 200px;
+    background: #fff;
+    box-shadow: 0 7px 29px 0 #64646f33;
+}
+.jeeanchor {
+    position: relative;
+    bottom: 70px;
+    left: 90%;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+}
+.headerjee img {
+    height: 95px;
+    width: 330px;
+}
+ul.thumbs.animated {
+    display: none;
+}

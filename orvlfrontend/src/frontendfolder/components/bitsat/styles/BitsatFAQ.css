@@ -1,9 +1,10 @@
-.BitSatFaq{
-    position: relative;
-    top: -37px;
-}
-.bitsat1{
-    background-color: #d8ccff;
+.bitsatbox {
+    background: #d9ccff;
+    height: 9vh;
+    justify-content: center;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
 }
 .bitsat1 a:hover{
     color: #fff;
@@ -24,10 +25,143 @@
 .xl{
     padding-bottom: 30px;
 }
+.offjee.neet1.bitsat1 {
+    background: #d8ccff;
+}
 .xl h4,.hl h4{
     padding-left: 10px;
 }
-
+.headtext {
+    background: #fff;
+    border-radius: 8px;
+}
+.offneet {
+    display: flex;
+    /* flex-wrap: wrap; */
+    flex-direction: column;
+    gap: 10px;
+}
+*{
+    font-family: Roboto, sans-serif;
+    }
+    
+    /* h3{
+      text-wrap:balance;
+     
+      text-underline-offset:6px;
+      text-decoration-thickness:2px;
+      margin-bottom:30px;
+    }
+     */
+    details {
+      /* border: 1px solid rgba(112,112,112,0.1); */
+      border-radius: 4px;
+      padding: 0.5em 0.5em 0;
+      margin: 20px;
+      cursor:pointer; 
+      
+    }
+    
+    .summary {
+    
+      font-weight: 600;
+      margin: -0.5em -0.5em 0;
+      padding: 0.5em;
+      list-style-type:"+";
+      list-style:none;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    
+     details[open] {
+      padding: 0.5em; 
+  
+    
+    }
+    
+    .summary::marker{
+      font-size: 1.2em;
+      margin-right:20px;
+    }
+    
+    
+    
+    details summary::after{
+      content:"+";
+      float:right;
+      font-size:1.2em;
+      
+    }
+    
+    details[open] summary::after{
+      content:"-";
+      float:right;
+      font-size:1.5em;
+     
+     
+    }
+    .jeeul li{
+      list-style: disc;
+      list-style-position: inside;
+    }
+    .jeeul h3{
+      text-decoration: none;
+    }
+  .faqs-container{
+    padding: 1rem 9rem;
+  }
+  
+  .jeetable,.jeetable td,.jeetable th {
+    border: 1px solid;
+  }
+  
+  .jeetable{
+    border-collapse: collapse;
+    text-indent: initial;
+    unicode-bidi: isolate;
+    border-spacing: 2px;
+    margin-bottom: 30px;
+  }
+  .jeetable td{
+    padding-left: 5px;
+  }
+  .jeetable th{
+    padding-left: 3px;
+  }
+  
+    .condiv {
+      width: 101%;
+      height: inherit;
+      position: relative;
+      left: -7px;
+      border-left: 1px solid black;
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
+      padding:10px ;
+      box-shadow: 0px 0px 5px #00000080;
+  
+  }
+  .p{
+    text-decoration: underline;
+  }
+  .ja{
+    color: #000;
+  }
+  .offjee{
+    position: relative;
+    right:-75%;
+   
+    height: 45px;
+    width: 275px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  .offa{
+    color: #000;
+  }
 .bti{
     background-color: #d8ccff;
 }
@@ -36,4 +170,84 @@
 }
 .bbtn{
     background-color:#d8ccff ;
+}
+*{
+    box-sizing: border-box;
+}
+.couhead{
+    padding-bottom: 30px;
+}
+.couhead .couh1{
+    text-align: center;
+}
+.coursesmain{
+    background-color:  #d8ccff;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+}
+.courseflex{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    justify-content: flex-start;
+    margin: 0 auto;
+    width: 75%;
+    align-items: center;
+}
+.coursecard{
+    
+    width: 25rem;
+    margin: 0px auto;
+    border-radius: 20px;
+    box-shadow: 0 0 78px -19px #000;
+    transition: 1s;
+    background-color: #d8ccff;
+    border-radius: 2rem;
+    text-align: center;
+    
+
+}
+.corimg img{
+    height: 250px;
+    width: 100%;
+}
+.headtext h2{
+
+    border-radius: 20px 20px 0 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    padding: 1rem;
+}
+.butn{
+    background-color: #fff;
+    border-radius: 0 0 20px 20px;
+}
+.cbtn{
+    background-color:  #d8ccff;
+    color: #211d1d;
+    border-radius: 10px;
+    margin: .5rem auto;
+    
+    padding: .5rem;
+}
+.ac{
+    font-size:24px;
+    color: #000;
+    font-weight: bold;
+    width: auto;
+    height: auto;
+}
+.ac::after{
+    content: '>';
+    font-weight: 100;
+    font-size: medium;
+}
+.cbtn:hover,.ac:hover{
+    background: #2f2467;
+    color: #fff;
+    
+
+}
+.coursecard:hover{
+    transform: translateY(-1.5rem);
 }
