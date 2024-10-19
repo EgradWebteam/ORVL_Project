@@ -33,6 +33,7 @@ router.get('/course-list', async (req, res) => {
         c.discount,
         c.discount_amount,
         c.total_price,
+        c.payment_link,
         c.image,
         GROUP_CONCAT(s.subject_id SEPARATOR ', ') AS subject_ids,
         GROUP_CONCAT(s.subject_name SEPARATOR ', ') AS subjects
@@ -59,7 +60,7 @@ router.get('/course-list', async (req, res) => {
  
 // POST API for course creation
 router.post('/create-course', upload.fields([{ name: 'image', maxCount: 1 }]), async (req, res) => {
-    const { exam_id, subject_ids, course_name, start_date, end_date, cost, discount } = req.body;
+    const { exam_id, subject_ids, course_name, start_date, end_date, cost, discount, payment_link} = req.body;
  
     const image = req.files['image'] && req.files['image'][0] ? req.files['image'][0].path : null;
     let imageBuffer = null;
@@ -72,7 +73,7 @@ router.post('/create-course', upload.fields([{ name: 'image', maxCount: 1 }]), a
     const total_price = cost - discount_amount;
  
     // Validate required fields
-    if (!exam_id || !subject_ids || !course_name || !start_date || !end_date || !cost || !discount) {
+    if (!exam_id || !subject_ids || !course_name || !start_date || !end_date || !cost || !discount||!payment_link) {
         return res.status(400).send('All fields are required');
     }
  
@@ -80,11 +81,11 @@ router.post('/create-course', upload.fields([{ name: 'image', maxCount: 1 }]), a
  
     // Insert into course_creation table
     const courseQuery = `
-        INSERT INTO course_creation (exam_id, course_name, start_date, end_date, cost, discount, discount_amount, total_price, image)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        INSERT INTO course_creation (exam_id, course_name, start_date, end_date, cost, discount, discount_amount, total_price,payment_link, image)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
    
     try {
-        const [courseResult] = await db.query(courseQuery, [exam_id, course_name, start_date, end_date, cost, discount, discount_amount, total_price, imageBuffer]);
+        const [courseResult] = await db.query(courseQuery, [exam_id, course_name, start_date, end_date, cost, discount, discount_amount, total_price,payment_link, imageBuffer]);
  
         // Insert into course_subjects table
         const courseCreationId = courseResult.insertId; // Get the ID of the newly created course
@@ -103,7 +104,7 @@ router.post('/create-course', upload.fields([{ name: 'image', maxCount: 1 }]), a
 // PUT API for course update
 router.put('/update-course/:id', upload.fields([{ name: 'image', maxCount: 1 }]), async (req, res) => {
     const courseId = req.params.id;
-    const { exam_id, subject_ids, course_name, start_date, end_date, cost, discount } = req.body;
+    const { exam_id, subject_ids, course_name, start_date, end_date, cost, discount,payment_link } = req.body;
  
     const image = req.files['image'] && req.files['image'][0] ? req.files['image'][0].path : null;
     let imageBuffer = null;
@@ -115,15 +116,15 @@ router.put('/update-course/:id', upload.fields([{ name: 'image', maxCount: 1 }])
     const total_price = cost - discount_amount;
  
     // Validation
-    if (!exam_id || !subject_ids || !course_name || !start_date || !end_date || !cost || isNaN(cost) || isNaN(discount)) {
+    if (!exam_id || !subject_ids || !course_name || !start_date || !end_date || !cost ||!payment_link|| isNaN(cost) || isNaN(discount)) {
         return res.status(400).send('All fields are required and must be valid');
     }
  
     // Update the course_creation table
-    const courseQuery = `UPDATE course_creation SET exam_id = ?, course_name = ?, start_date = ?, end_date = ?, cost = ?, discount = ?, discount_amount = ?, total_price = ?, image = ? WHERE course_creation_id = ?`;
+    const courseQuery = `UPDATE course_creation SET exam_id = ?, course_name = ?, start_date = ?, end_date = ?, cost = ?, discount = ?, discount_amount = ?, total_price = ?,payment_link=?, image = ? WHERE course_creation_id = ?`;
    
     try {
-        await db.query(courseQuery, [exam_id, course_name, start_date, end_date, cost, discount, discount_amount, total_price, image, courseId]);
+        await db.query(courseQuery, [exam_id, course_name, start_date, end_date, cost, discount, discount_amount, total_price, image,payment_link, courseId]);
  
         // Update course_subjects table
         const subjectIdsArray = Array.isArray(subject_ids) ? subject_ids : [subject_ids];

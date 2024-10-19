@@ -35,43 +35,44 @@ router.get('/exam/:exam_id/subjects', async (req, res) => {
 // Fetch selections with grouped data for the frontend table
 router.get('/selections', async (req, res) => {
     try {
-        // Query to get exam IDs and subject IDs
-        const examQuery = `
-            SELECT e.exam_id, e.exam_name, GROUP_CONCAT(sub.subject_id SEPARATOR ', ') AS subject_ids
+        // Combined query to get exam details along with unique subject IDs and subject names
+        const Query = `
+            SELECT 
+                s.selection_id, 
+                e.exam_id, 
+                e.exam_name, 
+                GROUP_CONCAT(DISTINCT sub.subject_id ORDER BY sub.subject_id SEPARATOR ', ') AS subject_ids, 
+                GROUP_CONCAT(DISTINCT sub.subject_name ORDER BY sub.subject_name SEPARATOR ', ') AS subject_names
             FROM selections s
             JOIN exams e ON s.exam_id = e.exam_id
             JOIN subjects sub ON s.subject_id = sub.subject_id
-            GROUP BY e.exam_id, e.exam_name
+            GROUP BY s.selection_id, e.exam_id
             ORDER BY e.exam_id;
         `;
 
-        // Query to get selection details along with subject names
-        const subjectQuery = `
-            SELECT s.selection_id, e.exam_id, e.exam_name, GROUP_CONCAT(sub.subject_name SEPARATOR ', ') AS subject_names
-            FROM selections s
-            JOIN exams e ON s.exam_id = e.exam_id
-            JOIN subjects sub ON s.subject_id = sub.subject_id
-            GROUP BY s.selection_id, e.exam_id, e.exam_name
-            ORDER BY e.exam_id;
-        `;
+        // Execute the combined query
+        const [results] = await db.query(Query);
 
-        // Execute both queries
-        const [examResults] = await db.query(examQuery);
-        const [subjectResults] = await db.query(subjectQuery);
+        // Create a structured response to avoid duplicate exam names
+        const structuredResults = results.reduce((acc, curr) => {
+            const existingExam = acc.find(item => item.exam_id === curr.exam_id);
+            if (existingExam) {
+                existingExam.subject_ids += `, ${curr.subject_ids}`;
+                existingExam.subject_names += `, ${curr.subject_names}`;
+            } else {
+                acc.push({
+                    selection_id: curr.selection_id,
+                    exam_id: curr.exam_id,
+                    exam_name: curr.exam_name,
+                    subject_ids: curr.subject_ids,
+                    subject_names: curr.subject_names
+                });
+            }
+            return acc;
+        }, []);
 
-        // Combine results into a single array for the frontend
-        const combinedResults = subjectResults.map((subject) => {
-    return {
-        selection_id: subject.selection_id, // Include selection_id here
-        exam_id: subject.exam_id,
-        exam_name: subject.exam_name,
-        subject_ids: examResults.find(exam => exam.exam_id === subject.exam_id).subject_ids,
-        subject_names: subject.subject_names, // Directly use subject_names from subjectQuery
-    };
-});
-
-        // Respond with the combined results
-        res.json(combinedResults);
+        // Respond with the structured results
+        res.json(structuredResults);
     } catch (error) {
         console.error('Error fetching selections:', error);
         res.status(500).json({ error: 'Failed to fetch selections' });
@@ -152,26 +153,27 @@ router.put('/selections/ExamCreation_update/:id', async (req, res) => {
 });
  
 // Route to delete a selection by selection_id
-router.delete('/selections/ExamCreation_delete/:selection_id', async (req, res) => {
-    const selection_id = req.params.selection_id;
-    console.log('Received selection_id for deletion:', selection_id); // Log the ID
+router.delete('/selections/ExamCreation_delete/:exam_id', async (req, res) => {
+    const exam_id = req.params.exam_id;
+    console.log('Received exam_id for deletion:', exam_id); // Log the ID
 
     try {
-        const [results] = await db.query('DELETE FROM selections WHERE selection_id = ?', [selection_id]);
+        const [results] = await db.query('DELETE FROM selections WHERE exam_id = ?', [exam_id]);
 
         console.log('Delete results:', results); // Log results from the delete operation
 
         if (results.affectedRows === 0) {
-            console.log(`No selection found with ID: ${selection_id}`);
-            return res.status(404).send('Selection not found'); // Handle case where no rows were deleted
+            console.log(`No selections found with exam_id: ${exam_id}`);
+            return res.status(404).send('Selections not found'); // Handle case where no rows were deleted
         }
 
         res.status(204).send(); // No content to send back
     } catch (err) {
-        console.error('Error deleting selection:', err);
-        res.status(500).send('Error deleting selection');
+        console.error('Error deleting selections:', err);
+        res.status(500).send('Error deleting selections');
     }
 });
+
 
  
 // Export the router

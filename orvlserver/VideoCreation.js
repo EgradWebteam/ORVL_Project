@@ -25,20 +25,21 @@ router.get('/topics/:topic_id/videos', async (req, res) => {
 router.get('/fetch-videos', async (req, res) => {
     try {
         const query = `
-            SELECT
-                v.video_id,
-                e.exam_id,
-                s.subject_id,
-                t.topic_id,
-                e.exam_name,
-                s.subject_name,
-                t.topic_name,
-                v.video_name,
-                v.video_link
+           SELECT
+            v.video_id,
+            t.topic_id,
+            e.exam_id,
+            s.subject_id,
+                   e.exam_name,
+                   s.subject_name,
+                   t.topic_name,
+                   GROUP_CONCAT(v.video_name ORDER BY v.video_name ) AS video_names,
+               GROUP_CONCAT(v.video_link ORDER BY v.video_name ) AS video_links
             FROM videos v
             JOIN exams e ON v.exam_id = e.exam_id
             JOIN subjects s ON v.subject_id = s.subject_id
             JOIN topics t ON v.topic_id = t.topic_id
+            GROUP BY e.exam_name, s.subject_name, t.topic_name
         `;
         const [results] = await db.query(query);
         res.json(results);

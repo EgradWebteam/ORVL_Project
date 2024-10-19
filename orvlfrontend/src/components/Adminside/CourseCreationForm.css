@@ -1,77 +1,146 @@
 .course-creation-container {
     padding: 20px;
-    font-family: Arial, sans-serif;
-    /* background-color: #f9f9f9; */
     margin-left: 22vw;
-        margin-top: 10vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif; /* Set font for subject names */
+    font-size: 16px; /* Optional: adjust font size */
+    color: #333;
 }
-.btnes1{
-    position: 0;
-    left:55%;
+
+.btnes1 {
     background-color: #00222c;
     color: #fff;
     font-size: larger;
     padding: 10px;
     border-radius: 10px;
     top: 6vh;
+    /* Adjust position as needed */
 }
 
- 
-/* .btnes1:hover {
-    background-color: #6baadd; /* Darker green */
-*/
-.group1 {
+.submit-button {
+    background-color: #3e77e0; /* Blue */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Increased padding for better size */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px; /* Adjusted font size */
+    margin: 10px; /* Margin around the button */
+    cursor: pointer;
+    border-radius: 115px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.submit-button:hover {
+    background-color: #3786e0; /* Darker blue on hover */
+}
+
+.cancel-button {
+    background-color: #f44336; /* Red */
+    color: white;
+    border: none;
+    padding: 10px 50px; /* Increased padding for better size */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px; /* Adjusted font size */
+    margin: 10px; /* Margin around the button */
+    cursor: pointer;
+    border-radius: 115px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.cancel-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+
+
+.course_group {
     display: flex;
     flex-direction: column; /* Stack elements vertically */
     gap: 15px; /* Space between elements */
+    padding: 20px; /* Padding around the group */
+    background-color: #f9f9f9; /* Light background */
+    border: 1px solid #ddd; /* Border for the form */
+    border-radius: 8px; /* Rounded corners for the form */
+    max-width: 700px;
+    margin-bottom: 1rem;
 }
-
-.label {
+.Subject_selection_container {
     display: flex;
-    align-items: center; /* Align label with input/select vertically */
+    justify-content: start;
+    gap: 3rem;
+   
+}
+.subject{
+    font-family: Arial, sans-serif; /* Set font for subject names */
+    font-size: 16px;
+    font-weight: bold;
+}
+.check_boxes_container {
+    display: flex;
+    flex-direction: column; /* Stack checkboxes vertically */
+    gap: 0.5rem; /* Space between checkbox items */
+    font-family: Arial, sans-serif; /* Set font for subject names */
+    font-size: 16px; /* Optional: adjust font size */
+    color: #333;
+}
+.Check_box_each_label {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Align name to the left and checkbox to the right */
+    align-items: center; /* Center vertically */
+    gap: 1rem; /* Space between subject name and checkbox */
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
 }
 
+/* .label {
+    display: flex;
+    flex-direction: column; 
+} */
 .label span {
-    margin-right: 10px; /* Space between label text and input */
-    width: 120px; /* Fixed width for labels to align */
-    font-weight: bold; /* Make label text bold */
+   
+    margin-right: 30px;
+    font-weight: bold;
+    color: #333;
 }
 
-input[type="text"], 
-select {
-    width: 100%; /* Make input and select full width of parent */
-    max-width: 300px; /* Set a maximum width */
-    padding: 10px; /* Space inside input/select */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+input[type="checkbox"] {
+    width: 100%; /* Full width */
+    max-width: 400px; /* Set a maximum width */
+    padding: 10px; /* Padding */
     font-size: 16px; /* Font size */
     border: 1px solid #ccc; /* Border styling */
     border-radius: 4px; /* Rounded corners */
     box-sizing: border-box; /* Include padding and border in width */
     transition: border-color 0.3s; /* Smooth transition for border color */
+    margin:auto
 }
 
-input[type="text"]:focus, 
-select:focus {
-    border-color: #007bff; /* Border color on focus */
+input[type="text"]:focus,
+select:focus,
+input[type="checkbox"]:hover {
+    border-color: #007bff; /* Change border color on focus/hover */
     outline: none; /* Remove default outline */
-}
-
-input[type="text"]:hover, 
-select:hover {
-    border-color: #007bff; /* Change border color on hover */
 }
 
 .error-message {
     color: red;
     margin: 10px 0;
 }
- .group1 {
-    background-color: rgb(66, 65, 65);
 
- }
 .modal {
     position: fixed;
     top: 0;
@@ -83,57 +152,21 @@ select:hover {
     align-items: center;
     justify-content: center;
 }
- 
+
 .modal-content {
-    background: white;
+    background: #979191;
     padding: 20px;
     border-radius: 5px;
-    width: 500px;
+    width: 800px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    
 }
- 
-.modal-content h2 {
-    margin-bottom: 15px;
-}
- 
-.modal-content form {
-    display: flex;
-    flex-direction: column;
-}
- 
-.modal-content select,
-.modal-content input {
-    margin-bottom: 10px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
- 
-.modal-content input[type="file"] {
-    padding: 3px;
-}
- 
-.modal-content btn {
-    background-color: #3c5f8b; /* Green */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
-}
- 
-.modal-content btn:hover {
-    background-color: #487ecf; /* Darker green */
-}
- 
+
 .course-list {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
 }
- 
+
 .course-item {
     display: flex;
     align-items: center;
@@ -145,55 +178,20 @@ select:hover {
     background-color: white;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
- 
-.course-item-number {
-    width: 30px;
-}
- 
-.course-item-exam,
-.course-item-name,
-.course-item-start-date,
-.course-item-end-date,
-.course-item-cost,
-.course-item-discount,
-.course-item-total-price {
-    flex: 1;
-    text-align: center;
-}
- 
-.course-item-actions {
-    display: flex;
-    gap: 10px;
-}
- 
-.course-item-actions btn {
-    background-color: #f44336; /* Red */
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
- 
-.course-item-actions btn:hover {
-    background-color: #d32f2f; /* Darker red */
-}
+
+/* Additional styling for table */
 .course-list-table {
     width: 100%;
     border-collapse: collapse;
 }
- 
+
 .course-list-table th, .course-list-table td {
     border: 1px solid hsla(0, 7%, 97%, 0.966);
     padding: 8px;
     text-align: left;
 }
- 
+
 .course-list-table th {
     background-color: #00222c;
     color: #fff;
-    
 }
-
- 
- 

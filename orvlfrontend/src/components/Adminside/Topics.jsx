@@ -208,7 +208,7 @@ const Topics = () => {
       {modal1 && (
         <div className='examform'>
           <div className='modal'>
-            <div className='content_m'>
+            <div className='content_s'>
               <h1>Topics Creation</h1>
               <form onSubmit={handleSubmit}>
                 <div className='div1'>
@@ -271,7 +271,7 @@ const Topics = () => {
       {editModal && (
         <div className='examform'>
           <div className='modal'>
-            <div className='content_m'>
+            <div className='content_s'>
               <h1>Edit Topics</h1>
               <form onSubmit={handleUpdate}>
                 <div className='div1'>

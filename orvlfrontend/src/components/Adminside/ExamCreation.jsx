@@ -107,15 +107,15 @@ const ExamCreation = () => {
         .catch(error => console.error('Error updating selection:', error));
   };
 
-  const handleDelete = (selection_id) => {
-    console.log("Attempting to delete selection with ID:", selection_id); // Log the ID
-    if (selection_id === undefined) {
+  const handleDelete = (exam_id) => {
+    console.log("Attempting to delete selection with ID:", exam_id); // Log the ID
+    if (exam_id === undefined) {
         console.error("Selection ID is undefined. Cannot proceed with deletion.");
         return;
     }
 
     if (window.confirm('Are you sure you want to delete this selection?')) {
-        axios.delete(`http://localhost:8000/ExamCreation/selections/ExamCreation_delete/${selection_id}`)
+        axios.delete(`http://localhost:8000/ExamCreation/selections/ExamCreation_delete/${exam_id}`)
             .then(() => {
                 alert('Selection deleted successfully');
                 return axios.get('http://localhost:8000/ExamCreation/selections'); // Refresh selections
@@ -192,7 +192,7 @@ const ExamCreation = () => {
                 <td>{selection.subject_names}</td>
                 <td className='upddel'>
                   <button className="update" onClick={() => handleEdit(index)}>Update</button>
-                  <button className="delete" onClick={() => handleDelete(selection.selection_id)}>Delete</button>
+                  <button className="delete" onClick={() => handleDelete(selection.exam_id)}>Delete</button>
                 </td>
               </tr>
             ))}
