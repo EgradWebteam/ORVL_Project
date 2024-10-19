@@ -132,16 +132,72 @@ const checkCoursePurchased = async (req, res, next) => {
 };
 
 // Get course details, topics, and videos by userId and courseCreationId
-router.get('/my_courses/course_details/:userId/:courseCreationId', checkCoursePurchased,  async (req, res) => {
+// router.get('/my_courses/course_details/:userId/:courseCreationId', checkCoursePurchased,  async (req, res) => {
+//     const { userId, courseCreationId } = req.params;
+
+//     try {
+//         // Fetch course name
+//         const [courseRows] = await db.query(`
+//             SELECT course_name,course_creation_id
+//             FROM course_creation
+//             WHERE course_creation_id = ?
+//         `, [courseCreationId]);
+
+//         if (courseRows.length === 0) {
+//             return res.status(404).json({ message: 'Course not found' });
+//         }
+
+//         const courseName = courseRows[0].course_name;
+//         const course_creation_id = courseRows[0].course_creation_id;
+
+//         // Fetch topics and videos for the specified course
+//         const [topics] = await db.query(`
+//             SELECT t.topic_id, t.topic_name,v.video_id,
+//                    v.video_name, v.video_link
+//             FROM topics t
+//             LEFT JOIN videos v ON t.topic_id = v.topic_id
+//             WHERE t.subject_id IN (
+//                 SELECT subject_id FROM course_subjects WHERE course_creation_id = ?
+//             )
+//         `, [courseCreationId]);
+
+//         // Organize topics and videos
+//         const topicsWithVideos = topics.reduce((acc, topic) => {
+//             const { topic_id, topic_name,video_id, video_name, video_link } = topic;
+
+//             // Check if the topic already exists
+//             let existingTopic = acc.find(t => t.topic_id === topic_id);
+//             if (!existingTopic) {
+//                 existingTopic = { topic_id, topic_name,video_id, videos: [] };
+//                 acc.push(existingTopic);
+//             }
+
+//             // Add the video if it exists
+//             if (video_id && video_name && video_link) {
+//                 existingTopic.videos.push({ video_id,video_name, video_link });
+//             }
+
+//             return acc;
+//         }, []);
+
+//         res.json({ courseName,course_creation_id, topics: topicsWithVideos });
+//     } catch (error) {
+//         console.error('Error fetching course details:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
+// Get course details, topics, and videos by userId and courseCreationId
+router.get('/my_courses/course_details/:userId/:courseCreationId', checkCoursePurchased, async (req, res) => {
     const { userId, courseCreationId } = req.params;
 
     try {
         // Fetch course name
-        const [courseRows] = await db.query(`
-            SELECT course_name,course_creation_id
+        const [courseRows] = await db.query(
+            `SELECT course_name, course_creation_id
             FROM course_creation
-            WHERE course_creation_id = ?
-        `, [courseCreationId]);
+            WHERE course_creation_id = ?`, 
+            [courseCreationId]
+        );
 
         if (courseRows.length === 0) {
             return res.status(404).json({ message: 'Course not found' });
@@ -150,42 +206,58 @@ router.get('/my_courses/course_details/:userId/:courseCreationId', checkCoursePu
         const courseName = courseRows[0].course_name;
         const course_creation_id = courseRows[0].course_creation_id;
 
-        // Fetch topics and videos for the specified course
-        const [topics] = await db.query(`
-            SELECT t.topic_id, t.topic_name,v.video_id,
-                   v.video_name, v.video_link
+        // Fetch topics and all videos with visit counts
+        const [topics] = await db.query(
+            `SELECT t.topic_id, t.topic_name, 
+                    v.video_id, v.video_name, v.video_link,
+                    COALESCE(vc.video_count, 0) AS visit_count
             FROM topics t
             LEFT JOIN videos v ON t.topic_id = v.topic_id
+            LEFT JOIN video_count vc ON vc.video_id = v.video_id AND vc.user_id = ?
             WHERE t.subject_id IN (
                 SELECT subject_id FROM course_subjects WHERE course_creation_id = ?
-            )
-        `, [courseCreationId]);
+            )`, 
+            [userId, courseCreationId]
+        );
 
         // Organize topics and videos
-        const topicsWithVideos = topics.reduce((acc, topic) => {
-            const { topic_id, topic_name,video_id, video_name, video_link } = topic;
+        const topicsWithVideos = topics.reduce((acc, video) => {
+            const { topic_id, topic_name, video_id, video_name, video_link, visit_count } = video;
 
             // Check if the topic already exists
             let existingTopic = acc.find(t => t.topic_id === topic_id);
             if (!existingTopic) {
-                existingTopic = { topic_id, topic_name,video_id, videos: [] };
+                existingTopic = { 
+                    topic_id, 
+                    topic_name, 
+                    videos: [] 
+                };
                 acc.push(existingTopic);
             }
 
-            // Add the video if it exists
-            if (video_id && video_name && video_link) {
-                existingTopic.videos.push({ video_id,video_name, video_link });
+            // Add the video to the topic
+            if (video_id) {
+                existingTopic.videos.push({ video_id, video_name, video_link, visit_count });
             }
 
             return acc;
         }, []);
 
-        res.json({ courseName,course_creation_id, topics: topicsWithVideos });
+        // Calculate visit percentage for each topic
+        topicsWithVideos.forEach(topic => {
+            const totalVideos = topic.videos.length;
+            const visitedVideos = topic.videos.filter(video => video.visit_count > 0).length;
+            topic.visitPercentage = totalVideos > 0 ? (visitedVideos / totalVideos) * 100 : 0;
+        });
+
+        res.json({ courseName, course_creation_id, topics: topicsWithVideos });
     } catch (error) {
         console.error('Error fetching course details:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 // Increment video count
 router.post('/video/update_count', async (req, res) => {

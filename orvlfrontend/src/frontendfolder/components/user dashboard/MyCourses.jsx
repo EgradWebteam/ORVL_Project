@@ -7,6 +7,9 @@ import videoimg from './Images/vid.png';
 import { RxCross2 } from "react-icons/rx";
 import { FaAngleDown } from "react-icons/fa";
 import { CgShapeRhombus } from "react-icons/cg";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css'; // Import styles
+
 
 const MyCourses = () => {
     const { id, courseId } = useParams(); // Capture courseId from URL
@@ -76,7 +79,7 @@ const MyCourses = () => {
             const response = await axios.get(`http://localhost:8000/course/video/count/${id}/${videoId}`);
             const videoCounts = response.data.video_count || 0;
 
-            if (videoCounts >= 2) {
+            if (videoCounts >= 5) {
                 alert("You can't play this video as you have reached the view limit.");
                 return;
             }
@@ -120,6 +123,7 @@ const MyCourses = () => {
 
     const closeModal = () => {
         setModalIsOpen(false);
+        window.location.reload();
         setSelectedVideo('');
     };
 
@@ -130,7 +134,7 @@ const MyCourses = () => {
     return (
         <div>
             <NavbarUD userId={id} />
-            <div className='mycourses'>
+            <div className=' mycourses'>
                 <h1 className='buych1'>My Courses</h1>
                 {loading ? (
                     <p>Loading your courses...</p>
@@ -160,33 +164,59 @@ const MyCourses = () => {
                                         )}
                                     </div>
                                 </div>
-                                <div className='topis-videos-container'> 
-                                    {selectedCourse.topics.map((topic) => (
-                                        <div key={topic.topic_id} id={topic.topic_id} className='topic-video'>
-                                            <div className="h3vlcon">
-                                                <h2 className='topicvideoh3'>{topic.topic_name}</h2>
-                                            </div>
-                                            {topic.videos.length > 0 ? (
-                                                <ul className='videotopicformycorsul'>
-                                                    {topic.videos.map((video) => (
-                                                        <li key={video.video_id} onClick={() => openVideoModal(video.video_link, selectedCourse.course_creation_id, video.video_id)} className='videotopicformycorsli'>
-                                                            <div className="videoimgq">
-                                                                <img src={videoimg} className="imgppvl" alt="Description of the video" />
-                                                            </div>
-                                                            <p className='titlevidvl'>{video.video_name}</p>
-                                                        </li>
-                                                    ))} 
-                                                </ul>
-                                            ) : (
-                                                <p className='novideopara'>
-                                                    <div className='rhombusforvl'>
-                                                        <CgShapeRhombus className='csvlr' />No videos available for this topic.<CgShapeRhombus className='cdr' />
-                                                    </div>
-                                                </p>
-                                            )}
-                                        </div>
-                                    ))} 
-                                </div>
+                                <div className='topics-videos-container'> 
+                                {selectedCourse.topics.map((topic) => {
+    // Calculate the percentage of visited videos
+    const visitedCount = topic.videos.filter(video => video.visit_count > 0).length;
+    const totalCount = topic.videos.length;
+    const visitPercentage = totalCount > 0 ? (visitedCount / totalCount) * 100 : 0;
+
+    return (
+        <div key={topic.topic_id} className='topic-video'>
+            <div className="h3vlcon">
+                <h2 className='topicvideoh3 '>{topic.topic_name}
+                <div className="progress-bar">
+                <CircularProgressbar className="progress-bar-text"
+                    value={visitPercentage}
+                    text={`${Math.round(visitPercentage)}%`}
+                    styles={buildStyles({
+                        strokeLinecap: 'round',
+                     
+                        pathColor: `rgba(62, 152, 199, ${visitPercentage / 100})`,
+                        textColor: '#f88',
+                        trailColor: '#d6d6d6',
+                    })}
+                />
+            </div></h2>
+            </div>
+           
+            {topic.videos.length > 0 ? (
+                <ul className='videotopicformycorsul'>
+                    {topic.videos.map((video) => (
+                        <li key={video.video_id} onClick={() => openVideoModal(video.video_link, selectedCourse.course_creation_id, video.video_id)} className='videotopicformycorsli'>
+                            <div className="videoimgq">
+                                <img src={videoimg} className="imgppvl" alt="Description of the video" />
+                            </div><span className="vistcount video">
+                             Visited: {video.visit_count}  / 5</span>
+                            <p className='titlevidvl'>{video.video_name}
+                           </p> 
+                        </li>
+                    ))} 
+                </ul>
+            ) : (
+                <p className='novideopara'>
+                    <div className='rhombusforvl'>
+                        <CgShapeRhombus className='csvlr' />No videos available for this topic.<CgShapeRhombus className='cdr' />
+                    </div>
+                </p>
+            )}
+        </div>
+    );
+})}
+
+</div>
+
+
                             </div>
                         ) : (
                             myCourses.map((course) => (
@@ -233,6 +263,7 @@ const MyCourses = () => {
                 </div>
             )}
         </div>
+               
     );
 };
 

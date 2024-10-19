@@ -178,7 +178,7 @@ const BuyCourses = () => {
                                     <div className='fsvnsv'>No of Videos: <div>{course.video_count}</div></div>
                                 </div>
                                 <div className="comcardbuyprice">
-                                    <div className='fsvnsv pricebuy'>${course.total_price}</div>
+                                    <div className='fsvnsv pricebuy'>₹{course.total_price}</div>
                                     <button className="btnbut" onClick={() =>  handleOpenModal(course)}>BUY NOW</button>
                                     {/* <button className="btnbut" onClick={() =>  handleOpenPayment(course)}>BUY NOW</button> */}
                                 </div>
