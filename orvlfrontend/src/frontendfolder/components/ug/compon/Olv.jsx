@@ -242,7 +242,7 @@ const Olv = () => {
             {/* <div className='fsvnsv subhcard'>no of subjects<div>{examcos.subject_count}</div></div> */}
             <div className='fsvnsv'>no of Videos: <div>{examcos.video_count}</div></div></div>
            
-           <div className="comcardbuyprice"><div className='fsvnsv  pricebuy'> ${examcos.total_price}</div> <button className="btnbut" onClick={() => handleBuyNow(examcos)}>BUY NOW</button>
+           <div className="comcardbuyprice"><div className='fsvnsv  pricebuy'> ₹{examcos.total_price}</div> <button className="btnbut" onClick={() => handleBuyNow(examcos)}>BUY NOW</button>
         </div></div> 
     ))}
 </div>

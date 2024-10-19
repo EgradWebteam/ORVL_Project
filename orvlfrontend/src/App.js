@@ -24,6 +24,7 @@ const DownloadJEEADV = lazy(() => import('./frontendfolder/components/downloadsu
 const Downloadneet = lazy(() => import('./frontendfolder/components/downloadsug/components/Downloadneet'));
 const Olv = lazy(() => import('./frontendfolder/components/ug/compon/Olv'));
 const RegisterForm = lazy(() => import('./frontendfolder/pages/RegisterForm'));
+const PayRegisterForm = lazy(() => import('./frontendfolder/pages/PayRegisterform'));
 const ForgetPassword = lazy(() => import('./frontendfolder/pages/ForgetPassword'));
 const UserDashboard = lazy(() => import('./frontendfolder/components/user dashboard/UserDashboard'));
 const MyCourses = lazy(() => import('./frontendfolder/components/user dashboard/MyCourses'));
@@ -65,6 +66,7 @@ function App() {
             <Route path="/olvug" element={<Olv />} />
             <Route path="/ForgetPassword" element={<ForgetPassword />} />
             <Route path="/Register" element={<RegisterForm />} />
+            <Route path="/PayRegister" element={<PayRegisterForm />} />
             <Route path="/UserDashboard/:id" element={<ProtectedRoute element={<UserDashboard />} isAuthenticated={isAuthenticated} />} />
             <Route path="/mycourses/:id/:courseId" element={<ProtectedRoute element={<MyCourses />} isAuthenticated={isAuthenticated} />} />
             <Route path="/MyCourses/:id" element={<ProtectedRoute element={<MyCourses />} isAuthenticated={isAuthenticated} />} />
