@@ -48,11 +48,12 @@
     background-color: #fff;
 }
 .inputfpem {
-    border: 2px solid #007bff;
+    border: 3px solid #007bff;
     padding: 10px;
   
     border-radius: 4px;
 }
+
 .exam-cards-containervl {
     display: flex;
     flex-wrap: wrap;
@@ -249,9 +250,10 @@ h2.topicvideoh3 {
 }
 .courseheadingtv {
     background: #e0f8ff;
-    width: 83vw;
+    width: 82.5vw;
     padding: 10px;
     display: flex;
+    margin-left:3px;
     justify-content: center;
 }
 .borderdropdown{
@@ -392,7 +394,7 @@ h1.buych1 {
 }
 .inputfpem.inputpayment {
     width: 70%;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     color: #ccc;
 }
 .jsk {
@@ -559,6 +561,7 @@ button.logoutbtn {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 1000;
   
 }
 .btnfph2 {
@@ -623,10 +626,30 @@ button.logoutbtn {
     top: 60px;
     
 } */
+input:focus {
+    border-color:  #007bff !important;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+#email:focus{
+    border-color: 2px solid #007bff;
+    box-shadow: none;
+    outline: none;
+}
 .inputfupdform {
     width: 350px;
     height: 27px;
     
+}
+.videoprogressbar {
+    width: 43px;
+    height: 0px;
+    padding-left: 160px;
+    z-index: 10;
+}
+.progress-bar-textvl{
+    font-size: 59px;
+    font-weight: 700;
 }
   @media (max-width: 600px) {
     .hamburger {
@@ -781,7 +804,7 @@ button.logoutbtn {
     }
     .courseheadingtv {
         background: #e0f8ff;
-        width: 75vw;
+        width: 77vw;
     }
   }
   @media (min-width:1200px) {

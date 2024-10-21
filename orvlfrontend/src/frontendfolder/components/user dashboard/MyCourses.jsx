@@ -191,18 +191,35 @@ const MyCourses = () => {
             </div>
            
             {topic.videos.length > 0 ? (
-                <ul className='videotopicformycorsul'>
-                    {topic.videos.map((video) => (
-                        <li key={video.video_id} onClick={() => openVideoModal(video.video_link, selectedCourse.course_creation_id, video.video_id)} className='videotopicformycorsli'>
-                            <div className="videoimgq">
-                                <img src={videoimg} className="imgppvl" alt="Description of the video" />
-                            </div><span className="vistcount video">
-                             Visited: {video.visit_count}  / 5</span>
-                            <p className='titlevidvl'>{video.video_name}
-                           </p> 
-                        </li>
-                    ))} 
-                </ul>
+                             <ul className='videotopicformycorsul'>
+                             {topic.videos.map((video) => {
+                                 const videoVisitCount = video.visit_count || 0;
+                                 const videoVisitPercentage = videoVisitCount > 0 ? (videoVisitCount / 5) * 100 : 0; // Assuming 5 is the max view count
+         
+                                 return (
+                                     <li key={video.video_id} onClick={() => openVideoModal(video.video_link, selectedCourse.course_creation_id, video.video_id)} className='videotopicformycorsli'>
+                                         <div className="videoimgq">
+                                             <img src={videoimg} className="imgppvl" alt="Description of the video" />
+                                         </div>
+                                         <div className=" videoprogressbar vistcount video">
+                                             <CircularProgressbar className="progress-bar-textvl"
+                                                 value={videoVisitPercentage}
+                                                 text={`${Math.round(videoVisitPercentage)}%`}
+                                                 styles={buildStyles({
+                                                     strokeLinecap: 'round',
+                                                     pathColor: `rgba(62, 152, 199, ${videoVisitPercentage / 100})`,
+                                                     textColor: '#f88',
+                                                     trailColor: '#d6d6d6',
+                                                 })}
+                                             />
+                                         </div>
+                                         <span className="vistcount video">Visited: {videoVisitCount} / 5</span>
+                                         <p className='titlevidvl'>{video.video_name}</p>
+                                        
+                                     </li>
+                                 );
+                             })}
+                             </ul>
             ) : (
                 <p className='novideopara'>
                     <div className='rhombusforvl'>

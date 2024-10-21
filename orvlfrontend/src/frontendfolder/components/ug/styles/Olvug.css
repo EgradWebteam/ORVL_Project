@@ -182,7 +182,7 @@ p.carousel-status {
 .inptnv, select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -455,6 +455,11 @@ button{
 }
 .buych1 {
     text-align: center;
+}
+input:focus {
+    border-color:  #007bff !important;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+    outline: none;
 }
 .pricebuy,.btnbut{
     height: 35px;

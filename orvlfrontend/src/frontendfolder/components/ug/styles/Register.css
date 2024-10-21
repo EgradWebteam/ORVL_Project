@@ -139,6 +139,11 @@
   color: #ccc;
   background-color: #fff;
 }
+input:focus {
+  border-color:   #007bff !important;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
 .modal-content .buttonlgnsubmit {
     background-color: rgba(47,135,196,1);
     color: white;
@@ -274,7 +279,7 @@
   select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
   }
