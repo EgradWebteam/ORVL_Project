@@ -268,8 +268,9 @@ button{
     height: 95px;
     font-size: 45px;
     line-height: 95px;
-    padding-left: 25px;
-    padding-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 100%;
     overflow: hidden;
     background-color: #eee;
@@ -285,7 +286,7 @@ button{
     font-family: Roboto, sans-serif;
 }
 .fearvidcard {
-    width: 360px;
+    width: 330px;
     height: auto;
     background: #fff;
     display: flex;

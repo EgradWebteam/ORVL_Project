@@ -48,7 +48,7 @@
     background-color: #fff;
 }
 .inputfpem {
-    border: 3px solid #007bff;
+    border: 2px solid #007bff;
     padding: 10px;
   
     border-radius: 4px;
@@ -199,10 +199,17 @@ button.btncontinue {
 .dropdowndiv {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     width: 100%;
 }
-.dropdowndiv :hover{
+li.topic-item {
+    list-style: none;
+}
+li.topic-item {
+    list-style: none;
+}
+.topic-item :hover,.subject-name{
    color: #007bff;
    background: #c6c8cb;
    width: 100%;
@@ -437,9 +444,9 @@ input.inputfupdform {
     box-shadow: 0 0 5px #00000080;
    
     border-radius: 8px;
-    padding: 55px;
-    width: 460px;
-    height: 460px;
+    padding: 45px;
+    width: 430px;
+    height: 430px;
 }
 
 .nephoneno {
@@ -651,7 +658,7 @@ input:focus {
     font-size: 59px;
     font-weight: 700;
 }
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     .hamburger {
         display: block;
         position: fixed;
@@ -691,7 +698,7 @@ input:focus {
     }
     .courseheadingtv {
         background: #e0f8ff;
-        width: 95%;
+        width: 94%;
     }
     .visibledropdown {
         width: fit-content;
@@ -768,8 +775,16 @@ input:focus {
     width: 134px;
     font-size: medium;
 }
+.mycourses {
+    width: 86%;
+    margin: 128px 0px 10px 136px;
+}
+.topics-videos-container {
+    width: 89%;
+    margin: 0 auto;
+}
   }
-  @media (min-width:768px) and (max-width:992px){
+  @media (min-width:769px) and (max-width:992px){
     .udsidebar {
         height: 100vh;
         width: 170px;
@@ -782,14 +797,18 @@ input:focus {
     }
     .mycourses {
         width: 80%;
-        margin: 128px 165px;
+        margin: 128px 150px;
     }
     .courseheadingtv {
         background: #e0f8ff;
-        width: 77vw;
+        width: 76vw;
+    }
+    .topics-videos-container {
+        margin: 0 30px;
+        width: 93%;
     }
   }
-  @media (min-width:600px) and (max-width:768px){
+  /* @media (min-width:690px) and (max-width:768px){
     .sidebar,.udsidebar {
         width: 170px;
     }
@@ -799,17 +818,18 @@ input:focus {
         right: 0px;
     }
     .mycourses {
-        width: 80%;
+        width: 72vw;
         margin: 128px 170px;
     }
     .courseheadingtv {
         background: #e0f8ff;
         width: 77vw;
     }
-  }
+  } */
   @media (min-width:1200px) {
     .topics-videos-container {
         width: 90%;
         margin: 0 auto;
     }
+ 
   }
