@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'; // Correct import
 import './Userdashboard.css';
+import  {  ThemeContext  }  from  "../themeContext";
 
 // Register the ArcElement, Tooltip, and Legend
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -14,7 +15,7 @@ const UserDashboard = () => {
     const [profileDataDisplay, setProfileDataDisplay] = useState({});
     const [viewedCourses, setViewedCourses] = useState([]);
     const navigate = useNavigate();
-
+    const { toggle, toggleFunction } = React.useContext(ThemeContext);
     useEffect(() => {
         const fetchProfileDisplay = async () => {
             try {
@@ -70,9 +71,10 @@ const UserDashboard = () => {
     };
 
     return (
-        <div>
+        <div style={toggle ? { background: "blue", color:"#fff" } : {}}>
             <NavbarUD userId={id} />
-            <div className='userInterfaceMainCon'>
+      
+            <div className='userInterfaceMainCon' >
                 {profileDataDisplay && (
                     <div className='dashboardvl'>
                         <h1>{getGreeting()}, {profileDataDisplay.name}</h1>
@@ -111,6 +113,7 @@ const UserDashboard = () => {
                                     <button onClick={() => handleContinue(course.course_creation_id)} className='btncontinue'>
                                         Continue
                                     </button>
+
                                 </div>
                              
                             );
@@ -118,8 +121,14 @@ const UserDashboard = () => {
                 
                         })}
                     </div>
+
                     </div>
                 )}
+                  <div>
+      Hello
+      <button onClick={toggleFunction}>Change</button>
+      {toggle ? "Dark" : "Light"}
+    </div>
             </div>
         </div>
     );

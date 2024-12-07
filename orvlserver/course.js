@@ -206,12 +206,13 @@ router.get('/my_courses/course_details/:userId/:courseCreationId', checkCoursePu
         const courseName = courseRows[0].course_name;
         const course_creation_id = courseRows[0].course_creation_id;
 
-        // Fetch topics and all videos with visit counts
+        // Fetch topics, videos, visit counts, and subject names
         const [topics] = await db.query(
-            `SELECT t.topic_id, t.topic_name, 
+            `SELECT t.topic_id, t.topic_name, s.subject_name, 
                     v.video_id, v.video_name, v.video_link,
                     COALESCE(vc.video_count, 0) AS visit_count
             FROM topics t
+            JOIN subjects s ON t.subject_id = s.subject_id
             LEFT JOIN videos v ON t.topic_id = v.topic_id
             LEFT JOIN video_count vc ON vc.video_id = v.video_id AND vc.user_id = ?
             WHERE t.subject_id IN (
@@ -220,37 +221,48 @@ router.get('/my_courses/course_details/:userId/:courseCreationId', checkCoursePu
             [userId, courseCreationId]
         );
 
-        // Organize topics and videos
-        const topicsWithVideos = topics.reduce((acc, video) => {
-            const { topic_id, topic_name, video_id, video_name, video_link, visit_count } = video;
+        // Organize topics and videos while including subject names
+        const subjectsMap = {};
+        topics.forEach(video => {
+            const { topic_id, topic_name, subject_name, video_id, video_name, video_link, visit_count } = video;
+
+            // Create subject entry if it doesn't exist
+            if (!subjectsMap[subject_name]) {
+                subjectsMap[subject_name] = [];
+            }
 
             // Check if the topic already exists
-            let existingTopic = acc.find(t => t.topic_id === topic_id);
+            let existingTopic = subjectsMap[subject_name].find(t => t.topic_id === topic_id);
             if (!existingTopic) {
                 existingTopic = { 
                     topic_id, 
                     topic_name, 
                     videos: [] 
                 };
-                acc.push(existingTopic);
+                subjectsMap[subject_name].push(existingTopic);
             }
 
             // Add the video to the topic
             if (video_id) {
                 existingTopic.videos.push({ video_id, video_name, video_link, visit_count });
             }
+        });
 
-            return acc;
-        }, []);
+        // Convert subjectsMap to an array
+        const subjectsWithTopics = Object.entries(subjectsMap).map(([subject_name, topics]) => ({
+            subject_name,
+            topics
+        }));
 
         // Calculate visit percentage for each topic
+        const topicsWithVideos = [].concat(...subjectsWithTopics.map(subject => subject.topics)); // Flatten the topics for visit calculation
         topicsWithVideos.forEach(topic => {
             const totalVideos = topic.videos.length;
             const visitedVideos = topic.videos.filter(video => video.visit_count > 0).length;
             topic.visitPercentage = totalVideos > 0 ? (visitedVideos / totalVideos) * 100 : 0;
         });
 
-        res.json({ courseName, course_creation_id, topics: topicsWithVideos });
+        res.json({ courseName, course_creation_id, subjects: subjectsWithTopics });
     } catch (error) {
         console.error('Error fetching course details:', error);
         res.status(500).send('Internal Server Error');

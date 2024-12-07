@@ -73,6 +73,7 @@ router.post('/verify-otp', async (req, res) => {
         res.status(500).json({ message: 'Error verifying OTP.' });
     }
 });
+
 // Endpoint to reset password
 // Endpoint to reset password
 router.post('/reset-password', async (req, res) => {
@@ -84,6 +85,12 @@ router.post('/reset-password', async (req, res) => {
     // Check if newPassword and confirmPassword match
     if (newPassword !== confirmPassword) {
         return res.status(400).json({ message: 'New password does not match confirmed password.' });
+    }
+
+    // Validate password criteria
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+        return res.status(400).json({ message: 'Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.' });
     }
 
     // Hash the new password
@@ -99,6 +106,7 @@ router.post('/reset-password', async (req, res) => {
         res.status(500).json({ message: 'Error resetting password.' });
     }
 });
+
 
 
 

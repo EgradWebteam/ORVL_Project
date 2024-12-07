@@ -111,7 +111,11 @@ const MyAccount = () => {
             setError('New password does not match confirmed password.');
             return;
         }
-    
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(newPassword)) {
+            setError('Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.');
+            return;
+        }
         try {
             const response = await axios.post('http://localhost:8000/resetpassword/reset-password', {
                 email,

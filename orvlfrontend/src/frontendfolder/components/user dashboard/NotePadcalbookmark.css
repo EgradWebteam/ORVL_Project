@@ -1,0 +1,39 @@
+
+.NOTEPADH1 {
+    display: flex;
+    width: fit-content;
+    padding: 6px;
+    font-size: 18px;
+    background: rgb(36, 150, 202);
+    color: white;
+    border-radius: 6px;
+    position: fixed;
+    top: 99px;
+    font-weight: 400;
+    right:85px;
+}
+.notepadbtns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+button.notepadbtn {
+    background: #007bff;
+    color: #fff;
+    border-radius: 6px;
+}
+@media ( max-width:600px){
+.canvasnotpad{
+ 
+    width: 100%;
+ 
+}}
+@media ( min-width:600px) and (max-width:768px){
+    .canvasnotpad{
+       
+        width: 100vw;
+        
+     
+    }
+}

@@ -53,6 +53,7 @@
   
     border-radius: 4px;
 }
+
 .exam-cards-containervl {
     display: flex;
     flex-wrap: wrap;
@@ -172,7 +173,7 @@ button.btncontinue {
 }
 .udsidebar .btnudnb {
     color: #053705;
-    width: 152px;
+    width: 155px;
     font-size: large;
 }
 .modal {
@@ -198,10 +199,17 @@ button.btncontinue {
 .dropdowndiv {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     width: 100%;
 }
-.dropdowndiv :hover{
+li.topic-item {
+    list-style: none;
+}
+li.topic-item {
+    list-style: none;
+}
+.topic-item :hover,.subject-name{
    color: #007bff;
    background: #c6c8cb;
    width: 100%;
@@ -249,9 +257,10 @@ h2.topicvideoh3 {
 }
 .courseheadingtv {
     background: #e0f8ff;
-    width: 83vw;
+    width: 82.5vw;
     padding: 10px;
     display: flex;
+    margin-left:3px;
     justify-content: center;
 }
 .borderdropdown{
@@ -392,7 +401,7 @@ h1.buych1 {
 }
 .inputfpem.inputpayment {
     width: 70%;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     color: #ccc;
 }
 .jsk {
@@ -435,9 +444,9 @@ input.inputfupdform {
     box-shadow: 0 0 5px #00000080;
    
     border-radius: 8px;
-    padding: 55px;
-    width: 460px;
-    height: 460px;
+    padding: 45px;
+    width: 430px;
+    height: 430px;
 }
 
 .nephoneno {
@@ -471,6 +480,7 @@ input.inputfupdform {
 }
 .macud {
     color: #007bff;
+    text-decoration: none;
 }
 button.logoutbtn {
     padding: 4px 8px;
@@ -559,6 +569,7 @@ button.logoutbtn {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 1000;
   
 }
 .btnfph2 {
@@ -623,12 +634,32 @@ button.logoutbtn {
     top: 60px;
     
 } */
+input:focus {
+    border-color:  #007bff !important;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+#email:focus{
+    border-color: 2px solid #007bff;
+    box-shadow: none;
+    outline: none;
+}
 .inputfupdform {
     width: 350px;
     height: 27px;
     
 }
-  @media (max-width: 600px) {
+.videoprogressbar {
+    width: 43px;
+    height: 0px;
+    padding-left: 160px;
+  
+}
+.progress-bar-textvl{
+    font-size: 59px;
+    font-weight: 700;
+}
+  @media (max-width: 768px) {
     .hamburger {
         display: block;
         position: fixed;
@@ -668,7 +699,7 @@ button.logoutbtn {
     }
     .courseheadingtv {
         background: #e0f8ff;
-        width: 95%;
+        width: 94%;
     }
     .visibledropdown {
         width: fit-content;
@@ -745,8 +776,16 @@ button.logoutbtn {
     width: 134px;
     font-size: medium;
 }
+.mycourses {
+    width: 86%;
+    margin: 128px 0px 10px 136px;
+}
+.topics-videos-container {
+    width: 89%;
+    margin: 0 auto;
+}
   }
-  @media (min-width:768px) and (max-width:992px){
+  @media (min-width:769px) and (max-width:992px){
     .udsidebar {
         height: 100vh;
         width: 170px;
@@ -759,14 +798,18 @@ button.logoutbtn {
     }
     .mycourses {
         width: 80%;
-        margin: 128px 165px;
+        margin: 128px 150px;
     }
     .courseheadingtv {
         background: #e0f8ff;
-        width: 77vw;
+        width: 76vw;
+    }
+    .topics-videos-container {
+        margin: 0 30px;
+        width: 93%;
     }
   }
-  @media (min-width:600px) and (max-width:768px){
+  /* @media (min-width:690px) and (max-width:768px){
     .sidebar,.udsidebar {
         width: 170px;
     }
@@ -776,17 +819,18 @@ button.logoutbtn {
         right: 0px;
     }
     .mycourses {
-        width: 80%;
+        width: 72vw;
         margin: 128px 170px;
     }
     .courseheadingtv {
         background: #e0f8ff;
-        width: 75vw;
+        width: 77vw;
     }
-  }
+  } */
   @media (min-width:1200px) {
     .topics-videos-container {
         width: 90%;
         margin: 0 auto;
     }
+ 
   }

@@ -9,6 +9,10 @@ import { FaAngleDown } from "react-icons/fa";
 import { CgShapeRhombus } from "react-icons/cg";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css'; // Import styles
+import NotePad from './NotePad';
+import Bookmark from './Bookmark';
+import ScientificCalculator from './ScientificCalculator';
+
 
 
 const MyCourses = () => {
@@ -23,7 +27,9 @@ const MyCourses = () => {
     const [modalIsOpencourse, setModalIsOpencourse] = useState(false);
     const [modalcoursedropdown, setModalcoursedropdown] = useState(false);
     const [videoCounts, setVideoCounts] = useState({});
-
+    const [calculator,setCalculator] = useState(false)
+    
+    
     useEffect(() => {
         const isAuthenticated = localStorage.getItem('authToken');
         if (!isAuthenticated) {
@@ -84,9 +90,11 @@ const MyCourses = () => {
                 return;
             }
 
-            const topic = selectedCourse?.topics.find(topic =>  
-                topic.videos.some(video => video.video_id === videoId)
-            );
+            const topic = selectedCourse?.subjects
+            .flatMap(subject => subject.topics)
+            .find(topic => topic.videos.some(video => video.video_id === videoId));
+
+         
             const courseCreationId = selectedCourse?.course_creation_id;
             const topicId = topic?.topic_id || null;
 
@@ -126,7 +134,9 @@ const MyCourses = () => {
         window.location.reload();
         setSelectedVideo('');
     };
-
+    const opencal = () =>{
+        setCalculator(!calculator)
+    }
     const opentopicdropdown = () => {
         setModalcoursedropdown(!modalcoursedropdown);
     };
@@ -149,30 +159,37 @@ const MyCourses = () => {
                                 </div>
                                 <div className='courseheadingtv'>
                                     <h2>{selectedCourse.courseName}</h2>
-                                </div>
+                                </div> 
                                 <div className='topic-dropdown'>
-                                    <div>
-                                        <div onClick={opentopicdropdown} className='labeldropdown'>Select a Topic <FaAngleDown className='fadown' /></div>
-                                        {modalcoursedropdown && selectedCourse.topics.length > 0 && (
-                                            <div className='borderdropdown'>
-                                                {selectedCourse.topics.map((topic) => (
-                                                    <div key={topic.topic_id} className='dropdowndiv'>
-                                                        <a href={`#${topic.topic_id}`} onClick={opentopicdropdown} className='dropdowndivanchor'>{topic.topic_name}</a>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+    <div>
+        <div onClick={opentopicdropdown} className='labeldropdown'>
+            Select a Topic <FaAngleDown className='fadown' />
+        </div>
+        {modalcoursedropdown && selectedCourse?.subjects?.length > 0 && (
+            <div className='borderdropdown'>
+                {selectedCourse.subjects.flatMap(subject => subject.topics).map((topic) => (
+                    <div key={topic.topic_id}   className='dropdowndiv'>
+                        <a href={`#${topic.topic_id}`} onClick={opentopicdropdown} className='dropdowndivanchor'>
+                            {topic.topic_name}
+                        </a>
+                    </div>
+                ))}
+            </div>
+        )}
+    </div>
+</div>
+
                                 <div className='topics-videos-container'> 
-                                {selectedCourse.topics.map((topic) => {
+                                {selectedCourse.subjects.map((subject) => (
+    <div key={subject.subject_name}>    <h3>{subject.subject_name}</h3>
+                                {subject.topics.map((topic) => {
     // Calculate the percentage of visited videos
     const visitedCount = topic.videos.filter(video => video.visit_count > 0).length;
     const totalCount = topic.videos.length;
     const visitPercentage = totalCount > 0 ? (visitedCount / totalCount) * 100 : 0;
 
     return (
-        <div key={topic.topic_id} className='topic-video'>
+        <div key={topic.topic_id} id ={topic.topic_id}  className='topic-video'>
             <div className="h3vlcon">
                 <h2 className='topicvideoh3 '>{topic.topic_name}
                 <div className="progress-bar">
@@ -192,16 +209,33 @@ const MyCourses = () => {
            
             {topic.videos.length > 0 ? (
                 <ul className='videotopicformycorsul'>
-                    {topic.videos.map((video) => (
+                {topic.videos.map((video) => {
+                    const videoVisitCount = video.visit_count || 0;
+                    const videoVisitPercentage = videoVisitCount > 0 ? (videoVisitCount / 5) * 100 : 0; // Assuming 5 is the max view count
+
+                    return (
                         <li key={video.video_id} onClick={() => openVideoModal(video.video_link, selectedCourse.course_creation_id, video.video_id)} className='videotopicformycorsli'>
                             <div className="videoimgq">
                                 <img src={videoimg} className="imgppvl" alt="Description of the video" />
-                            </div><span className="vistcount video">
-                             Visited: {video.visit_count}  / 5</span>
-                            <p className='titlevidvl'>{video.video_name}
-                           </p> 
+                            </div>
+                            <div className=" videoprogressbar vistcount video">
+                                <CircularProgressbar className="progress-bar-textvl"
+                                    value={videoVisitPercentage}
+                                    text={`${Math.round(videoVisitPercentage)}%`}
+                                    styles={buildStyles({
+                                        strokeLinecap: 'round',
+                                        pathColor: `rgba(62, 152, 199, ${videoVisitPercentage / 100})`,
+                                        textColor: '#f88',
+                                        trailColor: '#d6d6d6',
+                                    })}
+                                />
+                            </div>
+                            <span className="vistcount video">Visited: {videoVisitCount} / 5</span>
+                            <p className='titlevidvl'>{video.video_name}</p>
+                           
                         </li>
-                    ))} 
+                    );
+                })}
                 </ul>
             ) : (
                 <p className='novideopara'>
@@ -213,7 +247,8 @@ const MyCourses = () => {
         </div>
     );
 })}
-
+</div>
+ ))}
 </div>
 
 
@@ -262,6 +297,10 @@ const MyCourses = () => {
                     </div>
                 </div>
             )}
+            <div className='topic-dropdown'><NotePad /></div>
+            <div className='topic-kjk'> <button onClick={opencal}>calc </button>      {calculator && (<div>
+                <ScientificCalculator/></div>)}</div>
+     
         </div>
                
     );
